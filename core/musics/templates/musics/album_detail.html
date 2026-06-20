@@ -1,0 +1,1036 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+.album-detail-page {
+    background: #f7f8ff;
+    min-height: 100vh;
+}
+
+.album-hero-card {
+    padding: 20px;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.album-hero-cover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 26px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+    box-shadow: 0 16px 35px rgba(58, 59, 156, 0.12);
+}
+
+.album-hero-cover img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.album-hero-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.album-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.album-badge {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #f7f8ff;
+    color: var(--main-color-one);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.album-badge i {
+    font-size: 14px;
+}
+
+.album-title {
+    margin: 0 0 12px;
+    color: var(--main-color-one);
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.6;
+}
+
+.album-singer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #707597;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.album-singer i {
+    color: var(--main-color-one);
+}
+
+.album-singer a {
+    color: #707597;
+    text-decoration: none;
+}
+
+.album-singer a:hover {
+    color: var(--main-color-one);
+}
+
+.album-desc {
+    margin: 0;
+    color: #737899;
+    font-size: 14px;
+    line-height: 2.1;
+}
+
+.album-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.album-main-btn,
+.album-soft-btn {
+    height: 48px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    transition: 0.25s ease;
+}
+
+.album-main-btn {
+    background: var(--main-color-one);
+    color: #fff;
+}
+
+.album-main-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.album-soft-btn {
+    background: #f7f8ff;
+    color: var(--main-color-one);
+}
+
+.album-soft-btn:hover {
+    color: var(--main-color-one);
+    transform: translateY(-2px);
+}
+
+.album-stats-row {
+    margin-top: 18px;
+}
+
+.album-stat-card {
+    height: 100%;
+    padding: 18px;
+    border-radius: 22px;
+    background: #f7f8ff;
+}
+
+.album-stat-label {
+    margin: 0 0 8px;
+    color: #7c82a3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.album-stat-value {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.6;
+}
+
+.album-section-card {
+    margin-top: 24px;
+    padding: 22px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.album-section-head {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.album-section-title-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.album-section-title {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.album-section-subtitle {
+    margin: 0;
+    color: #7a80a0;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.album-track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.album-track-item {
+    padding: 12px;
+    border-radius: 22px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 10px 24px rgba(58, 59, 156, 0.06);
+    transition: 0.25s ease;
+}
+
+.album-track-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(58, 59, 156, 0.1);
+}
+
+.album-track-inner {
+    display: grid;
+    grid-template-columns: 52px 64px 1fr auto;
+    align-items: center;
+    gap: 14px;
+}
+
+.album-track-number {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+    background: #f7f8ff;
+    color: var(--main-color-one);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.album-track-cover {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.album-track-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.album-track-info {
+    min-width: 0;
+}
+
+.album-track-title {
+    margin: 0 0 7px;
+    color: var(--main-color-one);
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.7;
+}
+
+.album-track-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.album-track-title a:hover {
+    color: var(--main-color-one);
+}
+
+.album-track-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    color: #8085a5;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.album-track-meta span,
+.album-track-meta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #8085a5;
+    text-decoration: none;
+}
+
+.album-track-meta i {
+    color: var(--main-color-one);
+    font-size: 13px;
+}
+
+.album-track-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.album-icon-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.album-play-btn {
+    background: var(--main-color-one);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(58, 59, 156, 0.18);
+}
+
+.album-play-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.album-download-btn,
+.album-detail-btn {
+    background: #f7f8ff;
+    color: var(--main-color-one);
+}
+
+.album-download-btn:hover,
+.album-detail-btn:hover {
+    color: var(--main-color-one);
+    transform: translateY(-2px);
+}
+
+.album-icon-btn i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.album-empty-box {
+    padding: 55px 20px;
+    border-radius: 28px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.album-empty-box i {
+    font-size: 46px;
+    color: var(--main-color-one);
+}
+
+.album-empty-box h3 {
+    margin: 16px 0 8px;
+    color: var(--main-color-one);
+    font-size: 21px;
+    font-weight: 900;
+}
+
+.album-empty-box p {
+    margin: 0;
+    color: #777c9f;
+    font-size: 14px;
+}
+
+.album-song-grid-card {
+    height: 100%;
+    padding: 10px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+    transition: 0.25s ease;
+}
+
+.album-song-grid-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 42px rgba(58, 59, 156, 0.14);
+}
+
+.album-song-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.album-song-cover-link,
+.album-song-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.album-song-cover {
+    object-fit: cover;
+    transition: 0.3s ease;
+}
+
+.album-song-grid-card:hover .album-song-cover {
+    transform: scale(1.05);
+}
+
+.album-song-floating-actions {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+}
+
+.album-song-body {
+    padding: 12px 2px 2px;
+}
+
+.album-song-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.8;
+}
+
+.album-song-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.album-song-singer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #707597;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.album-song-singer a {
+    color: #707597;
+    text-decoration: none;
+}
+
+.album-song-singer i {
+    color: var(--main-color-one);
+}
+
+.album-song-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 10px;
+    color: #8489a8;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.album-song-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.album-song-meta i.bi-star-fill {
+    color: #ffb703;
+}
+
+.album-view-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 18px;
+    background: #f7f8ff;
+}
+
+.album-view-btn {
+    height: 36px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 13px;
+    background: transparent;
+    color: #777c9f;
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.25s ease;
+}
+
+.album-view-btn.active {
+    background: var(--main-color-one);
+    color: #fff;
+}
+
+.album-view-content {
+    display: none;
+}
+
+.album-view-content.active {
+    display: block;
+}
+
+.text-overflow-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 991px) {
+    .album-title {
+        font-size: 28px;
+    }
+
+    .album-track-inner {
+        grid-template-columns: 46px 58px 1fr;
+    }
+
+    .album-track-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        padding-right: 60px;
+    }
+}
+
+@media (max-width: 575px) {
+    .album-hero-card,
+    .album-section-card {
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .album-hero-cover {
+        border-radius: 20px;
+    }
+
+    .album-title {
+        font-size: 24px;
+    }
+
+    .album-main-btn,
+    .album-soft-btn {
+        width: 100%;
+    }
+
+    .album-section-head {
+        align-items: flex-start;
+    }
+
+    .album-view-switch {
+        width: 100%;
+    }
+
+    .album-view-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .album-track-inner {
+        grid-template-columns: 42px 54px 1fr;
+        gap: 10px;
+    }
+
+    .album-track-number {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+    }
+
+    .album-track-cover {
+        width: 54px;
+        height: 54px;
+        border-radius: 15px;
+    }
+
+    .album-track-title {
+        font-size: 13px;
+    }
+
+    .album-track-meta {
+        gap: 8px;
+        font-size: 11px;
+    }
+
+    .album-track-actions {
+        padding-right: 52px;
+    }
+
+    .album-icon-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+    }
+
+    .album-song-grid-card {
+        padding: 8px;
+        border-radius: 22px;
+    }
+
+    .album-song-cover-wrap {
+        border-radius: 18px;
+    }
+
+    .album-song-title {
+        font-size: 13px;
+    }
+
+    .album-song-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="album-detail-page py-4">
+    <div class="container-fluid">
+
+        <div class="album-hero-card">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-4 col-xl-3">
+                    <div class="album-hero-cover">
+                        {% if album.cover %}
+                            <img src="{{ album.cover.url }}" alt="{{ album.title }}">
+                        {% else %}
+                            <img src="{% static 'assets/img/defaults/song-cover.jpg' %}" alt="{{ album.title }}">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-xl-9">
+                    <div class="album-hero-content">
+
+                        <div class="album-badge-row">
+                            <span class="album-badge">
+                                <i class="bi bi-disc-fill"></i>
+                                آلبوم
+                            </span>
+
+                            <span class="album-badge">
+                                <i class="bi bi-music-note-list"></i>
+                                {% if songs_count %}
+                                    {{ songs_count }} آهنگ
+                                {% else %}
+                                    {{ songs|length }} آهنگ
+                                {% endif %}
+                            </span>
+
+                            <span class="album-badge">
+                                <i class="bi bi-calendar3"></i>
+                                {% if album.release_date %}
+                                    {{ album.release_date|date:"Y/m/d" }}
+                                {% else %}
+                                    تاریخ ثبت نشده
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <h1 class="album-title">{{ album.title }}</h1>
+
+                        <div class="album-singer">
+                            <i class="bi bi-mic-fill"></i>
+                            {% if album.singer %}
+                                <a href="{{ album.singer.get_absolute_url }}">
+                                    {{ album.singer.name }}
+                                </a>
+                            {% else %}
+                                <span>خواننده نامشخص</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="album-desc">
+                            آهنگ‌های آلبوم
+                            <strong>{{ album.title }}</strong>
+                            {% if album.singer %}
+                                از
+                                <strong>{{ album.singer.name }}</strong>
+                            {% endif %}
+                            را می‌توانید از این بخش پخش کنید یا وارد صفحه هر آهنگ شوید.
+                        </p>
+
+                        <div class="album-actions">
+                            {% if songs %}
+                                <button type="button" class="album-main-btn" id="playAlbumBtn">
+                                    <i class="bi bi-play-fill"></i>
+                                    پخش آلبوم
+                                </button>
+                            {% endif %}
+
+                            <a href="{% url 'musics:album_list' %}" class="album-soft-btn">
+                                <i class="bi bi-arrow-right"></i>
+                                بازگشت به آلبوم‌ها
+                            </a>
+
+                            {% if album.singer %}
+                                <a href="{{ album.singer.get_absolute_url }}" class="album-soft-btn">
+                                    <i class="bi bi-person-fill"></i>
+                                    صفحه هنرمند
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="album-stats-row">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4">
+                                    <div class="album-stat-card">
+                                        <p class="album-stat-label">تعداد آهنگ‌ها</p>
+                                        <h3 class="album-stat-value">
+                                            {% if songs_count %}
+                                                {{ songs_count }}
+                                            {% else %}
+                                                {{ songs|length }}
+                                            {% endif %}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-4">
+                                    <div class="album-stat-card">
+                                        <p class="album-stat-label">خواننده</p>
+                                        <h3 class="album-stat-value" style="font-size: 17px;">
+                                            {% if album.singer %}
+                                                {{ album.singer.name }}
+                                            {% else %}
+                                                ---
+                                            {% endif %}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-4">
+                                    <div class="album-stat-card">
+                                        <p class="album-stat-label">تاریخ انتشار</p>
+                                        <h3 class="album-stat-value" style="font-size: 17px;">
+                                            {% if album.release_date %}
+                                                {{ album.release_date|date:"Y/m/d" }}
+                                            {% else %}
+                                                ---
+                                            {% endif %}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="album-section-card">
+            <div class="album-section-head">
+                <div class="album-section-title-box">
+                    <h2 class="album-section-title">آهنگ‌های آلبوم</h2>
+                    <p class="album-section-subtitle">
+                        لیست آهنگ‌های موجود در آلبوم {{ album.title }}
+                    </p>
+                </div>
+
+                
+            </div>
+
+            {% if songs %}
+
+                <div class="album-view-content active" id="albumListView">
+                    <div class="album-track-list">
+                        {% for song in songs %}
+                            <div class="album-track-item">
+                                <div class="album-track-inner">
+
+                                    <div class="album-track-number">
+                                        {{ forloop.counter }}
+                                    </div>
+
+                                    <a href="{{ song.get_absolute_url }}" class="album-track-cover">
+                                        {% if song.cover %}
+                                            <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                                        {% elif song.image %}
+                                            <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                                        {% elif album.cover %}
+                                            <img src="{{ album.cover.url }}" alt="{{ song.title }}">
+                                        {% else %}
+                                            <img src="{% static 'assets/img/defaults/song-cover.jpg' %}" alt="{{ song.title }}">
+                                        {% endif %}
+                                    </a>
+
+                                    <div class="album-track-info">
+                                        <h3 class="album-track-title text-overflow-1">
+                                            <a href="{{ song.get_absolute_url }}">
+                                                {{ song.title }}
+                                            </a>
+                                        </h3>
+
+                                        <div class="album-track-meta">
+                                            <a href="{{ song.singer.get_absolute_url }}" class="text-overflow-1">
+                                                <i class="bi bi-mic-fill"></i>
+                                                {{ song.singer.name }}
+                                            </a>
+
+                                            {% if song.language %}
+                                                <span>
+                                                    <i class="bi bi-translate"></i>
+                                                    {{ song.language }}
+                                                </span>
+                                            {% endif %}
+
+                                            <span>
+                                                <i class="bi bi-star-fill"></i>
+                                                {{ song.rating|default:"0" }}
+                                            </span>
+
+                                            <span>
+                                                <i class="bi bi-calendar3"></i>
+                                                {{ song.jalali_date }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="album-track-actions">
+                                        {% if song.audio_file %}
+                                            <button
+                                                type="button"
+                                                class="album-icon-btn album-play-btn js-play-song"
+                                                aria-label="پخش آهنگ"
+                                                data-song-id="{{ song.id }}"
+                                                data-title="{{ song.title|escape }}"
+                                                data-singer="{{ song.singer.name|escape }}"
+                                                data-audio="{{ song.audio_file.url }}"
+                                                data-detail-url="{{ song.get_absolute_url }}"
+                                                {% if song.cover %}
+                                                    data-cover="{{ song.cover.url }}"
+                                                {% elif song.image %}
+                                                    data-cover="{{ song.image.url }}"
+                                                {% elif album.cover %}
+                                                    data-cover="{{ album.cover.url }}"
+                                                {% else %}
+                                                    data-cover="{% static 'assets/img/slide-3.gif' %}"
+                                                {% endif %}
+                                                {% if song.has_lyrics %}
+                                                    data-raw-lyrics="{{ song.lyrics.raw_lyrics|escape }}"
+                                                    data-translated-lyrics="{{ song.lyrics.translated_lyrics|escape }}"
+                                                {% else %}
+                                                    data-raw-lyrics=""
+                                                    data-translated-lyrics=""
+                                                {% endif %}
+                                            >
+                                                <i class="bi bi-play-fill"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        <a href="{{ song.get_absolute_url }}" class="album-icon-btn album-detail-btn" aria-label="جزئیات آهنگ">
+                                            <i class="bi bi-info-lg"></i>
+                                        </a>
+
+                                        {% if song.audio_file %}
+                                            <a href="{{ song.audio_file.url }}" download class="album-icon-btn album-download-btn" aria-label="دانلود آهنگ">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="album-view-content" id="albumGridView">
+                    <div class="row g-3 g-lg-4">
+                        {% for song in songs %}
+                            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                                <div class="album-song-grid-card">
+                                    <div class="album-song-cover-wrap">
+                                        <a href="{{ song.get_absolute_url }}" class="album-song-cover-link">
+                                            {% if song.cover %}
+                                                <img src="{{ song.cover.url }}" alt="{{ song.title }}" class="album-song-cover">
+                                            {% elif song.image %}
+                                                <img src="{{ song.image.url }}" alt="{{ song.title }}" class="album-song-cover">
+                                            {% elif album.cover %}
+                                                <img src="{{ album.cover.url }}" alt="{{ song.title }}" class="album-song-cover">
+                                            {% else %}
+                                                <img src="{% static 'assets/img/defaults/song-cover.jpg' %}" alt="{{ song.title }}" class="album-song-cover">
+                                            {% endif %}
+                                        </a>
+
+                                        <div class="album-song-floating-actions">
+                                            {% if song.audio_file %}
+                                                <button
+                                                    type="button"
+                                                    class="album-icon-btn album-play-btn js-play-song"
+                                                    aria-label="پخش آهنگ"
+                                                    data-song-id="{{ song.id }}"
+                                                    data-title="{{ song.title|escape }}"
+                                                    data-singer="{{ song.singer.name|escape }}"
+                                                    data-audio="{{ song.audio_file.url }}"
+                                                    data-detail-url="{{ song.get_absolute_url }}"
+                                                    {% if song.cover %}
+                                                        data-cover="{{ song.cover.url }}"
+                                                    {% elif song.image %}
+                                                        data-cover="{{ song.image.url }}"
+                                                    {% elif album.cover %}
+                                                        data-cover="{{ album.cover.url }}"
+                                                    {% else %}
+                                                        data-cover="{% static 'assets/img/slide-3.gif' %}"
+                                                    {% endif %}
+                                                    {% if song.has_lyrics %}
+                                                        data-raw-lyrics="{{ song.lyrics.raw_lyrics|escape }}"
+                                                        data-translated-lyrics="{{ song.lyrics.translated_lyrics|escape }}"
+                                                    {% else %}
+                                                        data-raw-lyrics=""
+                                                        data-translated-lyrics=""
+                                                    {% endif %}
+                                                >
+                                                    <i class="bi bi-play-fill"></i>
+                                                </button>
+                                            {% endif %}
+
+                                            {% if song.audio_file %}
+                                                <a href="{{ song.audio_file.url }}" download class="album-icon-btn album-download-btn" aria-label="دانلود آهنگ">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="album-song-body">
+                                        <h3 class="album-song-title text-overflow-1">
+                                            <a href="{{ song.get_absolute_url }}">
+                                                {{ song.title }}
+                                            </a>
+                                        </h3>
+
+                                        <div class="album-song-singer text-overflow-1">
+                                            <i class="bi bi-mic-fill"></i>
+                                            <a href="{{ song.singer.get_absolute_url }}">
+                                                {{ song.singer.name }}
+                                            </a>
+                                        </div>
+
+                                        <div class="album-song-meta">
+                                            <span>
+                                                <i class="bi bi-star-fill"></i>
+                                                {{ song.rating|default:"0" }}
+                                            </span>
+
+                                            <span>
+                                                <i class="bi bi-calendar3"></i>
+                                                {{ song.jalali_date }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="album-empty-box">
+                    <i class="bi bi-music-note-list"></i>
+                    <h3>آهنگی پیدا نشد</h3>
+                    <p>فعلاً هیچ آهنگی برای این آلبوم ثبت نشده است.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const playAlbumBtn = document.getElementById("playAlbumBtn");
+
+    if (playAlbumBtn) {
+        playAlbumBtn.addEventListener("click", function () {
+            const firstSongBtn = document.querySelector(".js-play-song");
+
+            if (firstSongBtn) {
+                firstSongBtn.click();
+            }
+        });
+    }
+
+    const viewButtons = document.querySelectorAll(".album-view-btn");
+    const listView = document.getElementById("albumListView");
+    const gridView = document.getElementById("albumGridView");
+
+    viewButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const targetView = btn.dataset.view;
+
+            viewButtons.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            btn.classList.add("active");
+
+            if (targetView === "list") {
+                if (listView) listView.classList.add("active");
+                if (gridView) gridView.classList.remove("active");
+            }
+
+            if (targetView === "grid") {
+                if (gridView) gridView.classList.add("active");
+                if (listView) listView.classList.remove("active");
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,684 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+.search-songs-page .song-list-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.search-songs-page .song-list-header::before {
+    content: "";
+    position: absolute;
+    inset: auto -70px -90px auto;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: rgba(255, 193, 7, 0.16);
+    pointer-events: none;
+}
+
+.tag-info-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.tag-info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 14px;
+    border-radius: 15px;
+    background: #fff;
+    color: #62678a;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(58, 59, 156, 0.07);
+}
+
+.tag-info-item i {
+    color: var(--main-color-one);
+    font-size: 17px;
+}
+
+.tag-special-badge {
+    background: linear-gradient(135deg, var(--main-color-one), #7067ff);
+    color: #fff;
+}
+
+.tag-special-badge i {
+    color: var(--main-color-two);
+}
+
+@media (max-width: 575px) {
+    .tag-info-strip {
+        gap: 8px;
+    }
+
+    .tag-info-item {
+        width: 100%;
+        font-size: 12px;
+    }
+}
+</style>
+
+<style>
+.song-list-page {
+    background: #f7f8ff;
+}
+
+.song-list-header {
+    padding: 22px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.song-sort-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.song-sort-label {
+    margin: 0;
+    color: #5f6388;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.song-sort-select {
+    min-width: 190px;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid rgba(58, 59, 156, 0.12);
+    border-radius: 15px;
+    background: #f8f9ff;
+    color: var(--main-color-one);
+    font-size: 14px;
+    font-weight: 800;
+    outline: none;
+}
+
+.song-sort-select:focus {
+    border-color: var(--main-color-one);
+    box-shadow: 0 0 0 4px rgba(58, 59, 156, 0.08);
+}
+
+.song-grid-wrapper {
+    margin-top: 24px;
+}
+
+.song-grid-card {
+    height: 100%;
+}
+
+.music-card-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.music-card-cover-link,
+.music-card-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.music-card-cover {
+    object-fit: cover;
+}
+
+.music-floating-actions {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+}
+
+.music-icon-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(21, 21, 64, 0.18);
+    transition: 0.25s ease;
+}
+
+.music-play-btn {
+    background: var(--main-color-one);
+}
+
+.music-download-btn {
+    background: var(--main-color-two);
+    color: var(--main-color-one);
+}
+
+.music-icon-btn i {
+    font-size: 19px;
+    line-height: 1;
+}
+
+.music-icon-btn:hover {
+    transform: translateY(-2px);
+}
+
+.music-card-light {
+    padding: 10px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+}
+
+.music-card-body {
+    padding: 12px 2px 2px;
+}
+
+.music-card-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.8;
+}
+
+.music-card-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.music-card-singer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #707597;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.music-card-singer a {
+    color: #707597;
+    text-decoration: none;
+}
+
+.music-card-singer i {
+    color: var(--main-color-one);
+}
+
+.music-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 10px;
+    color: #8489a8;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.music-card-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.music-card-meta i.bi-star-fill {
+    color: #ffb703;
+}
+
+.song-pagination-wrap {
+    margin-top: 34px;
+}
+
+.song-pagination {
+    gap: 7px;
+}
+
+.song-pagination .page-link {
+    min-width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 20px rgba(58, 59, 156, 0.08);
+}
+
+.song-pagination .page-item.active .page-link {
+    color: #fff;
+    background: var(--main-color-one);
+}
+
+.song-pagination .page-item.disabled .page-link {
+    color: #b8bcd4;
+    background: #f0f1f8;
+}
+
+.song-empty-box {
+    padding: 50px 20px;
+    border-radius: 28px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.song-empty-box i {
+    font-size: 42px;
+    color: var(--main-color-one);
+}
+
+.song-empty-box h3 {
+    margin: 16px 0 8px;
+    color: var(--main-color-one);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.song-empty-box p {
+    margin: 0;
+    color: #777c9f;
+}
+
+@media (max-width: 575px) {
+    .song-list-header {
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .song-sort-form {
+        justify-content: flex-start;
+    }
+
+    .song-sort-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .music-card-light {
+        padding: 8px;
+        border-radius: 22px;
+    }
+
+    .music-card-cover-wrap {
+        border-radius: 18px;
+    }
+
+    .music-icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+    }
+
+    .music-card-title {
+        font-size: 13px;
+    }
+
+    .music-card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="song-list-page search-songs-page py-4">
+    <div class="container-fluid">
+
+        <div class="song-list-header mb-4">
+            <div class="row align-items-center gy-3">
+                <div class="col-lg-7">
+                    <div class="slider-title-desc">
+                        <div class="slider-title-icon">
+                            <div class="slider-title-icon-parent bg-white">
+                                <div>
+                                    <span class="section-title-icon">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <h6>جستجو</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slider-title-title">
+                            <h1 class="h2 mb-2">
+                                نتایج جستجو برای
+                                <span class="title-font main-color-one-color">
+                                    {% if query %}
+                                        {{ query }}
+                                    {% else %}
+                                        ...
+                                    {% endif %}
+                                </span>
+                            </h1>
+
+                            <p class="mb-0 text-muted">
+                                جستجو روی نام آهنگ، خواننده، آلبوم، دسته‌بندی و برچسب انجام می‌شود؛ نتیجه فقط آهنگ‌های مرتبط است
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <form method="get" class="song-sort-form">
+                        <input type="hidden" name="q" value="{{ query }}">
+
+                        <label for="song-sort" class="song-sort-label">
+                            مرتب‌سازی:
+                        </label>
+
+                        <select name="sort" id="song-sort" class="song-sort-select" onchange="this.form.submit()">
+                            <option value="newest" {% if current_sort == "newest" %}selected{% endif %}>
+                                جدیدترین
+                            </option>
+
+                            <option value="oldest" {% if current_sort == "oldest" %}selected{% endif %}>
+                                قدیمی‌ترین
+                            </option>
+
+                            <option value="rating_desc" {% if current_sort == "rating_desc" %}selected{% endif %}>
+                                بیشترین امتیاز
+                            </option>
+
+                            <option value="rating_asc" {% if current_sort == "rating_asc" %}selected{% endif %}>
+                                کمترین امتیاز
+                            </option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="song-grid-wrapper">
+            <div class="row g-3 g-lg-4">
+
+                {% for song in songs %}
+                    <div class="col-6 col-xl-2">
+                        <div class="music-card-light song-grid-card">
+                            <div class="music-card-cover-wrap">
+
+                                <a href="{{ song.get_absolute_url }}" class="music-card-cover-link">
+                                    {% if song.cover %}
+                                        <img src="{{ song.cover.url }}" alt="{{ song.title }}" class="music-card-cover">
+                                    {% elif song.image %}
+                                        <img src="{{ song.image.url }}" alt="{{ song.title }}" class="music-card-cover">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/defaults/song-cover.jpg' %}" alt="{{ song.title }}" class="music-card-cover">
+                                    {% endif %}
+                                </a>
+
+                                <div class="music-floating-actions">
+                                    {% if song.audio_file %}
+                                        <button
+                                            type="button"
+                                            class="music-icon-btn music-play-btn js-play-song"
+                                            aria-label="پخش آهنگ"
+                                            data-song-id="{{ song.id }}"
+                                            data-title="{{ song.title|escape }}"
+                                            data-singer="{{ song.singer.name|escape }}"
+                                            data-audio="{{ song.audio_file.url }}"
+                                            data-detail-url="{{ song.get_absolute_url }}"
+                                            {% if song.cover %}
+                                                data-cover="{{ song.cover.url }}"
+                                            {% elif song.image %}
+                                                data-cover="{{ song.image.url }}"
+                                            {% else %}
+                                                data-cover="{% static 'assets/img/slide-3.gif' %}"
+                                            {% endif %}
+                                            {% if song.has_lyrics %}
+                                                data-raw-lyrics="{{ song.lyrics.raw_lyrics|escape }}"
+                                                data-translated-lyrics="{{ song.lyrics.translated_lyrics|escape }}"
+                                            {% else %}
+                                                data-raw-lyrics=""
+                                                data-translated-lyrics=""
+                                            {% endif %}
+                                        >
+                                            <i class="bi bi-play-fill"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    {% if song.audio_file %}
+                                        <a href="{{ song.audio_file.url }}" download class="music-icon-btn music-download-btn">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="music-card-body">
+                                <h3 class="music-card-title text-overflow-1">
+                                    <a href="{{ song.get_absolute_url }}">
+                                        {{ song.title }}
+                                    </a>
+                                </h3>
+
+                                <div class="music-card-singer text-overflow-1">
+                                    <i class="bi bi-mic-fill"></i>
+
+                                    {% if song.singer %}
+                                        <a href="#">
+                                            {{ song.singer.name }}
+                                        </a>
+                                    {% else %}
+                                        <span>خواننده نامشخص</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="music-card-meta">
+                                    <span>
+                                        <i class="bi bi-star-fill"></i>
+                                        {{ song.rating|default:"0" }}
+                                    </span>
+
+                                    <span>
+                                        <i class="bi bi-calendar3"></i>
+                                        {% if song.jalali_date %}
+                                            {{ song.jalali_date }}
+                                        {% else %}
+                                            {{ song.created_at|date:"Y/m/d" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <div class="col-12">
+                        <div class="song-empty-box">
+                            <i class="bi bi-search"></i>
+
+                            {% if query %}
+                                <h3>آهنگی برای این جستجو پیدا نشد</h3>
+                                <p>
+                                    برای عبارت
+                                    «{{ query }}»
+                                    هیچ آهنگ مرتبطی پیدا نشد.
+                                </p>
+                            {% else %}
+                                <h3>عبارتی برای جستجو وارد نشده است</h3>
+                                <p>
+                                    از کادر جستجوی بالای سایت، نام آهنگ، خواننده، آلبوم یا برچسب را وارد کن.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            <div class="song-pagination-wrap">
+                <nav aria-label="pagination">
+                    <ul class="pagination song-pagination justify-content-center">
+
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        {% for page_number in paginator.page_range %}
+                            {% if page_number == page_obj.number %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_number }}</span>
+                                </li>
+                            {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ page_number }}&sort={{ current_sort }}">
+                                        {{ page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}&sort={{ current_sort }}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+
+<div class="bottom-music-player" id="bottomMusicPlayer">
+    <div class="bmp-backdrop"></div>
+
+    <div class="bmp-inner">
+        <div class="bmp-left">
+            <div class="bmp-cover">
+                <img id="bmpCover" src="{% static 'assets/img/slide-3.gif' %}" alt="cover">
+            </div>
+
+            <div class="bmp-meta">
+                <h5 id="bmpTitle">هیچ آهنگی انتخاب نشده</h5>
+                <p id="bmpSinger">خواننده</p>
+            </div>
+        </div>
+
+        <div class="bmp-center">
+            <div class="bmp-controls">
+                <button type="button" class="bmp-btn" id="bmpPrev" aria-label="قبلی">
+                    <i class="bi bi-skip-backward-fill"></i>
+                </button>
+
+                <button type="button" class="bmp-btn bmp-btn-play" id="bmpPlayPause" aria-label="پخش/توقف">
+                    <i class="bi bi-play-fill" id="bmpPlayPauseIcon"></i>
+                </button>
+
+                <button type="button" class="bmp-btn" id="bmpNext" aria-label="بعدی">
+                    <i class="bi bi-skip-forward-fill"></i>
+                </button>
+
+                <button type="button" class="bmp-btn" id="bmpLyricsBtn" aria-label="نمایش متن آهنگ">
+                    <i class="bi bi-file-earmark-text"></i>
+                </button>
+            </div>
+
+            <div class="bmp-progress-wrap">
+                <span id="bmpCurrentTime">0:00</span>
+                <input type="range" id="bmpProgress" min="0" max="100" value="0">
+                <span id="bmpDuration">0:00</span>
+            </div>
+        </div>
+
+        <div class="bmp-right">
+            <a href="#" class="bmp-detail-link" id="bmpDetailLink">
+                <i class="bi bi-music-note-list"></i>
+            </a>
+
+            <div class="bmp-volume">
+                <i class="bi bi-volume-up-fill"></i>
+                <input type="range" id="bmpVolume" min="0" max="1" step="0.01" value="1">
+            </div>
+
+            <button type="button" class="bmp-btn bmp-close" id="bmpClose" aria-label="بستن">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <audio id="globalAudioPlayer"></audio>
+</div>
+
+
+<div class="lyrics-glass-modal" id="lyricsGlassModal">
+    <div class="lyrics-modal-dialog">
+        <button type="button" class="lyrics-modal-close" id="lyricsModalClose">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="lyrics-modal-header">
+            <div>
+                <h4 id="lyricsModalSongTitle">متن آهنگ</h4>
+                <p id="lyricsModalSingerName">خواننده</p>
+            </div>
+        </div>
+
+        <div class="lyrics-tabs">
+            <button type="button" class="lyrics-tab-btn active" data-tab="raw">متن اصلی</button>
+            <button type="button" class="lyrics-tab-btn" data-tab="translated">ترجمه</button>
+        </div>
+
+        <div class="lyrics-tab-content active" id="lyricsRawTab">
+            <div class="lyrics-scroll" id="lyricsRawContent">
+                متن آهنگ موجود نیست.
+            </div>
+        </div>
+
+        <div class="lyrics-tab-content" id="lyricsTranslatedTab">
+            <div class="lyrics-scroll" id="lyricsTranslatedContent">
+                ترجمه‌ای برای این آهنگ ثبت نشده است.
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

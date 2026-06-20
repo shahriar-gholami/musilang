@@ -1,0 +1,29 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>تیکت‌ها</h1>
+        <p>پیگیری پیام‌ها و درخواست‌های پشتیبانی</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    {% if tickets %}
+        <div class="dashboard-list">
+            {% for ticket in tickets %}
+                <div class="dashboard-list-item">
+                    <div>
+                        <strong>{{ ticket.title }}</strong>
+                        <span>{{ ticket.created_at|date:"Y/m/d" }}</span>
+                    </div>
+
+                    <span>{{ ticket.get_status_display }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">هنوز تیکتی ثبت نکرده‌ای.</div>
+    {% endif %}
+</div>
+{% endblock %}

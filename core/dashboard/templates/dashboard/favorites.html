@@ -1,0 +1,74 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>علاقه‌مندی‌ها</h1>
+        <p>آهنگ‌ها، خواننده‌ها و کالکشن‌های مورد علاقه شما</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <h2>آهنگ‌های علاقه‌مندی</h2>
+
+    {% if favorite_songs %}
+        <div class="dashboard-grid">
+            {% for song in favorite_songs %}
+                <a href="{{ song.get_absolute_url }}" class="dashboard-music-card">
+                    {% if song.image %}
+                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                    {% elif song.cover %}
+                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                    {% endif %}
+
+                    <strong>{{ song.title }}</strong>
+                    <span>{{ song.singer.name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">آهنگی در علاقه‌مندی‌ها نیست.</div>
+    {% endif %}
+</div>
+
+<div class="dashboard-section">
+    <h2>خواننده‌های علاقه‌مندی</h2>
+
+    {% if favorite_artists %}
+        <div class="dashboard-grid">
+            {% for artist in favorite_artists %}
+                <a href="{{ artist.get_absolute_url }}" class="dashboard-music-card">
+                    {% if artist.image %}
+                        <img src="{{ artist.image.url }}" alt="{{ artist.name }}">
+                    {% endif %}
+
+                    <strong>{{ artist.name }}</strong>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">خواننده‌ای در علاقه‌مندی‌ها نیست.</div>
+    {% endif %}
+</div>
+
+<div class="dashboard-section">
+    <h2>کالکشن‌های علاقه‌مندی</h2>
+
+    {% if favorite_collections %}
+        <div class="dashboard-grid">
+            {% for collection in favorite_collections %}
+                <a href="{{ collection.get_absolute_url }}" class="dashboard-music-card">
+                    {% if collection.image %}
+                        <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+                    {% endif %}
+
+                    <strong>{{ collection.title }}</strong>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">کالکشنی در علاقه‌مندی‌ها نیست.</div>
+    {% endif %}
+</div>
+{% endblock %}
+

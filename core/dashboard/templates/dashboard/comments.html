@@ -1,0 +1,33 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>دیدگاه‌ها</h1>
+        <p>دیدگاه‌هایی که در سایت ثبت کرده‌ای</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    {% if comments %}
+        <div class="dashboard-list">
+            {% for comment in comments %}
+                <div class="dashboard-list-item">
+                    <div>
+                        <strong>{{ comment.content|truncatechars:80 }}</strong>
+                        <span>{{ comment.created_at|date:"Y/m/d" }}</span>
+                    </div>
+
+                    {% if comment.is_approved %}
+                        <span class="text-success">تایید شده</span>
+                    {% else %}
+                        <span class="text-warning">در انتظار تایید</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">هنوز دیدگاهی ثبت نکرده‌ای.</div>
+    {% endif %}
+</div>
+{% endblock %}

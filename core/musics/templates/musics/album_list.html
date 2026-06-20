@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+.album-list-page {
+    background: #f7f8ff;
+    min-height: 100vh;
+}
+
+.album-list-header {
+    padding: 24px;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+    margin-bottom: 24px;
+}
+
+.album-list-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.album-list-title-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.album-list-badge {
+    width: fit-content;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #f7f8ff;
+    color: var(--main-color-one);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.album-list-title {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.6;
+}
+
+.album-list-subtitle {
+    margin: 0;
+    color: #737899;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.album-list-header-icon {
+    width: 82px;
+    height: 82px;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--main-color-one), #7477ff);
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(58, 59, 156, 0.22);
+}
+
+.album-list-header-icon i {
+    font-size: 38px;
+    line-height: 1;
+}
+
+.album-grid-card {
+    height: 100%;
+    padding: 10px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+    transition: 0.25s ease;
+}
+
+.album-grid-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 42px rgba(58, 59, 156, 0.14);
+}
+
+.album-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.album-cover-link,
+.album-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.album-cover {
+    object-fit: cover;
+    transition: 0.3s ease;
+}
+
+.album-grid-card:hover .album-cover {
+    transform: scale(1.05);
+}
+
+.album-cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(20, 20, 55, 0.04) 0%,
+        rgba(20, 20, 55, 0.55) 100%
+    );
+    opacity: 0;
+    transition: 0.25s ease;
+}
+
+.album-grid-card:hover .album-cover-overlay {
+    opacity: 1;
+}
+
+.album-floating-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-color-one);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 12px 26px rgba(21, 21, 64, 0.22);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: 0.25s ease;
+    z-index: 2;
+}
+
+.album-grid-card:hover .album-floating-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.album-floating-btn:hover {
+    color: #fff;
+    background: var(--main-color-one);
+}
+
+.album-floating-btn i {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.album-card-body {
+    padding: 14px 4px 4px;
+}
+
+.album-card-title {
+    margin: 0 0 8px;
+    color: var(--main-color-one);
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.8;
+}
+
+.album-card-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.album-card-title a:hover {
+    color: var(--main-color-one);
+}
+
+.album-card-singer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #707597;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.album-card-singer i {
+    color: var(--main-color-one);
+    font-size: 13px;
+}
+
+.album-card-singer a {
+    color: #707597;
+    text-decoration: none;
+}
+
+.album-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(58, 59, 156, 0.08);
+    color: #8489a8;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.album-card-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+.album-card-meta i {
+    color: var(--main-color-one);
+    font-size: 13px;
+}
+
+.album-empty-box {
+    padding: 60px 20px;
+    border-radius: 30px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.album-empty-box i {
+    font-size: 48px;
+    color: var(--main-color-one);
+}
+
+.album-empty-box h3 {
+    margin: 18px 0 8px;
+    color: var(--main-color-one);
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.album-empty-box p {
+    margin: 0;
+    color: #777c9f;
+    font-size: 14px;
+}
+
+.album-pagination-wrap {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+}
+
+.album-pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+}
+
+.album-page-link,
+.album-page-current {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.album-page-link {
+    background: #f7f8ff;
+    color: var(--main-color-one);
+    transition: 0.25s ease;
+}
+
+.album-page-link:hover {
+    transform: translateY(-2px);
+    background: var(--main-color-one);
+    color: #fff;
+}
+
+.album-page-current {
+    background: var(--main-color-one);
+    color: #fff;
+}
+
+.text-overflow-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .album-list-header {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .album-list-header-content {
+        align-items: flex-start;
+    }
+
+    .album-list-title {
+        font-size: 24px;
+    }
+
+    .album-list-header-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 22px;
+    }
+
+    .album-list-header-icon i {
+        font-size: 30px;
+    }
+
+    .album-grid-card {
+        padding: 8px;
+        border-radius: 22px;
+    }
+
+    .album-cover-wrap {
+        border-radius: 18px;
+    }
+
+    .album-card-title {
+        font-size: 13px;
+    }
+
+    .album-card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .album-floating-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 13px;
+        opacity: 1;
+        transform: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="album-list-page py-4">
+    <div class="container-fluid">
+
+        <div class="album-list-header">
+            <div class="album-list-header-content">
+                <div class="album-list-title-box">
+                    <span class="album-list-badge">
+                        <i class="bi bi-disc-fill"></i>
+                        آلبوم‌ها
+                    </span>
+
+                    <h1 class="album-list-title">لیست آلبوم‌ها</h1>
+
+                    <p class="album-list-subtitle">
+                        مجموعه‌ای از آلبوم‌های ثبت‌شده در سایت را ببینید و آهنگ‌های هر آلبوم را دنبال کنید.
+                    </p>
+                </div>
+
+                <div class="album-list-header-icon">
+                    <i class="bi bi-vinyl-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        {% if albums %}
+            <div class="row g-3 g-lg-4">
+                {% for album in albums %}
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="album-grid-card">
+                            <div class="album-cover-wrap">
+                                <a href="{{ album.get_absolute_url }}" class="album-cover-link">
+                                    {% if album.cover %}
+                                        <img src="{{ album.cover.url }}" alt="{{ album.title }}" class="album-cover">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/defaults/song-cover.jpg' %}" alt="{{ album.title }}" class="album-cover">
+                                    {% endif %}
+
+                                    <span class="album-cover-overlay"></span>
+                                </a>
+
+                                <a href="{{ album.get_absolute_url }}" class="album-floating-btn" aria-label="مشاهده آلبوم">
+                                    <i class="bi bi-arrow-left"></i>
+                                </a>
+                            </div>
+
+                            <div class="album-card-body">
+                                <h3 class="album-card-title text-overflow-1">
+                                    <a href="{{ album.get_absolute_url }}">
+                                        {{ album.title }}
+                                    </a>
+                                </h3>
+
+                                <div class="album-card-singer text-overflow-1">
+                                    <i class="bi bi-mic-fill"></i>
+
+                                    {% if album.singer %}
+                                        <a href="{{ album.singer.get_absolute_url }}">
+                                            {{ album.singer.name }}
+                                        </a>
+                                    {% else %}
+                                        <span>خواننده نامشخص</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="album-card-meta">
+                                    <span class="text-overflow-1">
+                                        <i class="bi bi-music-note-list"></i>
+
+                                        {% if album.songs_count is not None %}
+                                            {{ album.songs_count }} آهنگ
+                                        {% else %}
+                                            {{ album.songs.count }} آهنگ
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="text-overflow-1">
+                                        <i class="bi bi-calendar3"></i>
+                                        {% if album.release_date %}
+                                            {{ album.release_date|date:"Y/m/d" }}
+                                        {% else %}
+                                            بدون تاریخ
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_other_pages %}
+                <div class="album-pagination-wrap">
+                    <div class="album-pagination">
+
+                        {% if page_obj.has_previous %}
+                            <a class="album-page-link" href="?page=1" aria-label="صفحه اول">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+
+                            <a class="album-page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="صفحه قبلی">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <span class="album-page-current">{{ num }}</span>
+                            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                                <a class="album-page-link" href="?page={{ num }}">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a class="album-page-link" href="?page={{ page_obj.next_page_number }}" aria-label="صفحه بعدی">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+
+                            <a class="album-page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="صفحه آخر">
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="album-empty-box">
+                <i class="bi bi-disc-fill"></i>
+                <h3>آلبومی پیدا نشد</h3>
+                <p>فعلاً هیچ آلبومی در سایت ثبت نشده است.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,50 @@
+<aside class="dashboard-sidebar">
+    <div class="dashboard-user-box">
+        <div class="dashboard-user-avatar">
+            {{ request.user.username|first|upper }}
+        </div>
+
+        <div class="dashboard-user-info">
+            <strong>{{ request.user.full_name }}</strong>
+            <span>پنل کاربری</span>
+        </div>
+    </div>
+
+    <nav class="dashboard-menu">
+        <a href="{% url 'dashboard:dashboard' %}" class="dashboard-menu-item">
+            داشبورد
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_favorites' %}" class="dashboard-menu-item">
+            علاقه‌مندی‌ها
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_playlists' %}" class="dashboard-menu-item">
+            پلی‌لیست‌ها
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_song_request' %}" class="dashboard-menu-item">
+            درخواست آهنگ
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_account' %}" class="dashboard-menu-item">
+            اطلاعات حساب
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_tickets' %}" class="dashboard-menu-item">
+            تیکت‌ها
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_packages' %}" class="dashboard-menu-item">
+            پکیج‌های اشتراک
+        </a>
+
+        <a href="{% url 'dashboard:dashboard_comments' %}" class="dashboard-menu-item">
+            دیدگاه‌ها
+        </a>
+
+        <a href="{% url 'accounts:logout' %}" class="dashboard-menu-item dashboard-menu-logout">
+            خروج
+        </a>
+    </nav>
+</aside>

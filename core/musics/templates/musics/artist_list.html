@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+.artist-list-page {
+    background: #f7f8ff;
+}
+
+.artist-list-header {
+    padding: 22px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.artist-grid-wrapper {
+    margin-top: 24px;
+}
+
+.artist-grid-card {
+    height: 100%;
+}
+
+.artist-card-light {
+    height: 100%;
+    padding: 10px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+    transition: 0.25s ease;
+}
+
+.artist-card-light:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(58, 59, 156, 0.12);
+}
+
+.artist-card-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.artist-card-cover-link,
+.artist-card-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.artist-card-cover {
+    object-fit: cover;
+}
+
+.artist-card-body {
+    padding: 14px 4px 4px;
+}
+
+.artist-card-title {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.8;
+}
+
+.artist-card-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.artist-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.artist-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #707597;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.artist-meta-item i {
+    color: var(--main-color-one);
+    font-size: 14px;
+    line-height: 1;
+}
+
+.artist-card-action {
+    margin-top: 14px;
+}
+
+.artist-view-btn {
+    width: 100%;
+    height: 42px;
+    border: none;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--main-color-one);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    transition: 0.25s ease;
+}
+
+.artist-view-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.artist-pagination-wrap {
+    margin-top: 34px;
+}
+
+.artist-pagination {
+    gap: 7px;
+}
+
+.artist-pagination .page-link {
+    min-width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: #fff;
+    font-weight: 800;
+    box-shadow: 0 8px 20px rgba(58, 59, 156, 0.08);
+}
+
+.artist-pagination .page-item.active .page-link {
+    color: #fff;
+    background: var(--main-color-one);
+}
+
+.artist-pagination .page-item.disabled .page-link {
+    color: #b8bcd4;
+    background: #f0f1f8;
+}
+
+.artist-empty-box {
+    padding: 50px 20px;
+    border-radius: 28px;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.artist-empty-box i {
+    font-size: 42px;
+    color: var(--main-color-one);
+}
+
+.artist-empty-box h3 {
+    margin: 16px 0 8px;
+    color: var(--main-color-one);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.artist-empty-box p {
+    margin: 0;
+    color: #777c9f;
+}
+
+@media (max-width: 575px) {
+    .artist-list-header {
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .artist-card-light {
+        padding: 8px;
+        border-radius: 22px;
+    }
+
+    .artist-card-cover-wrap {
+        border-radius: 18px;
+    }
+
+    .artist-card-title {
+        font-size: 13px;
+    }
+
+    .artist-view-btn {
+        height: 40px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="artist-list-page py-4">
+    <div class="container-fluid">
+
+        <div class="artist-list-header mb-4">
+            <div class="row align-items-center gy-3">
+                <div class="col-lg-12">
+                    <div class="slider-title-desc">
+                        <div class="slider-title-icon">
+                            <div class="slider-title-icon-parent bg-white">
+                                <div>
+                                    <span class="section-title-icon">
+                                        <i class="bi bi-mic-fill"></i>
+                                    </span>
+                                    <h6>هنرمندان</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slider-title-title">
+                            <h1 class="h2 mb-2">
+                                لیست <span class="title-font main-color-one-color">هنرمندان</span>
+                            </h1>
+                            <p class="mb-0 text-muted">
+                                خواننده‌ها و هنرمندان ثبت‌شده را ببین و وارد صفحه اختصاصی هرکدام شو
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="artist-grid-wrapper">
+            <div class="row g-3 g-lg-4">
+                {% for artist in artists %}
+                    <div class="col-6 col-lg-3 col-xl-2">
+                        <div class="artist-card-light artist-grid-card">
+                            <div class="artist-card-cover-wrap">
+                                <a href="{{ artist.get_absolute_url }}" class="artist-card-cover-link">
+                                    {% if artist.image %}
+                                        <img src="{{ artist.image.url }}" alt="{{ artist.name }}" class="artist-card-cover">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ artist.name }}" class="artist-card-cover">
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                            <div class="artist-card-body">
+                                <h3 class="artist-card-title text-overflow-1">
+                                    <a href="{{ artist.get_absolute_url }}">
+                                        {{ artist.name }}
+                                    </a>
+                                </h3>
+
+                                <div class="artist-card-meta">
+                                    <div class="artist-meta-item text-overflow-1">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        {% if artist.nationality %}
+                                            <span>{{ artist.nationality }}</span>
+                                        {% else %}
+                                            <span>ملیت ثبت نشده</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if artist.bio %}
+                                        <div class="artist-meta-item text-overflow-1">
+                                            <i class="bi bi-file-text-fill"></i>
+                                            <span>دارای بیوگرافی</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="artist-meta-item text-overflow-1">
+                                            <i class="bi bi-file-text"></i>
+                                            <span>بدون بیوگرافی</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="artist-card-action">
+                                    <a href="{{ artist.get_absolute_url }}" class="artist-view-btn">
+                                        <i class="bi bi-arrow-left-circle"></i>
+                                        مشاهده صفحه هنرمند
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="artist-empty-box">
+                            <i class="bi bi-people-fill"></i>
+                            <h3>هنرمندی پیدا نشد</h3>
+                            <p>فعلاً هنرمندی برای نمایش وجود ندارد.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if page_obj and page_obj.has_other_pages %}
+            <div class="artist-pagination-wrap">
+                <nav aria-label="pagination">
+                    <ul class="pagination artist-pagination justify-content-center">
+
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        {% for page_number in page_obj.paginator.page_range %}
+                            {% if page_number == page_obj.number %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_number }}</span>
+                                </li>
+                            {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_number }}">
+                                        {{ page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

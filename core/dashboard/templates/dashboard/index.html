@@ -1,0 +1,68 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>داشبورد</h1>
+        <p>خوش آمدی {{ request.user.full_name }}</p>
+    </div>
+</div>
+
+<div class="dashboard-cards">
+    <div class="dashboard-card">
+        <span>وضعیت اشتراک</span>
+
+        {% if customer.has_package %}
+            <strong class="text-success">فعال</strong>
+        {% else %}
+            <strong class="text-danger">غیرفعال</strong>
+        {% endif %}
+    </div>
+
+    <div class="dashboard-card">
+        <span>آهنگ‌های علاقه‌مندی</span>
+        <strong>{{ favorite_songs_count }}</strong>
+    </div>
+
+    <div class="dashboard-card">
+        <span>خواننده‌های علاقه‌مندی</span>
+        <strong>{{ favorite_artists_count }}</strong>
+    </div>
+
+    <div class="dashboard-card">
+        <span>کالکشن‌های علاقه‌مندی</span>
+        <strong>{{ favorite_collections_count }}</strong>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="dashboard-section-header">
+        <h2>آخرین آهنگ‌های علاقه‌مندی</h2>
+        <a href="{% url 'dashboard:dashboard_favorites' %}">مشاهده همه</a>
+    </div>
+
+    {% if favorite_songs %}
+        <div class="dashboard-list">
+            {% for song in favorite_songs %}
+                <a href="{{ song.get_absolute_url }}" class="dashboard-list-item">
+                    {% if song.image %}
+                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                    {% elif song.cover %}
+                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                    {% endif %}
+
+                    <div>
+                        <strong>{{ song.title }}</strong>
+                        <span>{{ song.singer.name }}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            هنوز آهنگی به علاقه‌مندی‌ها اضافه نکرده‌ای.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

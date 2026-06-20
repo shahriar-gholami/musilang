@@ -1,0 +1,17 @@
+Khayyam
+django==4.2.8
+django-decouple==2.1
+django_jalali
+filelock
+djangorestframework
+markdown
+pillow
+django-storages
+boto3
+python-dotenv
+django-filter
+django-ckeditor
+requests
+django-cors-headers
+django-debug-toolbar
+jdatetime

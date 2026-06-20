@@ -1,0 +1,21 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>درخواست آهنگ</h1>
+        <p>اگر آهنگی در سایت نیست، از این بخش درخواست بده</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <form method="post" class="dashboard-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="dashboard-btn">
+            ارسال درخواست
+        </button>
+    </form>
+</div>
+{% endblock %}

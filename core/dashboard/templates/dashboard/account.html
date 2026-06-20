@@ -1,0 +1,21 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>اطلاعات حساب</h1>
+        <p>مشاهده و ویرایش اطلاعات حساب کاربری</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <form method="post" class="dashboard-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="dashboard-btn">
+            ذخیره تغییرات
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+{% load static %}
+{% block style %}
+<style>
+    .collection-list-page {
+    padding: 40px 0 70px;
+    background:
+        radial-gradient(circle at top right, rgba(58, 59, 156, 0.08), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(255, 209, 0, 0.14), transparent 30%),
+        #fbfbff;
+}
+
+.collection-list-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding: 26px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 18px 45px rgba(58, 59, 156, 0.08);
+}
+
+.section-kicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: var(--main-color-one);
+    background: var(--main-color-one-shadow);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.collection-list-title h1 {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 30px;
+    font-weight: 950;
+}
+
+.collection-list-title p {
+    max-width: 670px;
+    margin: 12px 0 0;
+    color: #747998;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 2;
+}
+
+.collection-sort-form {
+    min-width: 220px;
+}
+
+.collection-sort-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #606684;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.collection-sort-form select {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid rgba(58, 59, 156, 0.12);
+    border-radius: 16px;
+    color: var(--main-color-one);
+    background: #f7f8ff;
+    font-size: 13px;
+    font-weight: 900;
+    outline: none;
+}
+
+.collection-card {
+    height: 100%;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 18px 38px rgba(58, 59, 156, 0.08);
+    transition: 0.28s ease;
+}
+
+.collection-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 55px rgba(58, 59, 156, 0.14);
+}
+
+.collection-card-image {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f1f2fb;
+}
+
+.collection-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.35s ease;
+}
+
+.collection-card:hover .collection-card-image img {
+    transform: scale(1.07);
+}
+
+.collection-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 22, 72, 0.58);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s ease;
+}
+
+.collection-card:hover .collection-card-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.collection-card-overlay span {
+    padding: 10px 18px;
+    border-radius: 999px;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+    font-size: 13px;
+    font-weight: 950;
+}
+
+.collection-card-body {
+    padding: 18px;
+}
+
+.collection-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.collection-card-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #747998;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.collection-card-meta i {
+    color: var(--main-color-two-hover);
+}
+
+.public-badge {
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: #117347 !important;
+    background: #e9fff4;
+}
+
+.collection-card-body h2 {
+    margin: 0 0 10px;
+    font-size: 17px;
+    font-weight: 950;
+    line-height: 1.7;
+}
+
+.collection-card-body h2 a {
+    color: var(--main-color-one);
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.collection-card-body h2 a:hover {
+    color: var(--main-color-one-hover);
+}
+
+.collection-description {
+    min-height: 58px;
+    margin: 0 0 14px;
+    color: #747998;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.9;
+}
+
+.collection-singers {
+    padding: 12px;
+    border-radius: 18px;
+    background: #f7f8ff;
+    margin-bottom: 14px;
+}
+
+.collection-singers-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--main-color-one);
+    font-size: 12px;
+    font-weight: 950;
+}
+
+.collection-singers-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.collection-singers-list a,
+.collection-singers-list span {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 999px;
+    color: #676d8c;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(58, 59, 156, 0.06);
+}
+
+.collection-singers-list a:hover {
+    color: var(--main-color-one);
+}
+
+.collection-card-btn {
+    width: 100%;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 16px;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+    font-size: 13px;
+    font-weight: 950;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.collection-card-btn:hover {
+    color: var(--main-color-one);
+    background: var(--main-color-two-hover);
+    transform: translateY(-2px);
+}
+
+.collection-pagination {
+    margin-top: 38px;
+}
+
+.collection-pagination ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.collection-pagination a,
+.collection-pagination span {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 13px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(58, 59, 156, 0.08);
+}
+
+.collection-pagination span.active {
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+}
+
+.collection-pagination a:hover {
+    background: var(--main-color-one);
+    color: #fff;
+}
+
+.collection-empty-state {
+    padding: 60px 20px;
+    border-radius: 30px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 18px 45px rgba(58, 59, 156, 0.08);
+}
+
+.collection-empty-icon {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 18px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: var(--main-color-one-shadow);
+    font-size: 34px;
+}
+
+.collection-empty-state h3 {
+    margin: 0 0 10px;
+    color: var(--main-color-one);
+    font-size: 22px;
+    font-weight: 950;
+}
+
+.collection-empty-state p {
+    margin: 0;
+    color: #747998;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .collection-list-page {
+        padding: 24px 0 50px;
+    }
+
+    .collection-list-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .collection-list-title h1 {
+        font-size: 23px;
+    }
+
+    .collection-list-title p {
+        font-size: 13px;
+    }
+
+    .collection-sort-form {
+        min-width: 100%;
+    }
+
+    .collection-card-body {
+        padding: 15px;
+    }
+}
+
+</style>
+{% endblock %}
+{% block title %}
+    کالکشن‌ها
+{% endblock %}
+
+{% block content %}
+
+<section class="collection-list-page">
+
+    <div class="container">
+
+        <div class="collection-list-header">
+            <div class="collection-list-title">
+                <span class="section-kicker">Collections</span>
+                <h1>کالکشن‌های آموزشی و پلی‌لیست‌ها</h1>
+                <p>
+                    مجموعه‌ای از آهنگ‌های منتخب برای یادگیری زبان، تمرین شنیداری و لذت بردن از موسیقی.
+                </p>
+            </div>
+
+            <form method="get" class="collection-sort-form">
+                <label for="sort">مرتب‌سازی:</label>
+
+                <select name="sort" id="sort" onchange="this.form.submit()">
+                    <option value="newest" {% if current_sort == "newest" %}selected{% endif %}>
+                        جدیدترین
+                    </option>
+                    <option value="oldest" {% if current_sort == "oldest" %}selected{% endif %}>
+                        قدیمی‌ترین
+                    </option>
+                    <option value="songs_desc" {% if current_sort == "songs_desc" %}selected{% endif %}>
+                        بیشترین آهنگ
+                    </option>
+                    <option value="songs_asc" {% if current_sort == "songs_asc" %}selected{% endif %}>
+                        کمترین آهنگ
+                    </option>
+                </select>
+            </form>
+        </div>
+
+        {% if collections %}
+            <div class="row g-4">
+                {% for collection in collections %}
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                        <article class="collection-card">
+
+                            <a href="#" class="collection-card-image">
+                                {% if collection.image %}
+                                    <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+                                {% else %}
+                                    <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+                                {% endif %}
+
+                                <div class="collection-card-overlay">
+                                    <span>
+                                        مشاهده کالکشن
+                                    </span>
+                                </div>
+                            </a>
+
+                            <div class="collection-card-body">
+
+                                <div class="collection-card-meta">
+                                    <span>
+                                        <i class="bi bi-music-note-list"></i>
+                                        {{ collection.songs_count|default:0 }} آهنگ
+                                    </span>
+
+                                    {% if collection.is_public %}
+                                        <span class="public-badge">
+                                            عمومی
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <h2>
+                                    <a href="#">
+                                        {{ collection.title }}
+                                    </a>
+                                </h2>
+
+                                {% if collection.description %}
+                                    <p class="collection-description">
+                                        {{ collection.description|truncatechars:105 }}
+                                    </p>
+                                {% else %}
+                                    <p class="collection-description">
+                                        این کالکشن شامل مجموعه‌ای از آهنگ‌های منتخب برای یادگیری زبان است.
+                                    </p>
+                                {% endif %}
+
+                                <div class="collection-singers">
+                                    <span class="collection-singers-label">
+                                        خواننده‌ها:
+                                    </span>
+
+                                    {% if collection.preview_singers %}
+                                        <div class="collection-singers-list">
+                                            {% for singer in collection.preview_singers %}
+                                                <a href="#">
+                                                    {{ singer.name }}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="collection-singers-list">
+                                            <span>ثبت نشده</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <a href="#" class="collection-card-btn">
+                                    مشاهده جزئیات
+                                    <i class="bi bi-arrow-left"></i>
+                                </a>
+
+                            </div>
+
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_other_pages %}
+                <nav class="collection-pagination">
+                    <ul>
+                        {% if page_obj.has_previous %}
+                            <li>
+                                <a href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">
+                                    قبلی
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li>
+                                    <span class="active">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                                <li>
+                                    <a href="?page={{ num }}&sort={{ current_sort }}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li>
+                                <a href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}">
+                                    بعدی
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+
+        {% else %}
+            <div class="collection-empty-state">
+                <div class="collection-empty-icon">
+                    <i class="bi bi-folder-x"></i>
+                </div>
+                <h3>هنوز کالکشنی ثبت نشده است</h3>
+                <p>
+                    در حال حاضر هیچ کالکشن عمومی برای نمایش وجود ندارد.
+                </p>
+            </div>
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

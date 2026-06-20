@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+{% block extra_css %}
+<style>
+    #id_code {
+        letter-spacing: 8px;
+        font-size: 1.4rem;
+    }
+
+    #id_code::placeholder {
+        letter-spacing: 4px;
+        color: #adb5bd;
+    }
+</style>
+{% endblock %}
+
+{% endblock %}
+
+{% block title %}تایید کد{% endblock %}
+
+{% block content %}
+<section class="py-5" dir="rtl">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+
+                <div class="bg-white rounded-4 shadow-sm border p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border"
+                                  style="width: 74px; height: 74px;">
+                                <i class="bi bi-shield-check fs-2 text-primary"></i>
+                            </span>
+                        </div>
+
+                        <h1 class="h3 fw-bold mb-2">تایید شماره موبایل</h1>
+
+                        {% if phone_number %}
+                            <p class="text-muted mb-0">
+                                کد تایید ارسال‌شده به شماره زیر را وارد کنید.
+                            </p>
+                            <div class="mt-2">
+                                <span class="badge bg-light text-dark border px-3 py-2" dir="ltr">
+                                    {{ phone_number }}
+                                </span>
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">
+                                کد تایید ارسال‌شده را وارد کنید.
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} rounded-3 mb-2">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="id_code" class="form-label fw-semibold">
+                                کد تایید
+                            </label>
+
+                            <input type="text"
+                                   name="code"
+                                   id="id_code"
+                                   class="form-control rounded-3 text-center fw-bold"
+                                   dir="ltr"
+                                   inputmode="numeric"
+                                   autocomplete="one-time-code"
+                                   placeholder="------"
+                                   maxlength="6"
+                                   value="">
+
+                            <div class="form-text text-center mt-2">
+                                کد تایید معمولاً تا چند دقیقه معتبر است.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold">
+                            تایید و ورود
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">شماره موبایل اشتباه است؟</span>
+                        <a href="{% url 'accounts:register' %}" class="text-decoration-none fw-semibold">
+                            ثبت‌نام مجدد
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'accounts:login' %}" class="text-decoration-none text-muted small">
+                            بازگشت به ورود
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

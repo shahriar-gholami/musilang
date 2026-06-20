@@ -1,0 +1,1197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+.song-detail-page {
+    background: #f7f8ff;
+}
+
+.song-hero {
+    margin-top: 20px;
+    position: relative;
+    min-height: 470px;
+    overflow: hidden;
+    border-radius: 38px 38px 38px 38px;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+.song-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(4, 5, 19, 0.92), rgba(4, 5, 19, 0.68), rgba(4, 5, 19, 0.35)),
+        linear-gradient(0deg, rgba(4, 5, 19, 0.9), rgba(4, 5, 19, 0.1));
+    z-index: 1;
+}
+
+.song-hero::after {
+    content: "";
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    right: -110px;
+    bottom: -130px;
+    border-radius: 50%;
+    background: rgba(255, 193, 7, 0.18);
+    filter: blur(8px);
+    z-index: 1;
+}
+
+.song-hero-inner {
+    position: relative;
+    z-index: 2;
+    min-height: 470px;
+    display: flex;
+    align-items: flex-end;
+    padding: 58px 0;
+}
+
+.song-hero-content {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    align-items: end;
+    gap: 28px;
+    width: 100%;
+}
+
+.song-hero-cover {
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+    backdrop-filter: blur(14px);
+}
+
+.song-hero-cover img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255, 255, 255, 0.18);
+}
+
+.song-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 7px 13px;
+    margin-bottom: 14px;
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.13);
+    backdrop-filter: blur(12px);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.song-hero-badge i {
+    color: var(--main-color-two);
+}
+
+.song-hero-title {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 950;
+    line-height: 1.45;
+}
+
+.song-hero-subtitle {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin-top: 13px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.song-hero-subtitle a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.song-hero-subtitle span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.song-hero-desc {
+    max-width: 720px;
+    margin: 18px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    line-height: 2.1;
+}
+
+.song-hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.song-main-play {
+    min-width: 150px;
+    height: 52px;
+    border: none;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+    font-size: 15px;
+    font-weight: 900;
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.24);
+    transition: 0.25s ease;
+}
+
+.song-main-play i {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: var(--main-color-one);
+    font-size: 20px;
+}
+
+.song-main-play:hover {
+    transform: translateY(-2px);
+}
+
+.song-main-download,
+.song-main-link {
+    min-width: 132px;
+    height: 52px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    font-size: 14px;
+    font-weight: 900;
+    transition: 0.25s ease;
+}
+
+.song-main-download:hover,
+.song-main-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+}
+
+.song-stat-card {
+    height: 100%;
+    padding: 18px;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.song-stat-card i {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: rgba(58, 59, 156, 0.08);
+    font-size: 20px;
+}
+
+.song-stat-card h6 {
+    margin: 12px 0 5px;
+    color: #8a8faa;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.song-stat-card p {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 16px;
+    font-weight: 950;
+}
+
+.song-section-card {
+    padding: 24px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(58, 59, 156, 0.08);
+}
+
+.song-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.song-section-title i {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: rgba(58, 59, 156, 0.08);
+    font-size: 20px;
+}
+
+.song-section-title h2,
+.song-section-title h3 {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 20px;
+    font-weight: 950;
+}
+
+.lyrics-box {
+    color: #505574;
+    font-size: 15px;
+    line-height: 2.4;
+    white-space: pre-line;
+}
+
+.word-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px 8px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    color: #5f6388;
+    background: #f7f8ff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.word-pill strong {
+    color: var(--main-color-one);
+}
+
+.comment-item {
+    padding: 16px;
+    border-radius: 20px;
+    background: #f7f8ff;
+}
+
+.comment-item + .comment-item {
+    margin-top: 12px;
+}
+
+.comment-item h6 {
+    margin: 0 0 8px;
+    color: var(--main-color-one);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.comment-item p {
+    margin: 0;
+    color: #686d8e;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.related-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.related-header h2 {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 22px;
+    font-weight: 950;
+}
+
+.music-card-light {
+    height: 100%;
+    padding: 10px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(58, 59, 156, 0.08);
+}
+
+.music-card-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f4f5ff, #eef1ff);
+}
+
+.music-card-cover-link,
+.music-card-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.music-card-cover {
+    object-fit: cover;
+}
+
+.music-floating-actions {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+}
+
+.music-icon-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(21, 21, 64, 0.18);
+    transition: 0.25s ease;
+}
+
+.music-play-btn {
+    background: var(--main-color-one);
+}
+
+.music-download-btn {
+    background: var(--main-color-two);
+    color: var(--main-color-one);
+}
+
+.music-icon-btn:hover {
+    transform: translateY(-2px);
+}
+
+.music-card-body {
+    padding: 12px 2px 2px;
+}
+
+.music-card-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.8;
+}
+
+.music-card-title a {
+    color: var(--main-color-one);
+    text-decoration: none;
+}
+
+.music-card-singer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #707597;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.music-card-singer a {
+    color: #707597;
+    text-decoration: none;
+}
+
+.music-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 10px;
+    color: #8489a8;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.music-card-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.music-card-meta i.bi-star-fill {
+    color: #ffb703;
+}
+
+.empty-detail-box {
+    padding: 28px;
+    border-radius: 24px;
+    color: #777c9f;
+    background: #f7f8ff;
+    text-align: center;
+    font-weight: 800;
+}
+
+@media (max-width: 991px) {
+    .song-hero-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .song-hero-cover {
+        width: 190px;
+        height: 190px;
+    }
+
+    .song-hero-title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 575px) {
+    .song-hero {
+        min-height: auto;
+        border-radius: 0 0 26px 26px;
+    }
+
+    .song-hero-inner {
+        min-height: auto;
+        padding: 38px 0;
+    }
+
+    .song-hero-cover {
+        width: 150px;
+        height: 150px;
+    }
+
+    .song-hero-title {
+        font-size: 25px;
+    }
+
+    .song-hero-actions {
+        align-items: stretch;
+    }
+
+    .song-main-play,
+    .song-main-download,
+    .song-main-link {
+        width: 100%;
+    }
+
+    .song-section-card {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .music-card-light {
+        padding: 8px;
+        border-radius: 22px;
+    }
+
+    .music-card-cover-wrap {
+        border-radius: 18px;
+    }
+
+    .music-icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+    }
+
+    .music-card-title {
+        font-size: 13px;
+    }
+
+    .music-card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.song-rating-summary {
+    padding: 16px;
+    border-radius: 22px;
+    background: #f7f8ff;
+    text-align: center;
+}
+
+.song-rating-score {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    color: var(--main-color-one);
+}
+
+.song-rating-score span {
+    font-size: 42px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+.song-rating-score small {
+    color: #858aa8;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.song-rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 10px;
+    color: #ffb703;
+    font-size: 20px;
+}
+
+.song-rating-summary p {
+    margin: 12px 0 0;
+    color: #747998;
+    font-size: 13px;
+    line-height: 2;
+    font-weight: 700;
+}
+
+.song-rating-form {
+    margin-top: 16px;
+}
+
+.rating-inputs {
+    direction: ltr;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.rating-inputs input {
+    display: none;
+}
+
+.rating-inputs label {
+    cursor: pointer;
+    color: #d7dae8;
+    font-size: 28px;
+    transition: 0.2s ease;
+}
+
+.rating-inputs label:hover,
+.rating-inputs label:hover ~ label,
+.rating-inputs input:checked ~ label {
+    color: #ffb703;
+    transform: translateY(-2px);
+}
+
+.song-comment-form {
+    margin-top: 4px;
+}
+
+.song-form-group {
+    margin-bottom: 14px;
+}
+
+.song-form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--main-color-one);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.song-form-control {
+    width: 100%;
+    border: 1px solid rgba(58, 59, 156, 0.12);
+    border-radius: 16px;
+    padding: 12px 14px;
+    color: #555a78;
+    background: #f7f8ff;
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+    transition: 0.25s ease;
+}
+
+.song-form-control:focus {
+    border-color: var(--main-color-one);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(58, 59, 156, 0.08);
+}
+
+.song-form-control::placeholder {
+    color: #a3a8c0;
+}
+
+textarea.song-form-control {
+    resize: vertical;
+    min-height: 125px;
+    line-height: 2;
+}
+
+.song-submit-btn {
+    width: 100%;
+    min-height: 48px;
+    border: none;
+    border-radius: 17px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+    font-size: 14px;
+    font-weight: 950;
+    box-shadow: 0 12px 28px rgba(255, 209, 0, 0.2);
+    transition: 0.25s ease;
+}
+
+.song-submit-btn:hover {
+    background: var(--main-color-two-hover);
+    transform: translateY(-2px);
+}
+
+.song-alert {
+    padding: 14px 18px;
+    border-radius: 18px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.song-alert-success {
+    color: #117347;
+    background: #e9fff4;
+}
+
+.song-alert-error,
+.song-alert-danger {
+    color: #b42318;
+    background: #fff0f0;
+}
+
+.song-alert-warning {
+    color: #946200;
+    background: #fff8df;
+}
+
+.song-alert-info {
+    color: var(--main-color-one);
+    background: rgba(58, 59, 156, 0.08);
+}
+
+.comment-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.comment-head h6 {
+    margin: 0;
+}
+
+.comment-head span {
+    color: #9ba0b8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+</style>
+
+
+
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    <div class="container-fluid mt-3">
+        {% for message in messages %}
+            <div class="song-alert song-alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container-fluid">
+<section
+    class="song-hero text-white"
+    {% if song.cover %}
+        style="background-image: url('{{ song.cover.url }}');"
+    {% else %}
+        style="background-image: url('{% static 'assets/img/slide-3.gif' %}');"
+    {% endif %}
+>
+    <div class="container-fluid">
+        <div class="song-hero-inner">
+            <div class="song-hero-content  text-white">
+
+                <div class="song-hero-cover">
+                    {% if song.cover %}
+                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                    {% else %}
+                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
+                    {% endif %}
+                </div>
+
+                <div class="song-hero-info  text-white">
+                    <div class="song-hero-badge  text-white">
+                        <i class="bi bi-music-note-beamed  text-white"></i>
+                        <span class=" text-white">آموزش زبان با موسیقی</span>
+                    </div>
+
+                    <h1 class="song-hero-title  text-white">{{ song.title }}</h1>
+
+                    <div class="song-hero-subtitle  text-white">
+                        {% if song.singer %}
+                            <span class=" text-white">
+                                <i class="bi bi-mic-fill  text-white"></i>
+                                <a href="#">{{ song.singer.name }}</a>
+                            </span>
+                        {% endif %}
+
+                        {% if song.language %}
+                            <span class=" text-white">
+                                <i class="bi bi-translate  text-white"></i>
+                                {{ song.language }}
+                            </span>
+                        {% endif %}
+
+                        {% if song.album %}
+                            <span class=" text-white">
+                                <i class="bi bi-disc-fill  text-white"></i>
+                                {{ song.album.title }}
+                            </span>
+                        {% endif %}
+
+                        {% if song.year %}
+                            <span class=" text-white">
+                                <i class="bi bi-calendar3  text-white"></i>
+                                {{ song.year }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <p class="song-hero-desc">
+                        با گوش دادن به این آهنگ، متن اصلی، ترجمه و کلمات مهم را کنار هم ببین و یادگیری زبان را جذاب‌تر دنبال کن.
+                    </p>
+
+                    <div class="song-hero-actions">
+                        {% if song.audio_file %}
+                            <button
+                                type="button"
+                                class="song-main-play js-play-song"
+                                data-song-id="{{ song.id }}"
+                                data-title="{{ song.title|escape }}"
+                                {% if song.singer %}
+                                    data-singer="{{ song.singer.name|escape }}"
+                                {% else %}
+                                    data-singer="خواننده نامشخص"
+                                {% endif %}
+                                data-audio="{{ song.audio_file.url }}"
+                                data-detail-url="{{ song.get_absolute_url }}"
+                                {% if song.cover %}
+                                    data-cover="{{ song.cover.url }}"
+                                {% else %}
+                                    data-cover="{% static 'assets/img/slide-3.gif' %}"
+                                {% endif %}
+                                {% if lyrics %}
+                                    data-raw-lyrics="{{ lyrics.raw_lyrics|default:''|escape }}"
+                                    data-translated-lyrics="{{ lyrics.translated_lyrics|default:''|escape }}"
+                                {% else %}
+                                    data-raw-lyrics=""
+                                    data-translated-lyrics=""
+                                {% endif %}
+                            >
+                                <i class="bi bi-play-fill"></i>
+                                پخش آهنگ
+                            </button>
+
+                            <a href="{{ song.audio_file.url }}" download class="song-main-download">
+                                <i class="bi bi-download"></i>
+                                دانلود
+                            </a>
+                        {% endif %}
+
+                        {% if lyrics %}
+                            <a href="#song-lyrics" class="song-main-link">
+                                <i class="bi bi-file-earmark-text"></i>
+                                متن آهنگ
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+
+
+<section class="song-detail-page py-4">
+    <div class="container-fluid">
+
+        
+
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+
+                <div class="song-section-card mb-4" id="song-lyrics">
+                    <div class="song-section-title">
+                        <i class="bi bi-file-earmark-music"></i>
+                        <h2>متن و ترجمه آهنگ</h2>
+                    </div>
+
+                    {% if lyrics %}
+                        {% if lyrics.raw_lyrics %}
+                            <div class="lyrics-box">{{ lyrics.raw_lyrics }}</div>
+                        {% elif lyrics.synced_lyrics %}
+                            <div class="lyrics-box">
+                                {% for line in lyrics.synced_lyrics %}
+                                    {{ line.text }}
+                                    {% if line.translation %}
+                                        <br>
+                                        <span class="text-muted">{{ line.translation }}</span>
+                                    {% endif %}
+                                    <br>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-detail-box">متنی برای این آهنگ ثبت نشده است.</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="empty-detail-box">متنی برای این آهنگ ثبت نشده است.</div>
+                    {% endif %}
+                </div>
+
+
+                <div class="song-section-card mb-4">
+                    <div class="song-section-title">
+                        <i class="bi bi-translate"></i>
+                        <h3>کلمات مهم آهنگ</h3>
+                    </div>
+
+                    {% if words %}
+                        <div>
+                            {% for word in words %}
+                                <span class="word-pill">
+                                    <strong>{{ word.term }}</strong>
+                                    {% if word.translation %}
+                                        <span>{{ word.translation }}</span>
+                                    {% endif %}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-detail-box">هنوز کلمه مهمی برای این آهنگ ثبت نشده است.</div>
+                    {% endif %}
+                </div>
+
+
+                <div class="song-section-card">
+                    <div class="song-section-title">
+                        <i class="bi bi-chat-square-text"></i>
+                        <h3>دیدگاه کاربران</h3>
+                    </div>
+
+                    {% if comments %}
+                        {% for comment in comments %}
+                            <div class="comment-item">
+                                <h6>
+                                    {% if comment.name %}
+                                        {{ comment.name }}
+                                    {% elif comment.user.full_name %}
+                                        {{ comment.user.full_name }}
+                                    {% else %}
+                                        کاربر سایت
+                                    {% endif %}
+                                </h6>
+
+                                <p>{{ comment.body|default:comment.text }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-detail-box">هنوز دیدگاهی برای این آهنگ ثبت نشده است.</div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="song-section-card mb-4">
+                    <div class="song-section-title">
+                        <i class="bi bi-star-fill"></i>
+                        <h3>امتیاز شما</h3>
+                    </div>
+
+                    <div class="song-rating-summary">
+                        <div class="song-rating-score">
+                            <span>{{ song.rating|floatformat:1 }}</span>
+                            <small>از ۵</small>
+                        </div>
+
+                        <p>اگر این آهنگ را دوست داشتی، به آن امتیاز بده.</p>
+                    </div>
+
+                    {% if request.user.is_authenticated %}
+                        <form method="post" action="{% url 'musics:song_rating_create' song.pk %}" class="song-rating-form">
+                            {% csrf_token %}
+
+                            <div class="rating-inputs">
+                                <input type="radio" name="score" id="rating-5" value="5">
+                                <label for="rating-5" title="عالی">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+
+                                <input type="radio" name="score" id="rating-4" value="4">
+                                <label for="rating-4" title="خوب">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+
+                                <input type="radio" name="score" id="rating-3" value="3">
+                                <label for="rating-3" title="متوسط">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+
+                                <input type="radio" name="score" id="rating-2" value="2">
+                                <label for="rating-2" title="ضعیف">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+
+                                <input type="radio" name="score" id="rating-1" value="1">
+                                <label for="rating-1" title="خیلی ضعیف">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="song-submit-btn">
+                                ثبت امتیاز
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="empty-detail-box mt-3">
+                            برای ثبت امتیاز ابتدا وارد حساب کاربری خود شوید.
+                        </div>
+                    {% endif %}
+                </div>
+
+
+
+                <div class="song-section-card mb-4">
+                    <div class="song-section-title">
+                        <i class="bi bi-chat-dots-fill"></i>
+                        <h3>ثبت دیدگاه</h3>
+                    </div>
+
+                    {% if request.user.is_authenticated %}
+                        <form method="post" action="{% url 'musics:song_comment_create' song.pk %}" class="song-comment-form">
+                            {% csrf_token %}
+
+                            <div class="song-form-group">
+                                <label for="comment-text">دیدگاه شما</label>
+                                <textarea
+                                    name="text"
+                                    id="comment-text"
+                                    rows="5"
+                                    class="song-form-control"
+                                    placeholder="نظرت درباره این آهنگ را بنویس..."
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <button type="submit" class="song-submit-btn">
+                                ارسال دیدگاه
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="empty-detail-box">
+                            برای ثبت دیدگاه ابتدا وارد حساب کاربری خود شوید.
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <div class="song-section-card mb-4">
+                    <div class="song-section-title">
+                        <i class="bi bi-tags-fill"></i>
+                        <h3>دسته‌بندی و برچسب‌ها</h3>
+                    </div>
+                    <div class="mb-3">
+                        {% for category in song.categories.all %}
+                            <a href="{{ category.get_absolute_url }}" class="word-pill text-decoration-none">
+                                <strong>#</strong>
+                                {{ category.title }}
+                            </a>
+                        {% empty %}
+                            <div class="empty-detail-box">دسته‌بندی ثبت نشده است.</div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                    {% for tag in song.tags.all %}
+                        <a href="{{ tag.get_absolute_url }}" class="word-pill text-decoration-none">
+                            <strong>#</strong>
+                            {{ tag.title }}
+                        </a>
+                    {% empty %}
+                        <div class="empty-detail-box">برچسبی ثبت نشده است.</div>
+                    {% endfor %}
+                </div>
+                </div>
+
+                
+
+                {% if song.singer %}
+                    <div class="song-section-card">
+                        <div class="song-section-title">
+                            <i class="bi bi-person-music"></i>
+                            <h3>خواننده</h3>
+                        </div>
+
+                        <p class="mb-3 text-muted">
+                            آهنگ‌های بیشتر از
+                            <strong>{{ song.singer.name }}</strong>
+                            را ببین.
+                        </p>
+
+                        <a href="#" class="btn btn-primary w-100 rounded-4">
+                            صفحه خواننده
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="mt-5">
+            <div class="related-header">
+                <h2>آهنگ‌های مرتبط</h2>
+                <span class="text-muted small">بر اساس زبان، دسته‌بندی و تگ مشترک</span>
+            </div>
+
+            <div class="row g-3 g-lg-4">
+                {% for related_song in related_songs %}
+                    <div class="col-6 col-xl-2">
+                        <div class="music-card-light">
+                            <div class="music-card-cover-wrap">
+                                <a href="{{ related_song.get_absolute_url }}" class="music-card-cover-link">
+                                    {% if related_song.cover %}
+                                        <img src="{{ related_song.cover.url }}" alt="{{ related_song.title }}" class="music-card-cover">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ related_song.title }}" class="music-card-cover">
+                                    {% endif %}
+                                </a>
+
+                                <div class="music-floating-actions">
+                                    {% if related_song.audio_file %}
+                                        <button
+                                            type="button"
+                                            class="music-icon-btn music-play-btn js-play-song"
+                                            aria-label="پخش آهنگ"
+                                            data-title="{{ related_song.title|escape }}"
+                                            {% if related_song.singer %}
+                                                data-singer="{{ related_song.singer.name|escape }}"
+                                            {% else %}
+                                                data-singer="خواننده نامشخص"
+                                            {% endif %}
+                                            data-audio="{{ related_song.audio_file.url }}"
+                                            data-detail-url="{{ related_song.get_absolute_url }}"
+                                            {% if related_song.cover %}
+                                                data-cover="{{ related_song.cover.url }}"
+                                            {% else %}
+                                                data-cover="{% static 'assets/img/slide-3.gif' %}"
+                                            {% endif %}
+                                            {% if related_song.lyrics %}
+                                                data-raw-lyrics="{{ related_song.lyrics.raw_lyrics|default:''|escape }}"
+                                                data-translated-lyrics="{{ related_song.lyrics.translated_lyrics|default:''|escape }}"
+                                            {% else %}
+                                                data-raw-lyrics=""
+                                                data-translated-lyrics=""
+                                            {% endif %}
+                                        >
+                                            <i class="bi bi-play-fill"></i>
+                                        </button>
+
+                                        <a href="{{ related_song.audio_file.url }}" download class="music-icon-btn music-download-btn">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="music-card-body">
+                                <h3 class="music-card-title text-overflow-1">
+                                    <a href="{{ related_song.get_absolute_url }}">
+                                        {{ related_song.title }}
+                                    </a>
+                                </h3>
+
+                                <div class="music-card-singer text-overflow-1">
+                                    <i class="bi bi-mic-fill"></i>
+
+                                    {% if related_song.singer %}
+                                        <a href="#">
+                                            {{ related_song.singer.name }}
+                                        </a>
+                                    {% else %}
+                                        <span>خواننده نامشخص</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="music-card-meta">
+                                    <span>
+                                        <i class="bi bi-star-fill"></i>
+                                        {{ related_song.rating|default:"0" }}
+                                    </span>
+
+                                    <span>
+                                        <i class="bi bi-calendar3"></i>
+                                        {% if related_song.jalali_date %}
+                                            {{ related_song.jalali_date }}
+                                        {% else %}
+                                            {{ related_song.created_at|date:"Y/m/d" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="empty-detail-box">آهنگ مرتبطی برای نمایش وجود ندارد.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

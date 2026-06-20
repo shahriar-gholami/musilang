@@ -1,0 +1,39 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>پکیج‌های اشتراک</h1>
+        <p>مدیریت و خرید اشتراک سایت</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    {% if customer.has_package %}
+        <div class="dashboard-card">
+            <span>اشتراک شما فعال است</span>
+
+            {% if customer.site_pkg_exp_date %}
+                <strong>تاریخ پایان: {{ customer.site_pkg_exp_date|date:"Y/m/d" }}</strong>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            شما در حال حاضر اشتراک فعال ندارید.
+        </div>
+    {% endif %}
+</div>
+
+{% if packages %}
+    <div class="dashboard-grid">
+        {% for package in packages %}
+            <div class="dashboard-card">
+                <h3>{{ package.title }}</h3>
+                <strong>{{ package.price }}</strong>
+                <p>{{ package.description }}</p>
+                <a href="#" class="dashboard-btn">خرید اشتراک</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

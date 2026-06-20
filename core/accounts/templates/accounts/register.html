@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ثبت نام{% endblock %}
+
+{% block content %}
+<section class="py-5" dir="rtl">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+
+                <div class="bg-white rounded-4 shadow-sm border p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border"
+                                  style="width: 74px; height: 74px;">
+                                <i class="bi bi-person-plus fs-2 text-primary"></i>
+                            </span>
+                        </div>
+
+                        <h1 class="h3 fw-bold mb-2">ثبت نام</h1>
+                        <p class="text-muted mb-0">
+                            برای ساخت حساب کاربری، اطلاعات زیر را وارد کنید.
+                        </p>
+                    </div>
+
+                    {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} rounded-3 mb-2">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="" novalidate>
+                        {% csrf_token %}
+
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% else %}
+                            <input type="hidden" name="next" value="/">
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_full_name" class="form-label fw-semibold">
+                                نام و نام خانوادگی
+                            </label>
+                            <input type="text"
+                                   name="full_name"
+                                   id="id_full_name"
+                                   class="form-control rounded-3"
+                                   placeholder="نام و نام خانوادگی خود را وارد کنید"
+                                   value="{{ form.full_name.value|default_if_none:'' }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_phone_number" class="form-label fw-semibold">
+                                شماره موبایل
+                            </label>
+                            <input type="text"
+                                   name="phone_number"
+                                   id="id_phone_number"
+                                   class="form-control rounded-3 text-start"
+                                   dir="ltr"
+                                   placeholder="09123456789"
+                                   value="{{ form.phone_number.value|default_if_none:'' }}">
+                            <div class="form-text">
+                                کد تایید برای این شماره ارسال می‌شود.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold">
+                            ثبت نام و دریافت کد تایید
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">قبلاً حساب دارید؟</span>
+                        <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold">
+                            ورود به حساب
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

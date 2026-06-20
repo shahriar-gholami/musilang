@@ -1,0 +1,1689 @@
+<!doctype html>
+{% load static %}
+<html class="no-js" lang="Fa_IR" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <title>قالب شاهان</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/img/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/img/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/img/favicon-16x16.png' %}">
+    <link rel="manifest" href="/site.webmanifest">
+    <!-- Place favicon.ico in the root directory -->
+
+    <link rel="stylesheet" href="{% static 'assets/css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/font/bootstrap-icon/bootstrap-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/js/plugin/swiper/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/js/plugin/countdown/countdown.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/js/plugin/rasta-contact/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/js/plugin/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+
+    <style>
+
+        #bmpProgress,
+        #bmpVolume {
+            direction: ltr;
+        }
+
+
+        .bottom-music-player {
+            position: fixed;
+            right: 20px;
+            left: 20px;
+            bottom: 20px;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(30px);
+            transition: 0.35s ease;
+        }
+
+        .bottom-music-player.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .bmp-inner {
+            display: grid;
+            grid-template-columns: 320px 1fr 280px;
+            align-items: center;
+            gap: 20px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            background: rgba(13, 13, 18, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+        }
+
+        .bmp-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .bmp-cover {
+            width: 68px;
+            height: 68px;
+            overflow: hidden;
+            border-radius: 18px;
+            flex: 0 0 68px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .bmp-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .bmp-meta {
+            min-width: 0;
+        }
+
+        .bmp-meta h5 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bmp-meta p {
+            margin: 0;
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bmp-center {
+            min-width: 0;
+        }
+
+        .bmp-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .bmp-btn {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s ease;
+            cursor: pointer;
+        }
+
+        .bmp-btn:hover {
+            background: rgba(255,255,255,0.16);
+            transform: translateY(-2px);
+        }
+
+        .bmp-btn-play {
+            width: 52px;
+            height: 52px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.35);
+        }
+
+        .bmp-progress-wrap {
+            display: grid;
+            grid-template-columns: 55px 1fr 55px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bmp-progress-wrap span {
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        #bmpProgress,
+        #bmpVolume {
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.15);
+            outline: none;
+        }
+
+        #bmpProgress::-webkit-slider-thumb,
+        #bmpVolume::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: 0;
+        }
+
+        .bmp-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+        }
+
+        .bmp-volume {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 130px;
+            color: #fff;
+        }
+
+        .bmp-detail-link {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .bmp-close {
+            background: rgba(255, 80, 80, 0.18);
+        }
+
+        .lyrics-glass-modal {
+            position: fixed;
+            right: 0;
+            left: 0;
+            bottom: 120px;
+            z-index: 10000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: 0.3s ease;
+        }
+
+        .lyrics-glass-modal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .lyrics-modal-dialog {
+            position: relative;
+            width: min(900px, 100%);
+            max-height: 70vh;
+            overflow: hidden;
+            border-radius: 28px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(15, 15, 22, 0.80);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+            color: #fff;
+        }
+
+        .lyrics-modal-header {
+            padding: 22px 24px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .lyrics-modal-header h4 {
+            margin: 0 0 6px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .lyrics-modal-header p {
+            margin: 0;
+            color: rgba(255,255,255,0.65);
+        }
+
+        .lyrics-modal-close {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .lyrics-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 16px 24px 0;
+        }
+
+        .lyrics-tab-btn {
+            border: 0;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.75);
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .lyrics-tab-btn.active {
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            color: #fff;
+        }
+
+        .lyrics-tab-content {
+            display: none;
+            padding: 18px 24px 24px;
+        }
+
+        .lyrics-tab-content.active {
+            display: block;
+        }
+
+        .lyrics-scroll {
+            max-height: calc(70vh - 150px);
+            overflow-y: auto;
+            padding-left: 8px;
+            line-height: 2.1;
+            white-space: pre-line;
+            color: rgba(255,255,255,0.88);
+        }
+
+        @media (max-width: 992px) {
+            .bmp-inner {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .bmp-right {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bottom-music-player {
+                right: 12px;
+                left: 12px;
+                bottom: 12px;
+            }
+
+            .bmp-inner {
+                padding: 14px;
+                border-radius: 20px;
+            }
+
+            .bmp-progress-wrap {
+                grid-template-columns: 44px 1fr 44px;
+                gap: 8px;
+            }
+
+            .bmp-volume {
+                width: 100px;
+            }
+
+            .lyrics-glass-modal {
+                bottom: 150px;
+                padding: 12px;
+            }
+
+            .lyrics-modal-dialog {
+                border-radius: 22px;
+                max-height: 68vh;
+            }
+        }
+
+
+    </style>
+
+    
+
+
+    {% block style %}
+    {% endblock %}
+
+    <meta name="theme-color" content="#f4f5f9">
+</head>
+
+<body>
+
+<!-- start header code -->
+
+<header class="header py-3 gy-0">
+    <div class="container-fluid">
+        <div class="row align-items-center ">
+            <div class="col-xl-3 col-6">
+                <div class="header-logo">
+                    <div class="image">
+                        <a href="index.html">
+                            <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" alt="">
+                        </a>
+                    </div>
+                    <div class="description d-md-block d-none">
+                        <h6 class="font-16 title-font">فروشگاه آنلاین شاهان</h6>
+                        <p class="mb-0 mt-1 text-muted">فروشگاهی برای همه سلیقه ها</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5 d-xl-block d-none">
+                <div class="header-form">
+                <form action="{% url 'musics:search' %}" method="get">
+                    <input 
+                        type="search" 
+                        name="q"
+                        class="form-control input-search" 
+                        placeholder="جستجوی آهنگ، خواننده، آلبوم و..."
+                        value="{{ request.GET.q }}"
+                    >
+                    <button type="submit" class="btn input-btn-search">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            </div>
+            <div class="col-xl-4 col-6">
+                <div class="header-btn">
+                    
+                    <div class="header-btn-login d-lg-block d-none">
+                        {% if user.is_authenticated %}
+                            <a href="#" class="btn">
+                                <i class="bi bi-person-fill"></i>
+                                حساب کاربری
+                            </a>
+                        {% else %}
+                            <a href="#" class="btn">
+                                <i class="bi bi-person-fill"></i>
+                                ورود / ثبت‌نام
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="header-btn-login-responsive d-lg-none d-block">
+                        {% if user.is_authenticated %}
+                            <a href="#" class="btn" aria-label="حساب کاربری">
+                                <i class="bi bi-person-fill fs-2"></i>
+                            </a>
+                        {% else %}
+                            <a href="#" class="btn" aria-label="ورود / ثبت‌نام">
+                                <i class="bi bi-person-fill fs-2"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="header-btn-favorite">
+                        <a href="" class="btn"><i class="bi bi-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1 col-2 d-xl-none d-block mt-1">
+                <div class="responsive-menu d-xl-none d-block">
+                    <button class="btn border-0 p-0 btn-responsive-menu" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#responsiveMenu" aria-controls="responsive menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                             class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                    </button>
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="responsiveMenu"
+                         aria-labelledby="responsive menu">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasRightLabel">فروشگاه شاهان</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <a href="" class="text-center d-block mb-3">
+                                <img src="{% static 'assets/img/logo.png' %}" alt="" class="img-fluid" width="200">
+                            </a>
+                            <ul class="rm-item-menu navbar-nav">
+                                <li class="nav-item bg-ul-f7"><a href="index.html" class="nav-link">صفحه
+                                    اصلی</a>
+                                </li>
+                                <li class="nav-item bg-ul-f7">
+                                    <a href="" class="nav-link">گوشی موبایل</a>
+                                    <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                    <ul class="navbar-nav h-0">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">برند</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">سامسونگ</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">هوآوی</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">شیائومی</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">الجی</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">سونی</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">بر اساس رده بندی</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">لمسی</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">دکمه ای</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">نظامی</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item bg-ul-f7">
+                                    <a href="" class="nav-link">تبلت</a>
+                                    <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                    <ul class="navbar-nav h-0">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">کشور</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">ژاپن</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">کره جنوبی</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">آمریکایی</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">بر اساس رده بندی</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">لمسی</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">دانش آموزی</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">مخصوص بازی</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item bg-ul-f7">
+                                    <a href="" class="nav-link">لپتاپ</a>
+                                    <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                    <ul class="navbar-nav h-0">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">برند</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">ایسر</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">مایکروسافت</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">ایسوس</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">اپل</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">سونی</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="">بر اساس قیمت</a>
+                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                <li class="nav-item"><a href="" class="nav-link">ارزان</a></li>
+                                                <li class="nav-item"><a href="" class="nav-link">اقتصادی</a>
+                                                </li>
+                                                <li class="nav-item"><a href="" class="nav-link">گران</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item bg-ul-f7">
+                                    <a href="" class="nav-link">صفحات</a>
+                                    <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                    <ul class="navbar-nav h-0">
+                                        <li><a href="index.html">صفحه اصلی</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="product.html">صفحه
+                                            محصول</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="category.html">صفحه دسته
+                                            بندی</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="cart.html">صفحه سبد
+                                            خرید</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="search.html">صفحه
+                                            جستجو</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="category-product-row.html">دسته
+                                            بندی محصولات خطی</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="404.html">صفحه 404</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="login.html">صفحه ورود</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="register.html">صفحه ثبت
+                                            نام</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="forget.html">صفحه فراموشی
+                                            رمز
+                                            عبور</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="blog.html">صفحه وبلاگ</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="blog-detail.html">صفحه
+                                            جزییات
+                                            وبلاگ</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="compare.html">صفحه مقایسه
+                                            محصول</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="checkout.html">پرداخت
+                                            مرحله
+                                            ای</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="payment-ok.html">پرداخت
+                                            موفق</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="payment-nok.html">پرداخت
+                                            ناموفق</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="product-not-found.html">محصول
+                                            ناموجود</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="empty-cart.html">سبد خرید
+                                            خالی</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="dashboard.html"> داشبورد
+                                            کاربری</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="order.html">سفارشات</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="favorite.html">محصولات
+                                            مورد
+                                            علاقه</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="notification.html">اطلاعیه</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="comments.html">نظرات</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="address-create.html">آدرس ها</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="last-seen.html">آخرین
+                                            بازدید
+                                            ها</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-11 col-10 d-xl-none d-block mt-1">
+                <div class="d-flex">
+                    <div class="header-form w-100">
+                        <form action="{% url 'musics:search' %}" method="get">
+                            <input 
+                                type="search" 
+                                name="q"
+                                class="form-control input-search" 
+                                placeholder="جستجوی آهنگ، خواننده، آلبوم و..."
+                                value="{{ request.GET.q }}"
+                            >
+                            <button type="submit" class="btn input-btn-search">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- start mega menu -->
+
+<div class="mega-menu-parent position-sticky top-0 d-xl-block d-none">
+    <div class="container-fluid py-0 mt-0">
+        <div class="header-top-menu py-0 mt-0">
+            <div class="row align-items-center py-0 mt-0">
+                <div class="col-lg-7">
+                    <div class="header-top-menu-right">
+                        <div class="top-menu-menu">
+                            <ul class="navbar-nav align-items-center">
+                                <li class="position-relative m-0"></li>
+                                <li class="nav-item main-menu-head"><a href=""
+                                                                       class="nav-link header-top-menu-link-a  nav-active fw-bold"><i
+                                        class="bi bi-list"></i>
+                                    مگا تب منو
+                                </a>
+                                    <ul class="main-menu mega-container">
+                                        <li class="main-menu-sub-active-li"><a href=""><i
+                                                class="bi bi-phone"></i>
+                                            موبایل</a>
+                                            <ul class="main-menu-sub back-menu"
+                                                style=" background: #fff url('assets/img/509-5092096_offering-high-quality-mobile-repair-service-main-image_prev_ui.png') no-repeat;">
+                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
+                                                    گوشی</a>
+                                                </li>
+                                                <li><a href="">گوشی اپل</a></li>
+                                                <li><a href="">گوشی سامسونگ</a></li>
+                                                <li><a href="">گوشی شیائومی</a></li>
+                                                <li><a href="">گوشی بلک بری</a></li>
+                                                <li><a href="">گوشی ایرانی</a></li>
+                                                <li><a class="title my-flex-baseline" href="">گوشی بر اساس
+                                                    قیمت</a></li>
+                                                <li><a href="">گوشی تا 2 میلیون</a></li>
+                                                <li><a href="">گوشی تا 5 میلیون</a></li>
+                                                <li><a href="">گوشی تا 10 میلیون</a></li>
+                                                <li><a href="">گوشی تا 12 میلیون</a></li>
+                                                <li><a href="">گوشی تا 15 میلیون</a></li>
+                                                <li><a class="title my-flex-baseline" href="">گوشی براساس حافظه
+                                                    داخلی</a></li>
+                                                <li><a href="">گوشی تا 16 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 32 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 64 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 128 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 256 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 512 گیگابایت</a></li>
+                                                <li><a href="">گوشی تا 1 ترابایت</a></li>
+                                                <li><a class="title my-flex-baseline" href="">گوشی براساس
+                                                    کاربری</a>
+                                                </li>
+                                                <li><a href="">گوشی اقتصادی</a></li>
+                                                <li><a href="">گوشی دانش آموزی</a></li>
+                                                <li><a href="">گوشی لاکچری</a></li>
+                                                <li><a href="">گوشی پرچمدار</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href=""><i class="bi bi-tablet"></i> تبلت</a>
+                                            <ul class="main-menu-sub back-menu"
+                                                style=" background: #fff url('assets/img/tablet-menu.png') no-repeat;">
+                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
+                                                    تبلت</a>
+                                                </li>
+                                                <li><a href="">تبلت اپل</a></li>
+                                                <li><a href="">تبلت سامسونگ</a></li>
+                                                <li><a href="">تبلت شیائومی</a></li>
+                                                <li><a href="">تبلت بلک بری</a></li>
+                                                <li><a href="">تبلت ایرانی</a></li>
+                                                <li><a class="title my-flex-baseline" href="">تبلت بر اساس
+                                                    قیمت</a></li>
+                                                <li><a href="">تبلت تا 2 میلیون</a></li>
+                                                <li><a href="">تبلت تا 5 میلیون</a></li>
+                                                <li><a href="">تبلت تا 10 میلیون</a></li>
+                                                <li><a href="">تبلت تا 12 میلیون</a></li>
+                                                <li><a href="">تبلت تا 15 میلیون</a></li>
+                                                <li><a class="title my-flex-baseline" href="">تبلت براساس حافظه
+                                                    داخلی</a></li>
+                                                <li><a href="">تبلت تا 16 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 32 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 64 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 128 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 256 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 512 گیگابایت</a></li>
+                                                <li><a href="">تبلت تا 1 ترابایت</a></li>
+                                                <li><a class="title my-flex-baseline" href="">تبلت براساس
+                                                    کاربری</a>
+                                                </li>
+                                                <li><a href="">گتبلتوشی اقتصادی</a></li>
+                                                <li><a href="">تبلت دانش آموزی</a></li>
+                                                <li><a href="">تبلت لاکچری</a></li>
+                                                <li><a href="">تبلت پرچمدار</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href=""><i class="bi bi-shield"></i>آنتی ویروس</a>
+                                            <ul class="main-menu-sub back-menu"
+                                                style=" background: #fff url('assets/img/EAV.png') no-repeat;">
+                                                <li><a class="title my-flex-baseline" href="">براساس برند</a>
+                                                </li>
+                                                <li><a href="">نود 32</a></li>
+                                                <li><a href="">کسپر اسکای</a></li>
+                                                <li><a href="">360 سکوریتی</a></li>
+                                                <li><a href="">بیت دیفیندر</a></li>
+                                                <li><a href="">ایمن</a></li>
+                                                <li><a class="title my-flex-baseline" href="">براساس ویندوز</a>
+                                                </li>
+                                                <li><a href="">ویندوز 7</a></li>
+                                                <li><a href="">ویندوز 8</a></li>
+                                                <li><a href="">ویندوز 8.1</a></li>
+                                                <li><a href="">ویندوز 10</a></li>
+                                                <li><a href="">ویندوز 11</a></li>
+                                                <li><a class="title my-flex-baseline" href="">براساس برند</a>
+                                                </li>
+                                                <li><a href="">نود 32</a></li>
+                                                <li><a href="">کسپر اسکای</a></li>
+                                                <li><a href="">360 سکوریتی</a></li>
+                                                <li><a href="">بیت دیفیندر</a></li>
+                                                <li><a href="">ایمن</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href=""><i class="bi bi-laptop"></i>لبتاپ</a>
+                                            <ul class="main-menu-sub back-menu"
+                                                style=" background: #fff url('assets/img/labtop.png') no-repeat;">
+                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
+                                                    لبتاپ</a>
+                                                </li>
+                                                <li><a href="">لبتاپ اپل</a></li>
+                                                <li><a href="">لبتاپ سامسونگ</a></li>
+                                                <li><a href="">لبتاپ شیائومی</a></li>
+                                                <li><a href="">لبتاپ بلک بری</a></li>
+                                                <li><a href="">لبتاپ ایرانی</a></li>
+                                                <li><a class="title my-flex-baseline" href="">لبتاپ بر اساس
+                                                    قیمت</a>
+                                                </li>
+                                                <li><a href="">لبتاپ تا 2 میلیون</a></li>
+                                                <li><a href="">لبتاپ تا 5 میلیون</a></li>
+                                                <li><a href="">لبتاپ تا 10 میلیون</a></li>
+                                                <li><a href="">لبتاپ تا 12 میلیون</a></li>
+                                                <li><a href="">لبتاپ تا 15 میلیون</a></li>
+                                                <li><a class="title my-flex-baseline" href="">لبتاپ براساس حافظه
+                                                    داخلی</a></li>
+                                                <li><a href="">لبتاپ تا 16 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 32 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 64 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 128 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 256 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 512 گیگابایت</a></li>
+                                                <li><a href="">لبتاپ تا 1 ترابایت</a></li>
+                                                <li><a class="title my-flex-baseline" href="">لبتاپ براساس
+                                                    کاربری</a>
+                                                </li>
+                                                <li><a href="">لبتاپ اقتصادی</a></li>
+                                                <li><a href="">لبتاپ دانش آموزی</a></li>
+                                                <li><a href="">لبتاپ لاکچری</a></li>
+                                                <li><a href="">لبتاپ پرچمدار</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href=""><i class="bi bi-tag"></i>پر فروش ترین ها</a>
+                                            <ul class="main-menu-sub back-menu"
+                                                style=" background: #fff url('assets/img/top-sales.jpeg') no-repeat;">
+                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
+                                                    1 </a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
+                                                    1 </a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
+                                                    1 </a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
+                                                    1 </a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">مگا
+                                    لیست منو
+                                    <i class="bi bi-tablet"></i></a>
+                                    <ul class="list-unstyled shadow-lg back-menu sub-menu mega-container"
+                                        style="background: #fff url('assets/img/mega-img-1.jpg') no-repeat;background-size: 400px !important;">
+                                        <li><a href="" class="title">بـرند</a></li>
+                                        <li><a href="">سامـسونگ</a></li>
+                                        <li><a href="">اپـل</a></li>
+                                        <li><a href="">شیـائومی</a></li>
+                                        <li><a href="">ال جی</a></li>
+                                        <li><a href="">وان پـلاس</a></li>
+                                        <li><a href="">جی ال ایـکس</a></li>
+                                        <li><a href="">هـو آوی</a></li>
+                                        <li><a href="">بلک بـری</a></li>
+                                        <li><a href="">توشـیبا</a></li>
+                                        <li><a href="">دایـناکورد</a></li>
+                                        <li><a href="" class="title">براساس رده بندی </a>
+                                        </li>
+                                        <li><a href="">دکـمه ای</a></li>
+                                        <li><a href="">لـمسـی</a></li>
+                                        <li><a href="">نـظـامی</a></li>
+                                        <li><a href="">ضـد آب</a></li>
+                                        <li><a href="">مسـافرتی</a></li>
+                                        <li><a href="">خـارنی</a></li>
+                                        <li><a href="" class="title">براساس کشور </a></li>
+                                        <li><a href="">ایران</a></li>
+                                        <li><a href="">ژاپن</a></li>
+                                        <li><a href="">فرانسه</a></li>
+                                        <li><a href="">کره جنوبی</a></li>
+                                        <li><a href="">آمریکا</a></li>
+                                        <li><a href="">سوئد</a></li>
+                                        <li><a href="">تایوان</a></li>
+                                        <li><a href="" class="title">براساس رنگ</a></li>
+                                        <li><a href="">قرمز</a></li>
+                                        <li><a href="">قهوه ای</a></li>
+                                        <li><a href="">سبز</a></li>
+                                        <li><a href="">بنفش</a></li>
+                                        <li><a href="">نارنجی</a></li>
+                                        <li><a href="">نیلی</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a href="" class="nav-link  header-top-menu-link-a ">منو
+                                    ساده<i class="bi bi-menu-app"></i></a>
+                                    <ul class="level-one">
+                                        <li><a href="">منو شماره 1</a></li>
+                                        <li><a href="">منو شماره 2</a></li>
+                                        <li class="position-relative"><a href="">منو شماره 3 <i
+                                                class="bi bi-chevron-left"></i></a>
+                                            <ul class="level-two">
+                                                <li><a href="">زیر منو شماره 1</a></li>
+                                                <li><a href="">2 زیر منو شماره </a></li>
+                                                <li><a href="">3 زیر منو شماره </a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="">منو شماره 4</a></li>
+                                        <li><a href="">منو شماره 5</a></li>
+                                        <li><a href="">منو شماره 6</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">
+                                    تخفیف ها و پیشنهاد ها <i class="bi bi-tag"></i></a></li>
+                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">سوالی
+                                    دارید</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="header-top-menu-left">
+                        <div class="row align-items-center">
+                            <div class="col-6 d-lg-none d-xl-block d-block">
+                                <div class="header-top-menu-link">
+                                    <a href="header-top-menu-link-email" class="">admin@admin.com <i
+                                            class="bi bi-envelope-check-fill"></i></a>
+                                    <a href="header-top-menu-link-tel" class="">02112345678<i
+                                            class="bi bi-telephone-inbound-fill"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-xl-6">
+                                <div class="header-top-menu-socail">
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""><i class="bi bi-youtube"></i></a>
+                                    <a href=""><i class="bi bi-linkedin"></i></a>
+                                    <a href=""><i class="bi bi-telegram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- end mega menu -->
+
+
+<!-- end header code -->
+
+
+<!-- start content -->
+
+{% block content %}
+{% endblock %}
+
+<!-- end content -->
+
+
+<!-- start footer -->
+
+<footer class="footer py-30">
+    <div class="container-fluid">
+        <div class="row gy-4">
+            <div class="col-lg-2">
+                <div class="footer-logo">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="">
+                </div>
+                <div class="footer-reutrned">
+                    <h4 class="text-center">مرجوعی با احترام <br> پذیرفته میشود</h4>
+                    <i class="bi bi-arrow-down-up"></i>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="footer-main">
+                    <div class="footer-main-desc">
+                        <p class="text-muted text-justify font-16">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
+                            چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و
+                            سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود
+                            ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان
+                            جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی
+                            الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که
+                            تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل
+                            حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده
+                            قرار گیرد.</p>
+                    </div>
+                </div>
+                <div class="footer-main-address py-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-sm-6">
+                            <div class="footer-main-address-address d-flex align-items-center">
+                                <div class="footer-main-address-icon me-2">
+                                    <img src="{% static 'assets/img/pin.png' %}" alt="" width="70">
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <div class="mb-3">
+                                        <span class="badge font-12 main-color-one-bg text-white rounded-pill">دفتر مرکزی</span>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 font-16"><span class="fw-bold h5 title-font">تهران -</span>تهران،
+                                            عباس آباد، خیابان سهروردی،کوچه عشوری
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="footer-main-address-email">
+                                <div class="text-sm-end text-start">
+                                    <span class="badge bg-dark text-white font-13 mb-3 rounded-pill">ایمیل پشتیبانی</span>
+                                </div>
+                                <div class="text-sm-end text-start">
+                                    <a href=":mailto:admin@admin.com" class="font-14">info@Sitename.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-main-links">
+                    <div class="row gy-4">
+                        <div class="col-md-4 col-6">
+                            <ul class="navbar-nav">
+                                <li class="nav-item"><a href="" class="nav-link">خرید موبایل آیفون</a></li>
+                                <li class="nav-item"><a href="" class="nav-link">جدیدترین محصولات</a></li>
+                                <li class="nav-item"><a href="" class="nav-link">پرفروش ترین ها</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <ul class="navbar-nav">
+                                <li class="nav-item"><a href="" class="nav-link">درباره ما</a></li>
+                                <li class="nav-item"><a href="" class="nav-link">تماس با ما</a></li>
+                                <li class="nav-item"><a href="" class="nav-link">جشنواره</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 col-12">
+                            <div class="footer-main-links-enamad">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <a href="">
+                                                <img src="{% static 'assets/img/enamad.png' %}" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <a href="">
+                                                <img src="{% static 'assets/img/rezi.png' %}" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-copy-right">
+                    <p class="font-16 my-4">کلی حقوق این سایت متعلق به <span class="fw-bold">راستچین</span> می باشد</p>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="footer-contact">
+                    <div class="footer-contact-link text-center">
+                        <a href="#" role="button" onclick="topFunction()"><i class="bi bi-chevron-up"></i></a>
+                    </div>
+                    <div class="footer-contact-desc text-center">
+                        <h5 class="text-white">7 روز هفته 24 ساعته <br> پاسخگوی شما هستیم</h5>
+                    </div>
+                    <div class="footer-contact-desc-call text-center mt-3">
+                        <a href="">
+                            <h4 style="direction: ltr" class="text-white h3">021 <span
+                                    class="title-font me-2 text-white">12345678</span></h4>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <nav class="navbar navbar-expand justify-content-center">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a href="" class="nav-link text-muted-two"><i
+                                    class="bi bi-instagram"></i></a></li>
+                            <li class="nav-item"><a href="" class="nav-link text-muted-two"><i
+                                    class="bi bi-twitter"></i></a></li>
+                            <li class="nav-item"><a href="" class="nav-link text-muted-two"><i
+                                    class="bi bi-linkedin"></i></a></li>
+                            <li class="nav-item"><a href="" class="nav-link text-muted-two"><i
+                                    class="bi bi-telegram"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- end footer -->
+
+<!-- mobile menu -->
+
+<div class="mobile-footer d-lg-none d-flex">
+    <div class="parent">
+        <div class="item" onclick="topFunction()">
+            <i class="bi bi-chevron-up font-20"></i>
+        </div>
+        <div class="item">
+            <a href="index.html">
+                <i class="bi bi-house font-20"></i>
+            </a>
+        </div>
+        
+        <div class="item ">
+            <a href="index.html">
+                <i class="bi bi-archive"></i>
+            </a>
+        </div>
+        <div class="item">
+            <a href="index.html">
+                <i class="bi bi-person"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- end mobile menu -->
+
+
+<div class="float-btn">
+    <div class="container-fluid">
+        <!-- contact us floating -->
+        <div id="btncollapzion" class=" btn_collapzion"></div>
+        <div class="" id="contactOverlay"></div>
+        <!-- end contact us floating -->
+    </div>
+</div>
+
+
+<div class="bottom-music-player" id="bottomMusicPlayer">
+    <div class="bmp-backdrop"></div>
+
+    <div class="bmp-inner">
+        <div class="bmp-left">
+            <div class="bmp-cover">
+                <img id="bmpCover" src="{% static 'assets/img/slide-3.gif' %}" alt="cover">
+            </div>
+
+            <div class="bmp-meta">
+                <h5 id="bmpTitle">هیچ آهنگی انتخاب نشده</h5>
+                <p id="bmpSinger">خواننده</p>
+            </div>
+        </div>
+
+        <div class="bmp-center">
+            <div class="bmp-controls">
+                <button type="button" class="bmp-btn" id="bmpPrev" aria-label="قبلی">
+                    <i class="bi bi-skip-backward-fill"></i>
+                </button>
+
+                <button type="button" class="bmp-btn bmp-btn-play" id="bmpPlayPause" aria-label="پخش/توقف">
+                    <i class="bi bi-play-fill" id="bmpPlayPauseIcon"></i>
+                </button>
+
+                <button type="button" class="bmp-btn" id="bmpNext" aria-label="بعدی">
+                    <i class="bi bi-skip-forward-fill"></i>
+                </button>
+
+                <button type="button" class="bmp-btn" id="bmpLyricsBtn" aria-label="نمایش متن آهنگ">
+                    <i class="bi bi-file-earmark-text"></i>
+                </button>
+            </div>
+
+            <div class="bmp-progress-wrap">
+                <span id="bmpCurrentTime">0:00</span>
+                <input type="range" id="bmpProgress" min="0" max="100" value="0">
+                <span id="bmpDuration">0:00</span>
+            </div>
+        </div>
+
+        <div class="bmp-right">
+            <a href="#" class="bmp-detail-link" id="bmpDetailLink">
+                <i class="bi bi-music-note-list"></i>
+            </a>
+
+            <div class="bmp-volume">
+                <i class="bi bi-volume-up-fill"></i>
+                <input type="range" id="bmpVolume" min="0" max="1" step="0.01" value="1">
+            </div>
+
+            <button type="button" class="bmp-btn bmp-close" id="bmpClose" aria-label="بستن">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <audio id="globalAudioPlayer"></audio>
+</div>
+
+
+<div class="lyrics-glass-modal" id="lyricsGlassModal">
+    <div class="lyrics-modal-dialog">
+        <button type="button" class="lyrics-modal-close" id="lyricsModalClose">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="lyrics-modal-header">
+            <div>
+                <h4 id="lyricsModalSongTitle">متن آهنگ</h4>
+                <p id="lyricsModalSingerName">خواننده</p>
+            </div>
+        </div>
+
+        <div class="lyrics-tabs">
+            <button type="button" class="lyrics-tab-btn active" data-tab="raw">متن اصلی</button>
+            <button type="button" class="lyrics-tab-btn" data-tab="translated">ترجمه</button>
+        </div>
+
+        <div class="lyrics-tab-content active" id="lyricsRawTab">
+            <div class="lyrics-scroll" id="lyricsRawContent">
+                متن آهنگ موجود نیست.
+            </div>
+        </div>
+
+        <div class="lyrics-tab-content" id="lyricsTranslatedTab">
+            <div class="lyrics-scroll" id="lyricsTranslatedContent">
+                ترجمه‌ای برای این آهنگ ثبت نشده است.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'assets/js/vendor/modernizr-3.11.2.min.js' %}"></script>
+<script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/vendor/bootstrap.bundle-5.3.2.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/countdown/countdown.js' %}"></script>
+<script src="{% static 'assets/js/plugin/vanilla-tilt/vanilla-tilt.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/rasta-contact/script.js' %}"></script>
+<script src="{% static 'assets/js/plugin/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const player = document.getElementById("bottomMusicPlayer");
+    const audio = document.getElementById("globalAudioPlayer");
+
+    if (!player || !audio) return;
+
+    const bmpCover = document.getElementById("bmpCover");
+    const bmpTitle = document.getElementById("bmpTitle");
+    const bmpSinger = document.getElementById("bmpSinger");
+    const bmpDetailLink = document.getElementById("bmpDetailLink");
+
+    const bmpPlayPause = document.getElementById("bmpPlayPause");
+    const bmpPlayPauseIcon = document.getElementById("bmpPlayPauseIcon");
+    const bmpClose = document.getElementById("bmpClose");
+    const bmpPrev = document.getElementById("bmpPrev");
+    const bmpNext = document.getElementById("bmpNext");
+
+    const bmpProgress = document.getElementById("bmpProgress");
+    const bmpCurrentTime = document.getElementById("bmpCurrentTime");
+    const bmpDuration = document.getElementById("bmpDuration");
+    const bmpVolume = document.getElementById("bmpVolume");
+    const bmpLyricsBtn = document.getElementById("bmpLyricsBtn");
+
+    const lyricsModal = document.getElementById("lyricsGlassModal");
+    const lyricsModalClose = document.getElementById("lyricsModalClose");
+    const lyricsModalSongTitle = document.getElementById("lyricsModalSongTitle");
+    const lyricsModalSingerName = document.getElementById("lyricsModalSingerName");
+    const lyricsRawContent = document.getElementById("lyricsRawContent");
+    const lyricsTranslatedContent = document.getElementById("lyricsTranslatedContent");
+    const lyricsTabButtons = document.querySelectorAll(".lyrics-tab-btn");
+    const lyricsRawTab = document.getElementById("lyricsRawTab");
+    const lyricsTranslatedTab = document.getElementById("lyricsTranslatedTab");
+
+    const playButtons = Array.from(document.querySelectorAll(".js-play-song"));
+    const playCollectionBtn = document.getElementById("playCollectionBtn");
+
+    const DEFAULT_COVER = "{% static 'assets/img/slide-3.gif' %}";
+    const RANGE_FILL_COLOR = "#8b5cf6";
+    const RANGE_EMPTY_COLOR = "rgba(255, 255, 255, 0.18)";
+
+    if (bmpProgress) {
+        bmpProgress.style.direction = "ltr";
+    }
+
+    if (bmpVolume) {
+        bmpVolume.style.direction = "ltr";
+    }
+
+    const playlist = playButtons
+        .map((btn) => ({
+            title: btn.dataset.title || "",
+            singer: btn.dataset.singer || "",
+            audio: btn.dataset.audio || "",
+            cover: btn.dataset.cover || "",
+            detailUrl: btn.dataset.detailUrl || "#",
+            rawLyrics: btn.dataset.rawLyrics || "",
+            translatedLyrics: btn.dataset.translatedLyrics || ""
+        }))
+        .filter((song) => song.audio);
+
+    let currentIndex = -1;
+    let isSeeking = false;
+
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+    }
+
+    function updateRangeFill(input) {
+        if (!input) return;
+
+        const min = Number(input.min || 0);
+        const max = Number(input.max || 100);
+        const value = Number(input.value || 0);
+        const percent = ((value - min) / (max - min)) * 100;
+
+        input.style.background = `linear-gradient(to right, ${RANGE_FILL_COLOR} 0%, ${RANGE_FILL_COLOR} ${percent}%, ${RANGE_EMPTY_COLOR} ${percent}%, ${RANGE_EMPTY_COLOR} 100%)`;
+    }
+
+    function updatePlayIcon(isPlaying) {
+        if (!bmpPlayPauseIcon) return;
+        bmpPlayPauseIcon.className = isPlaying ? "bi bi-pause-fill" : "bi bi-play-fill";
+    }
+
+    function openPlayer() {
+        player.classList.add("show");
+    }
+
+    function closePlayer() {
+        audio.pause();
+        updatePlayIcon(false);
+        player.classList.remove("show");
+        closeLyricsModal();
+    }
+
+    function openLyricsModal() {
+        if (lyricsModal) lyricsModal.classList.add("show");
+    }
+
+    function closeLyricsModal() {
+        if (lyricsModal) lyricsModal.classList.remove("show");
+    }
+
+    function resetProgressUI() {
+        if (bmpProgress) {
+            bmpProgress.value = 0;
+            updateRangeFill(bmpProgress);
+        }
+
+        if (bmpCurrentTime) bmpCurrentTime.textContent = "0:00";
+        if (bmpDuration) bmpDuration.textContent = "0:00";
+    }
+
+    function setLyrics(rawLyrics, translatedLyrics, title, singer) {
+        const safeRawLyrics = rawLyrics && rawLyrics.trim()
+            ? rawLyrics
+            : "متن آهنگ موجود نیست.";
+
+        const safeTranslatedLyrics = translatedLyrics && translatedLyrics.trim()
+            ? translatedLyrics
+            : "ترجمه‌ای برای این آهنگ ثبت نشده است.";
+
+        if (lyricsModalSongTitle) lyricsModalSongTitle.textContent = title || "متن آهنگ";
+        if (lyricsModalSingerName) lyricsModalSingerName.textContent = singer || "";
+        if (lyricsRawContent) lyricsRawContent.textContent = safeRawLyrics;
+        if (lyricsTranslatedContent) lyricsTranslatedContent.textContent = safeTranslatedLyrics;
+    }
+
+    function activateLyricsTab(tabName) {
+        lyricsTabButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.tab === tabName);
+        });
+
+        if (lyricsRawTab) {
+            lyricsRawTab.classList.toggle("active", tabName === "raw");
+        }
+
+        if (lyricsTranslatedTab) {
+            lyricsTranslatedTab.classList.toggle("active", tabName === "translated");
+        }
+    }
+
+    function loadSong(index, autoPlay = true) {
+        if (index < 0 || index >= playlist.length) return;
+
+        const song = playlist[index];
+        currentIndex = index;
+        isSeeking = false;
+
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+
+        if (bmpTitle) bmpTitle.textContent = song.title || "بدون عنوان";
+        if (bmpSinger) bmpSinger.textContent = song.singer || "نامشخص";
+
+        if (bmpCover) {
+            bmpCover.src = song.cover || DEFAULT_COVER;
+            bmpCover.alt = song.title || "کاور آهنگ";
+        }
+
+        if (bmpDetailLink) {
+            bmpDetailLink.href = song.detailUrl || "#";
+        }
+
+        setLyrics(song.rawLyrics, song.translatedLyrics, song.title, song.singer);
+        activateLyricsTab("raw");
+        resetProgressUI();
+
+        audio.src = song.audio;
+        audio.load();
+
+        openPlayer();
+
+        if (autoPlay) {
+            audio.play()
+                .then(() => updatePlayIcon(true))
+                .catch(() => updatePlayIcon(false));
+        } else {
+            updatePlayIcon(false);
+        }
+    }
+
+    function playCurrent() {
+        if (!audio.src) {
+            if (playlist.length > 0) loadSong(0, true);
+            return;
+        }
+
+        audio.play()
+            .then(() => updatePlayIcon(true))
+            .catch(() => updatePlayIcon(false));
+    }
+
+    function playNext() {
+        if (!playlist.length) return;
+        const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % playlist.length : 0;
+        loadSong(nextIndex, true);
+    }
+
+    function playPrev() {
+        if (!playlist.length) return;
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : playlist.length - 1;
+        loadSong(prevIndex, true);
+    }
+
+    function syncProgressFromAudio() {
+        if (!bmpProgress) return;
+        if (!audio.duration || isNaN(audio.duration)) return;
+
+        const progress = (audio.currentTime / audio.duration) * 100;
+        bmpProgress.value = progress;
+        updateRangeFill(bmpProgress);
+    }
+
+    function seekAudioFromRange() {
+        if (!bmpProgress) return;
+        if (!audio.duration || isNaN(audio.duration)) return;
+
+        const progressValue = Number(bmpProgress.value);
+        const seekTime = (progressValue / 100) * audio.duration;
+
+        audio.currentTime = seekTime;
+
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = formatTime(seekTime);
+        }
+
+        updateRangeFill(bmpProgress);
+    }
+
+    function syncVolume() {
+        if (!bmpVolume) return;
+
+        const volume = Number(bmpVolume.value);
+        audio.volume = volume;
+        updateRangeFill(bmpVolume);
+    }
+
+    window.globalMusicPlayer = {
+        loadSong: function (index, autoPlay = true) {
+            loadSong(index, autoPlay);
+        },
+        play: playCurrent,
+        pause: function () {
+            audio.pause();
+        },
+        next: playNext,
+        prev: playPrev
+    };
+
+    playButtons.forEach(function (btn) {
+        btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const audioUrl = btn.dataset.audio || "";
+            if (!audioUrl) return;
+
+            const playlistIndex = playlist.findIndex((song) => song.audio === audioUrl);
+            if (playlistIndex !== -1) {
+                loadSong(playlistIndex, true);
+            }
+        });
+    });
+
+    if (playCollectionBtn) {
+        playCollectionBtn.addEventListener("click", function () {
+            if (playlist.length > 0) {
+                loadSong(0, true);
+            }
+        });
+    }
+
+    if (bmpPlayPause) {
+        bmpPlayPause.addEventListener("click", function () {
+            if (!audio.src) {
+                if (playlist.length > 0) loadSong(0, true);
+                return;
+            }
+
+            if (audio.paused) {
+                playCurrent();
+            } else {
+                audio.pause();
+            }
+        });
+    }
+
+    if (bmpPrev) bmpPrev.addEventListener("click", playPrev);
+    if (bmpNext) bmpNext.addEventListener("click", playNext);
+    if (bmpClose) bmpClose.addEventListener("click", closePlayer);
+
+    if (bmpVolume) {
+        if (!bmpVolume.value) {
+            bmpVolume.value = audio.volume;
+        }
+
+        syncVolume();
+        bmpVolume.addEventListener("input", syncVolume);
+        bmpVolume.addEventListener("change", syncVolume);
+    }
+
+    if (bmpProgress) {
+        bmpProgress.addEventListener("input", function () {
+            isSeeking = true;
+            seekAudioFromRange();
+        });
+
+        bmpProgress.addEventListener("change", function () {
+            seekAudioFromRange();
+            isSeeking = false;
+        });
+
+        bmpProgress.addEventListener("mousedown", function () {
+            isSeeking = true;
+        });
+
+        bmpProgress.addEventListener("mouseup", function () {
+            seekAudioFromRange();
+            isSeeking = false;
+        });
+
+        bmpProgress.addEventListener("touchstart", function () {
+            isSeeking = true;
+        });
+
+        bmpProgress.addEventListener("touchend", function () {
+            seekAudioFromRange();
+            isSeeking = false;
+        });
+
+        updateRangeFill(bmpProgress);
+    }
+
+    audio.addEventListener("loadedmetadata", function () {
+        if (bmpDuration) bmpDuration.textContent = formatTime(audio.duration || 0);
+        if (bmpCurrentTime) bmpCurrentTime.textContent = formatTime(audio.currentTime || 0);
+
+        if (bmpProgress) {
+            bmpProgress.value = 0;
+            updateRangeFill(bmpProgress);
+        }
+    });
+
+    audio.addEventListener("timeupdate", function () {
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = formatTime(audio.currentTime || 0);
+        }
+
+        if (bmpDuration) {
+            bmpDuration.textContent = formatTime(audio.duration || 0);
+        }
+
+        if (!isSeeking) {
+            syncProgressFromAudio();
+        }
+    });
+
+    audio.addEventListener("play", function () {
+        updatePlayIcon(true);
+    });
+
+    audio.addEventListener("pause", function () {
+        updatePlayIcon(false);
+    });
+
+    audio.addEventListener("ended", function () {
+        playNext();
+    });
+
+    if (bmpLyricsBtn) {
+        bmpLyricsBtn.addEventListener("click", openLyricsModal);
+    }
+
+    if (lyricsModalClose) {
+        lyricsModalClose.addEventListener("click", closeLyricsModal);
+    }
+
+    if (lyricsModal) {
+        lyricsModal.addEventListener("click", function (event) {
+            if (event.target === lyricsModal) {
+                closeLyricsModal();
+            }
+        });
+    }
+
+    lyricsTabButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const tab = btn.dataset.tab === "translated" ? "translated" : "raw";
+            activateLyricsTab(tab);
+        });
+    });
+
+    activateLyricsTab("raw");
+    resetProgressUI();
+    updatePlayIcon(false);
+});
+</script>
+
+
+
+<script>
+    new Swiper(".latest-songs-slider", {
+    loop: true,
+    speed: 700,
+    spaceBetween: 16,
+    slidesPerView: 2.5,
+
+    autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+    },
+
+    navigation: {
+        nextEl: ".latest-songs-next",
+        prevEl: ".latest-songs-prev",
+    },
+
+    pagination: {
+        el: ".latest-songs-pagination",
+        clickable: true,
+    },
+
+    breakpoints: {
+        0: {
+            slidesPerView: 2.2,
+            spaceBetween: 5,
+        },
+        576: {
+            slidesPerView: 2.5,
+            spaceBetween: 10,
+        },
+        768: {
+            slidesPerView: 3.5,
+            spaceBetween: 14,
+        },
+        992: {
+            slidesPerView: 4.5,
+            spaceBetween: 16,
+        },
+        1200: {
+            slidesPerView: 5.5,
+            spaceBetween: 18,
+        },
+    },
+});
+
+</script>
+
+</body>
+
+</html>

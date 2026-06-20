@@ -1,0 +1,22 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>ساخت پلی‌لیست جدید</h1>
+        <p>یک پلی‌لیست شخصی برای آهنگ‌های دلخواهت بساز</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <form method="post" class="dashboard-form">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="dashboard-btn">
+            ذخیره پلی‌لیست
+        </button>
+    </form>
+</div>
+{% endblock %}

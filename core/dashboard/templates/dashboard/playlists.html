@@ -1,0 +1,32 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>پلی‌لیست‌ها</h1>
+        <p>مدیریت پلی‌لیست‌های شخصی شما</p>
+    </div>
+
+    <a href="{% url 'dashboard:dashboard_playlist_create' %}" class="dashboard-btn">
+        ساخت پلی‌لیست جدید
+    </a>
+</div>
+
+<div class="dashboard-section">
+    {% if playlists %}
+        <div class="dashboard-grid">
+            {% for playlist in playlists %}
+                <div class="dashboard-card">
+                    <h3>{{ playlist.name }}</h3>
+                    <p>{{ playlist.songs.count }} آهنگ</p>
+                    <span>{{ playlist.created_date|date:"Y/m/d" }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            هنوز پلی‌لیستی نساخته‌ای.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

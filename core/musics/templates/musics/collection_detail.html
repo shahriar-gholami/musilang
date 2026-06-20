@@ -1,0 +1,804 @@
+{% extends "base.html" %}
+{% load static %}
+{% block style %}
+<style>
+    .collection-detail-page {
+    padding: 35px 0 90px;
+    background: #fbfbff;
+}
+
+.collection-detail-hero {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: center;
+    padding: 24px;
+    margin-bottom: 28px;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 20px 45px rgba(58, 59, 156, 0.08);
+}
+
+.collection-detail-cover {
+    border-radius: 26px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: #f3f4fb;
+}
+
+.collection-detail-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collection-badge {
+    display: inline-flex;
+    margin-bottom: 10px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: var(--main-color-one);
+    background: var(--main-color-one-shadow);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.collection-detail-content h1 {
+    margin: 0 0 12px;
+    color: var(--main-color-one);
+    font-size: 30px;
+    font-weight: 950;
+}
+
+.collection-detail-content p {
+    margin: 0 0 18px;
+    color: #747998;
+    font-size: 14px;
+    line-height: 2;
+    font-weight: 700;
+}
+
+.collection-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.collection-detail-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: #69708f;
+    background: #f7f8ff;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.public-badge {
+    color: #117347 !important;
+    background: #e9fff4 !important;
+}
+
+.collection-play-all-btn {
+    min-height: 50px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+    font-size: 14px;
+    font-weight: 950;
+    transition: 0.25s ease;
+}
+
+.collection-play-all-btn:hover {
+    background: var(--main-color-two-hover);
+    transform: translateY(-2px);
+}
+
+.collection-songs-box {
+    padding: 24px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 20px 45px rgba(58, 59, 156, 0.08);
+}
+
+.section-head {
+    margin-bottom: 18px;
+}
+
+.section-head h2 {
+    margin: 0;
+    color: var(--main-color-one);
+    font-size: 24px;
+    font-weight: 950;
+}
+
+.collection-song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.collection-song-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 14px;
+    border: 1px solid rgba(58, 59, 156, 0.08);
+    border-radius: 22px;
+    background: #fcfcff;
+    transition: 0.22s ease;
+}
+
+.collection-song-item:hover {
+    border-color: rgba(58, 59, 156, 0.18);
+    transform: translateY(-2px);
+}
+
+.collection-song-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.collection-song-index {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main-color-one);
+    background: var(--main-color-one-shadow);
+    font-size: 13px;
+    font-weight: 950;
+    flex-shrink: 0;
+}
+
+.collection-song-cover {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f1f2fb;
+    flex-shrink: 0;
+}
+
+.collection-song-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collection-song-info {
+    min-width: 0;
+}
+
+.collection-song-info h3 {
+    margin: 0 0 6px;
+    color: var(--main-color-one);
+    font-size: 16px;
+    font-weight: 950;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.collection-song-info p {
+    margin: 0;
+    color: #7a7f99;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.collection-song-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.collection-song-extra span {
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: #7a7f99;
+    background: #f2f3fb;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.collection-song-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.song-detail-btn,
+.song-play-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: 0.22s ease;
+}
+
+.song-detail-btn {
+    color: var(--main-color-one);
+    background: #f3f5ff;
+}
+
+.song-play-btn {
+    border: none;
+    color: var(--main-color-one);
+    background: var(--main-color-two);
+}
+
+.song-play-btn:hover,
+.song-detail-btn:hover {
+    transform: translateY(-2px);
+}
+
+.empty-detail-box {
+    padding: 34px 20px;
+    border-radius: 24px;
+    text-align: center;
+    color: #737999;
+    background: #f8f9ff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+@media (max-width: 991px) {
+    .collection-detail-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .collection-detail-page {
+        padding: 24px 0 85px;
+    }
+
+    .collection-detail-hero {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .collection-detail-content h1 {
+        font-size: 24px;
+    }
+
+    .collection-songs-box {
+        padding: 16px;
+        border-radius: 24px;
+    }
+
+    .collection-song-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .collection-song-left {
+        justify-content: stretch;
+        flex-wrap: wrap;
+    }
+
+    .song-detail-btn,
+    .song-play-btn {
+        flex: 1;
+    }
+}
+
+</style>
+{% endblock %}
+{% block title %}
+    {{ collection.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="collection-detail-page">
+    <div class="container">
+
+        <div class="collection-detail-hero">
+
+            <div class="collection-detail-cover">
+                {% if collection.image %}
+                    <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+                {% else %}
+                    <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+                {% endif %}
+            </div>
+
+            <div class="collection-detail-content">
+                <span class="collection-badge">
+                    کالکشن
+                </span>
+
+                <h1>{{ collection.title }}</h1>
+
+                {% if collection.description %}
+                    <p>{{ collection.description }}</p>
+                {% else %}
+                    <p>
+                        مجموعه‌ای از آهنگ‌های منتخب این کالکشن را می‌توانید پشت سر هم پخش کنید.
+                    </p>
+                {% endif %}
+
+                <div class="collection-detail-meta">
+                    <span>
+                        <i class="bi bi-music-note-list"></i>
+                        {{ songs|length }} آهنگ
+                    </span>
+
+                    {% if collection.is_public %}
+                        <span class="public-badge">
+                            عمومی
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if songs %}
+                    <button type="button" class="collection-play-all-btn" id="playCollectionBtn">
+                        <i class="bi bi-play-fill"></i>
+                        پخش همه آهنگ‌ها
+                    </button>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="collection-songs-box">
+
+            <div class="section-head">
+                <h2>آهنگ‌های این کالکشن</h2>
+            </div>
+
+            {% if songs %}
+                <div class="collection-song-list">
+
+                    {% for song in songs %}
+                        <div class="collection-song-item">
+
+                            <div class="collection-song-right">
+
+                                <div class="collection-song-index">
+                                    {{ forloop.counter }}
+                                </div>
+
+                                <div class="collection-song-cover">
+                                    {% if song.cover %}
+                                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                                    {% elif song.image %}
+                                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
+                                    {% endif %}
+                                </div>
+
+                                <div class="collection-song-info">
+                                    <h3>{{ song.title }}</h3>
+
+                                    <p>
+                                        {% if song.singer %}
+                                            {{ song.singer.name }}
+                                        {% else %}
+                                            خواننده نامشخص
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="collection-song-extra">
+                                        {% if song.language %}
+                                            <span>{{ song.language }}</span>
+                                        {% endif %}
+
+                                        {% if song.year %}
+                                            <span>{{ song.year }}</span>
+                                        {% endif %}
+
+                                        {% if song.album %}
+                                            <span>{{ song.album.title }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="collection-song-left">
+
+                                <a href="{{ song.get_absolute_url }}" class="song-detail-btn">
+                                    جزئیات
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="song-play-btn js-play-song"
+                                    data-song-id="{{ song.id }}"
+                                    data-title="{{ song.title|escape }}"
+                                    data-singer="{% if song.singer %}{{ song.singer.name|escape }}{% else %}نامشخص{% endif %}"
+                                    data-audio="{% if song.audio_file %}{{ song.audio_file.url }}{% endif %}"
+                                    data-cover="{% if song.cover %}{{ song.cover.url }}{% elif song.image %}{{ song.image.url }}{% else %}{% static 'assets/img/slide-3.gif' %}{% endif %}"
+                                    data-detail-url="{{ song.get_absolute_url }}"
+                                    {% if song.has_lyrics %}
+                                        data-raw-lyrics="{{ song.lyrics.raw_lyrics|default:''|escape }}"
+                                        data-translated-lyrics="{{ song.lyrics.translated_lyrics|default:''|escape }}"
+                                    {% else %}
+                                        data-raw-lyrics=""
+                                        data-translated-lyrics=""
+                                    {% endif %}
+                                >
+                                    <i class="bi bi-play-fill"></i>
+                                    پخش
+                                </button>
+
+
+
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+            {% else %}
+                <div class="empty-detail-box">
+                    هنوز آهنگی برای این کالکشن ثبت نشده است.
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+
+{{ playlist|json_script:"collectionPlaylistData" }}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const playlistElement = document.getElementById("collectionPlaylistData");
+    if (!playlistElement) return;
+
+    let collectionPlaylist = [];
+
+    try {
+        collectionPlaylist = JSON.parse(playlistElement.textContent);
+    } catch (error) {
+        console.error("Collection playlist JSON parse error:", error);
+        return;
+    }
+
+    if (!collectionPlaylist.length) return;
+
+    const defaultCover = "{% static 'assets/img/slide-3.gif' %}";
+
+    const playerWrapper = document.getElementById("bottomMusicPlayer");
+    const audio = document.getElementById("globalAudioPlayer");
+
+    const bmpCover = document.getElementById("bmpCover");
+    const bmpTitle = document.getElementById("bmpTitle");
+    const bmpSinger = document.getElementById("bmpSinger");
+    const bmpDetailLink = document.getElementById("bmpDetailLink");
+
+    const bmpPlayPause = document.getElementById("bmpPlayPause");
+    const bmpPlayPauseIcon = document.getElementById("bmpPlayPauseIcon");
+    const bmpPrev = document.getElementById("bmpPrev");
+    const bmpNext = document.getElementById("bmpNext");
+    const bmpClose = document.getElementById("bmpClose");
+
+    const bmpProgress = document.getElementById("bmpProgress");
+    const bmpCurrentTime = document.getElementById("bmpCurrentTime");
+    const bmpDuration = document.getElementById("bmpDuration");
+    const bmpVolume = document.getElementById("bmpVolume");
+
+    const bmpLyricsBtn = document.getElementById("bmpLyricsBtn");
+    const lyricsGlassModal = document.getElementById("lyricsGlassModal");
+    const lyricsModalClose = document.getElementById("lyricsModalClose");
+    const lyricsModalSongTitle = document.getElementById("lyricsModalSongTitle");
+    const lyricsModalSingerName = document.getElementById("lyricsModalSingerName");
+    const lyricsRawContent = document.getElementById("lyricsRawContent");
+    const lyricsTranslatedContent = document.getElementById("lyricsTranslatedContent");
+
+    const lyricsTabButtons = document.querySelectorAll(".lyrics-tab-btn");
+    const lyricsRawTab = document.getElementById("lyricsRawTab");
+    const lyricsTranslatedTab = document.getElementById("lyricsTranslatedTab");
+
+    if (!playerWrapper || !audio) return;
+
+    let currentPlaylist = collectionPlaylist;
+    let currentIndex = 0;
+
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return "0:00";
+
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+
+        return minutes + ":" + (secs < 10 ? "0" + secs : secs);
+    }
+
+    function getCurrentSong() {
+        return currentPlaylist[currentIndex] || null;
+    }
+
+    function updateLyrics(song) {
+        if (!song) return;
+
+        if (lyricsModalSongTitle) {
+            lyricsModalSongTitle.textContent = song.title || "متن آهنگ";
+        }
+
+        if (lyricsModalSingerName) {
+            lyricsModalSingerName.textContent = song.singer || "خواننده";
+        }
+
+        if (lyricsRawContent) {
+            lyricsRawContent.textContent = song.lyrics_raw || "متن آهنگ موجود نیست.";
+        }
+
+        if (lyricsTranslatedContent) {
+            lyricsTranslatedContent.textContent = song.lyrics_translated || "ترجمه‌ای برای این آهنگ ثبت نشده است.";
+        }
+    }
+
+    function setPlayerSong(song) {
+        if (!song) return;
+
+        if (bmpTitle) {
+            bmpTitle.textContent = song.title || "بدون عنوان";
+        }
+
+        if (bmpSinger) {
+            bmpSinger.textContent = song.singer || "خواننده نامشخص";
+        }
+
+        if (bmpCover) {
+            bmpCover.src = song.cover || defaultCover;
+        }
+
+        if (bmpDetailLink) {
+            bmpDetailLink.href = song.detail_url || "#";
+        }
+
+        audio.src = song.audio || "";
+
+        if (bmpProgress) {
+            bmpProgress.value = 0;
+        }
+
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = "0:00";
+        }
+
+        if (bmpDuration) {
+            bmpDuration.textContent = "0:00";
+        }
+
+        updateLyrics(song);
+
+        playerWrapper.classList.add("show");
+    }
+
+    function playSongAt(index, autoplay = true) {
+        if (index < 0 || index >= currentPlaylist.length) return;
+
+        currentIndex = index;
+
+        const song = getCurrentSong();
+
+        if (!song || !song.audio) {
+            console.warn("این آهنگ فایل صوتی ندارد:", song);
+            return;
+        }
+
+        setPlayerSong(song);
+
+        if (autoplay) {
+            audio.play()
+                .then(function () {
+                    if (bmpPlayPauseIcon) {
+                        bmpPlayPauseIcon.className = "bi bi-pause-fill";
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Audio play error:", error);
+                });
+        }
+    }
+
+    function playNextSong() {
+        if (!currentPlaylist.length) return;
+
+        let nextIndex = currentIndex + 1;
+
+        if (nextIndex >= currentPlaylist.length) {
+            nextIndex = 0;
+        }
+
+        playSongAt(nextIndex, true);
+    }
+
+    function playPrevSong() {
+        if (!currentPlaylist.length) return;
+
+        let prevIndex = currentIndex - 1;
+
+        if (prevIndex < 0) {
+            prevIndex = currentPlaylist.length - 1;
+        }
+
+        playSongAt(prevIndex, true);
+    }
+
+    const playCollectionBtn = document.getElementById("playCollectionBtn");
+
+    if (playCollectionBtn) {
+        playCollectionBtn.addEventListener("click", function () {
+            currentPlaylist = collectionPlaylist;
+            playSongAt(0, true);
+        });
+    }
+
+    document.querySelectorAll(".js-play-song").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const index = parseInt(this.dataset.index, 10);
+
+            if (isNaN(index)) return;
+
+            currentPlaylist = collectionPlaylist;
+            playSongAt(index, true);
+        });
+    });
+
+    if (bmpPlayPause) {
+        bmpPlayPause.addEventListener("click", function () {
+            if (!audio.src) {
+                playSongAt(currentIndex, true);
+                return;
+            }
+
+            if (audio.paused) {
+                audio.play()
+                    .then(function () {
+                        if (bmpPlayPauseIcon) {
+                            bmpPlayPauseIcon.className = "bi bi-pause-fill";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error("Audio play error:", error);
+                    });
+            } else {
+                audio.pause();
+
+                if (bmpPlayPauseIcon) {
+                    bmpPlayPauseIcon.className = "bi bi-play-fill";
+                }
+            }
+        });
+    }
+
+    if (bmpNext) {
+        bmpNext.addEventListener("click", function () {
+            playNextSong();
+        });
+    }
+
+    if (bmpPrev) {
+        bmpPrev.addEventListener("click", function () {
+            playPrevSong();
+        });
+    }
+
+    audio.addEventListener("loadedmetadata", function () {
+        if (bmpDuration) {
+            bmpDuration.textContent = formatTime(audio.duration);
+        }
+    });
+
+    audio.addEventListener("timeupdate", function () {
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = formatTime(audio.currentTime);
+        }
+
+        if (bmpProgress && audio.duration) {
+            bmpProgress.value = (audio.currentTime / audio.duration) * 100;
+        }
+    });
+
+    if (bmpProgress) {
+        bmpProgress.addEventListener("input", function () {
+            if (audio.duration) {
+                audio.currentTime = (Number(this.value) / 100) * audio.duration;
+            }
+        });
+    }
+
+    if (bmpVolume) {
+        bmpVolume.addEventListener("input", function () {
+            audio.volume = Number(this.value);
+        });
+    }
+
+    audio.addEventListener("play", function () {
+        if (bmpPlayPauseIcon) {
+            bmpPlayPauseIcon.className = "bi bi-pause-fill";
+        }
+    });
+
+    audio.addEventListener("pause", function () {
+        if (bmpPlayPauseIcon) {
+            bmpPlayPauseIcon.className = "bi bi-play-fill";
+        }
+    });
+
+    audio.addEventListener("ended", function () {
+        playNextSong();
+    });
+
+    if (bmpClose) {
+        bmpClose.addEventListener("click", function () {
+            audio.pause();
+            playerWrapper.classList.remove("show");
+        });
+    }
+
+    if (bmpLyricsBtn && lyricsGlassModal) {
+        bmpLyricsBtn.addEventListener("click", function () {
+            lyricsGlassModal.classList.add("show");
+        });
+    }
+
+    if (lyricsModalClose && lyricsGlassModal) {
+        lyricsModalClose.addEventListener("click", function () {
+            lyricsGlassModal.classList.remove("show");
+        });
+    }
+
+    lyricsTabButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            lyricsTabButtons.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const selectedTab = this.dataset.tab;
+
+            if (selectedTab === "raw") {
+                if (lyricsRawTab) {
+                    lyricsRawTab.classList.add("active");
+                }
+
+                if (lyricsTranslatedTab) {
+                    lyricsTranslatedTab.classList.remove("active");
+                }
+            } else {
+                if (lyricsTranslatedTab) {
+                    lyricsTranslatedTab.classList.add("active");
+                }
+
+                if (lyricsRawTab) {
+                    lyricsRawTab.classList.remove("active");
+                }
+            }
+        });
+    });
+});
+</script>
+
+
+{% endblock %}
