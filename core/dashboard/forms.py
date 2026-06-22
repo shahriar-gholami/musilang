@@ -1,9 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from accounts.models import Customer
-from musics.models import Song
-from musics.models import Playlist
-
+from musics.models import Song, Playlist
+from .models import *
 User = get_user_model()
 
 
@@ -29,36 +28,41 @@ class PlaylistCreateForm(forms.ModelForm):
             }),
         }
 
+from accounts.models import User
+
+from django import forms
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class AccountUpdateForm(forms.ModelForm):
-    first_name = forms.CharField(
-        required=False,
-        label="نام",
-        widget=forms.TextInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "نام",
-        }),
-    )
-    last_name = forms.CharField(
-        required=False,
-        label="نام خانوادگی",
-        widget=forms.TextInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "نام خانوادگی",
-        }),
-    )
-    email = forms.EmailField(
-        required=False,
-        label="ایمیل",
-        widget=forms.EmailInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "email@example.com",
-        }),
-    )
-
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email"]
+        fields = ["full_name", "email", "phone_number"]
+        widgets = {
+            "full_name": forms.TextInput(attrs={
+                "class": "dashboard-input",
+                "placeholder": "نام و نام خانوادگی",
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "dashboard-input",
+                "placeholder": "example@email.com",
+            }),
+            "phone_number": forms.TextInput(attrs={
+                "class": "dashboard-input",
+                "readonly": "readonly",
+            }),
+        }
+        labels = {
+            "full_name": "نام و نام خانوادگی",
+            "email": "ایمیل",
+            "phone_number": "شماره موبایل",
+        }
+
+    def clean_phone_number(self):
+        # شماره موبایل در این صفحه فقط نمایشی است و تغییر نمی‌کند.
+        return self.instance.phone_number
 
 
 class CustomerUpdateForm(forms.ModelForm):
@@ -81,52 +85,62 @@ class CustomerUpdateForm(forms.ModelForm):
         }
 
 
-class SongRequestForm(forms.Form):
-    song_title = forms.CharField(
-        label="نام آهنگ",
-        max_length=255,
-        widget=forms.TextInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "نام آهنگ را وارد کنید",
-        }),
-    )
-    singer_name = forms.CharField(
-        label="نام خواننده",
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "نام خواننده",
-        }),
-    )
-    description = forms.CharField(
-        label="توضیحات",
-        required=False,
-        widget=forms.Textarea(attrs={
-            "class": "dashboard-textarea",
-            "placeholder": "اگر توضیحی درباره آهنگ دارید بنویسید",
-            "rows": 5,
-        }),
-    )
+class SongRequestForm(forms.ModelForm):
+    class Meta:
+        model = SongRequest
+        fields = ["singer_name", "song_name"]
+
+        labels = {
+            "singer_name": "نام خواننده",
+            "song_name": "نام آهنگ",
+        }
+
+        widgets = {
+            "singer_name": forms.TextInput(attrs={
+                "class": "dashboard-input",
+                "placeholder": "مثلاً: محسن چاوشی",
+            }),
+            "song_name": forms.TextInput(attrs={
+                "class": "dashboard-input",
+                "placeholder": "مثلاً: کجایی",
+            }),
+        }
+
+class TicketCreateForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ["subject", "body"]
+        widgets = {
+            "subject": forms.TextInput(attrs={
+                "class": "dashboard-input",
+                "placeholder": "موضوع تیکت",
+            }),
+            "body": forms.Textarea(attrs={
+                "class": "dashboard-textarea",
+                "placeholder": "متن درخواست خود را بنویسید...",
+                "rows": 5,
+            }),
+        }
+        labels = {
+            "subject": "موضوع",
+            "body": "متن تیکت",
+        }
 
 
-class TicketCreateForm(forms.Form):
-    title = forms.CharField(
-        label="عنوان تیکت",
-        max_length=255,
-        widget=forms.TextInput(attrs={
-            "class": "dashboard-input",
-            "placeholder": "عنوان تیکت",
-        }),
-    )
-    message = forms.CharField(
-        label="متن پیام",
-        widget=forms.Textarea(attrs={
-            "class": "dashboard-textarea",
-            "placeholder": "متن پیام خود را بنویسید",
-            "rows": 6,
-        }),
-    )
+class TicketReplyForm(forms.ModelForm):
+    class Meta:
+        model = TicketReply
+        fields = ["body"]
+        widgets = {
+            "body": forms.Textarea(attrs={
+                "class": "dashboard-textarea ticket-reply-textarea",
+                "placeholder": "پاسخ خود را بنویسید...",
+                "rows": 3,
+            }),
+        }
+        labels = {
+            "body": "پاسخ",
+        }
 
 
 class CommentForm(forms.Form):

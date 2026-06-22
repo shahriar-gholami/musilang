@@ -368,6 +368,182 @@
             }
         }
 
+        .playlist-glass-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(10px);
+}
+
+.playlist-glass-modal.show {
+    display: flex;
+}
+
+.playlist-modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    padding: 24px;
+    border-radius: 24px;
+    color: #fff;
+    background: rgba(25, 25, 35, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.playlist-modal-close {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    border: 0;
+    color: #fff;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.playlist-modal-header h4 {
+    margin: 0 0 6px;
+}
+
+.playlist-modal-header p {
+    margin: 0 0 18px;
+    opacity: 0.75;
+}
+
+.playlist-modal-alert {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.playlist-modal-alert.show {
+    display: block;
+}
+
+.playlist-modal-alert.success {
+    color: #14532d;
+    background: #bbf7d0;
+}
+
+.playlist-modal-alert.error {
+    color: #7f1d1d;
+    background: #fecaca;
+}
+
+.playlist-create-box,
+.playlist-list-box {
+    margin-bottom: 18px;
+}
+
+.playlist-create-box label,
+.playlist-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#newPlaylistName {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 12px;
+    outline: none;
+}
+
+.playlist-list-box p {
+    margin-bottom: 10px;
+    opacity: 0.75;
+    font-size: 14px;
+}
+
+.playlist-submit-btn {
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: 14px;
+    color: #fff;
+    background: #8b5cf6;
+    cursor: pointer;
+}
+
+.playlist-modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    padding: 24px;
+    border-radius: 24px;
+    color: #fff;
+    background: rgba(25, 25, 35, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.playlist-modal-dialog h4,
+.playlist-modal-dialog p,
+.playlist-modal-dialog label,
+.playlist-modal-dialog span {
+    color: #fff;
+}
+
+.playlist-create-box label,
+.playlist-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #fff;
+}
+
+#newPlaylistName {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    outline: none;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#newPlaylistName::placeholder {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+#newPlaylistName:focus {
+    border-color: rgba(139, 92, 246, 0.7);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+#userPlaylistsList {
+    color: #fff;
+}
+
+#userPlaylistsList span {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.playlist-list-box p {
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+
+.playlist-modal-header p {
+    margin: 0 0 18px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+
 
     </style>
 
@@ -390,7 +566,7 @@
             <div class="col-xl-3 col-6">
                 <div class="header-logo">
                     <div class="image">
-                        <a href="index.html">
+                        <a href="{% url 'musics:index' %}">
                             <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" alt="">
                         </a>
                     </div>
@@ -422,12 +598,12 @@
                     
                     <div class="header-btn-login d-lg-block d-none">
                         {% if user.is_authenticated %}
-                            <a href="#" class="btn">
+                            <a href="{% url 'dashboard:dashboard' %}" class="btn">
                                 <i class="bi bi-person-fill"></i>
                                 حساب کاربری
                             </a>
                         {% else %}
-                            <a href="#" class="btn">
+                            <a href="{% url 'accounts:login' %}" class="btn">
                                 <i class="bi bi-person-fill"></i>
                                 ورود / ثبت‌نام
                             </a>
@@ -436,11 +612,11 @@
 
                     <div class="header-btn-login-responsive d-lg-none d-block">
                         {% if user.is_authenticated %}
-                            <a href="#" class="btn" aria-label="حساب کاربری">
+                            <a href="{% url 'dashboard:dashboard' %}" class="btn" aria-label="حساب کاربری">
                                 <i class="bi bi-person-fill fs-2"></i>
                             </a>
                         {% else %}
-                            <a href="#" class="btn" aria-label="ورود / ثبت‌نام">
+                            <a href="{% url 'accounts:login' %}" class="btn" aria-label="ورود / ثبت‌نام">
                                 <i class="bi bi-person-fill fs-2"></i>
                             </a>
                         {% endif %}
@@ -474,7 +650,7 @@
                                 <img src="{% static 'assets/img/logo.png' %}" alt="" class="img-fluid" width="200">
                             </a>
                             <ul class="rm-item-menu navbar-nav">
-                                <li class="nav-item bg-ul-f7"><a href="index.html" class="nav-link">صفحه
+                                <li class="nav-item bg-ul-f7"><a href="{% url 'musics:index' %}" class="nav-link">صفحه
                                     اصلی</a>
                                 </li>
                                 <li class="nav-item bg-ul-f7">
@@ -664,7 +840,7 @@
                         <div class="top-menu-menu">
                             <ul class="navbar-nav align-items-center">
                                 <li class="position-relative m-0"></li>
-                                <li class="nav-item main-menu-head"><a href=""
+                                <!-- <li class="nav-item main-menu-head"><a href=""
                                                                        class="nav-link header-top-menu-link-a  nav-active fw-bold"><i
                                         class="bi bi-list"></i>
                                     مگا تب منو
@@ -841,65 +1017,33 @@
                                             </ul>
                                         </li>
                                     </ul>
-                                </li>
-                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">مگا
-                                    لیست منو
-                                    <i class="bi bi-tablet"></i></a>
+                                </li> -->
+                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">
+                                    آرشیو آهنگ‌ها
+                                    <i class="bi bi-music-note-beamed"></i></a>
                                     <ul class="list-unstyled shadow-lg back-menu sub-menu mega-container"
                                         style="background: #fff url('assets/img/mega-img-1.jpg') no-repeat;background-size: 400px !important;">
-                                        <li><a href="" class="title">بـرند</a></li>
-                                        <li><a href="">سامـسونگ</a></li>
-                                        <li><a href="">اپـل</a></li>
-                                        <li><a href="">شیـائومی</a></li>
-                                        <li><a href="">ال جی</a></li>
-                                        <li><a href="">وان پـلاس</a></li>
-                                        <li><a href="">جی ال ایـکس</a></li>
-                                        <li><a href="">هـو آوی</a></li>
-                                        <li><a href="">بلک بـری</a></li>
-                                        <li><a href="">توشـیبا</a></li>
-                                        <li><a href="">دایـناکورد</a></li>
-                                        <li><a href="" class="title">براساس رده بندی </a>
-                                        </li>
-                                        <li><a href="">دکـمه ای</a></li>
-                                        <li><a href="">لـمسـی</a></li>
-                                        <li><a href="">نـظـامی</a></li>
-                                        <li><a href="">ضـد آب</a></li>
-                                        <li><a href="">مسـافرتی</a></li>
-                                        <li><a href="">خـارنی</a></li>
-                                        <li><a href="" class="title">براساس کشور </a></li>
-                                        <li><a href="">ایران</a></li>
-                                        <li><a href="">ژاپن</a></li>
-                                        <li><a href="">فرانسه</a></li>
-                                        <li><a href="">کره جنوبی</a></li>
-                                        <li><a href="">آمریکا</a></li>
-                                        <li><a href="">سوئد</a></li>
-                                        <li><a href="">تایوان</a></li>
-                                        <li><a href="" class="title">براساس رنگ</a></li>
-                                        <li><a href="">قرمز</a></li>
-                                        <li><a href="">قهوه ای</a></li>
-                                        <li><a href="">سبز</a></li>
-                                        <li><a href="">بنفش</a></li>
-                                        <li><a href="">نارنجی</a></li>
-                                        <li><a href="">نیلی</a></li>
+                                        <li><a href="#" class="title">بر اساس سبک</a></li>
+                                        {% for cat in info.get_categories %}
+                                        <li><a href="{% url 'musics:songs_by_category' cat.slug %}">{{ cat.title }}</a></li>
+                                        {% endfor %}
+                                        <li><a href="#" class="title">بر اساس برچسب</a></li>
+                                        {% for tag in info.get_tags %}
+                                        <li><a href="{% url 'musics:songs_by_tag' tag.id tag.get_slug %}">{{ tag.title }}</a></li>
+                                        {% endfor %}
+                                        <li><a href="#" class="title">بر اساس زبان</a></li>
+                                        {% for language in info.get_languages %}
+                                        <li><a href="{{ language.get_absolute_url }}">{{ language.name }}</a></li>
+                                        {% endfor %}
+                                        <li><a href="#" class="title">بر اساس خواننده</a></li>
+                                        {% for singer in info.get_singers %}
+                                        <li><a href="{{singer.get_absolute_url}}">{{ singer.name }}</a></li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
-                                <li class="nav-item"><a href="" class="nav-link  header-top-menu-link-a ">منو
-                                    ساده<i class="bi bi-menu-app"></i></a>
-                                    <ul class="level-one">
-                                        <li><a href="">منو شماره 1</a></li>
-                                        <li><a href="">منو شماره 2</a></li>
-                                        <li class="position-relative"><a href="">منو شماره 3 <i
-                                                class="bi bi-chevron-left"></i></a>
-                                            <ul class="level-two">
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">2 زیر منو شماره </a></li>
-                                                <li><a href="">3 زیر منو شماره </a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="">منو شماره 4</a></li>
-                                        <li><a href="">منو شماره 5</a></li>
-                                        <li><a href="">منو شماره 6</a></li>
-                                    </ul>
+                                <li class="nav-item"><a href="{% url 'musics:collection_list' %}" class="nav-link  header-top-menu-link-a ">
+                                    لیست کالکشن‌ها
+                                    <i class="bi bi-menu-app"></i></a>
                                 </li>
                                 <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">
                                     تخفیف ها و پیشنهاد ها <i class="bi bi-tag"></i></a></li>
@@ -1169,6 +1313,9 @@
         </div>
 
         <div class="bmp-right">
+            <button type="button" class="bmp-btn" id="bmpPlaylistBtn" aria-label="افزودن به پلی‌لیست">
+                <i class="bi bi-plus-lg"></i>
+            </button>
             <a href="#" class="bmp-detail-link" id="bmpDetailLink">
                 <i class="bi bi-music-note-list"></i>
             </a>
@@ -1186,7 +1333,6 @@
 
     <audio id="globalAudioPlayer"></audio>
 </div>
-
 
 <div class="lyrics-glass-modal" id="lyricsGlassModal">
     <div class="lyrics-modal-dialog">
@@ -1220,16 +1366,53 @@
     </div>
 </div>
 
-<script src="{% static 'assets/js/vendor/modernizr-3.11.2.min.js' %}"></script>
-<script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
-<script src="{% static 'assets/js/vendor/bootstrap.bundle-5.3.2.min.js' %}"></script>
-<script src="{% static 'assets/js/plugin/swiper/swiper-bundle.min.js' %}"></script>
-<script src="{% static 'assets/js/plugin/countdown/countdown.js' %}"></script>
-<script src="{% static 'assets/js/plugin/vanilla-tilt/vanilla-tilt.min.js' %}"></script>
-<script src="{% static 'assets/js/plugin/rasta-contact/script.js' %}"></script>
-<script src="{% static 'assets/js/plugin/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
-<script src="{% static 'assets/js/plugins.js' %}"></script>
-<script src="{% static 'assets/js/main.js' %}"></script>
+<div class="playlist-glass-modal" id="playlistGlassModal">
+    <div class="playlist-modal-dialog">
+        <button type="button" class="playlist-modal-close" id="playlistModalClose">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="playlist-modal-header">
+            <h4>افزودن به پلی‌لیست</h4>
+            <p id="playlistModalSongTitle">آهنگ انتخاب‌شده</p>
+        </div>
+
+        <div class="playlist-modal-alert" id="playlistModalAlert"></div>
+
+        <form id="playlistSongForm">
+            {% csrf_token %}
+
+            <input type="hidden" name="song_id" id="playlistSongId">
+
+            <div class="playlist-create-box">
+                <label>
+                    <input type="radio" name="playlist_mode" value="new" checked>
+                    ایجاد پلی‌لیست جدید
+                </label>
+
+                <input
+                    type="text"
+                    name="new_playlist_name"
+                    id="newPlaylistName"
+                    placeholder="نام پلی‌لیست جدید"
+                >
+            </div>
+
+            <div class="playlist-list-box">
+                <p>یا انتخاب از پلی‌لیست‌های موجود:</p>
+
+                <div id="userPlaylistsList">
+                    <span>در حال دریافت...</span>
+                </div>
+            </div>
+
+            <button type="submit" class="playlist-submit-btn">
+                ثبت
+            </button>
+        </form>
+    </div>
+</div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -1254,6 +1437,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const bmpDuration = document.getElementById("bmpDuration");
     const bmpVolume = document.getElementById("bmpVolume");
     const bmpLyricsBtn = document.getElementById("bmpLyricsBtn");
+    const bmpPlaylistBtn = document.getElementById("bmpPlaylistBtn");
+    const playlistModal = document.getElementById("playlistGlassModal");
+    const playlistModalClose = document.getElementById("playlistModalClose");
+    const playlistModalSongTitle = document.getElementById("playlistModalSongTitle");
+    const playlistModalAlert = document.getElementById("playlistModalAlert");
+    const playlistSongForm = document.getElementById("playlistSongForm");
+    const playlistSongId = document.getElementById("playlistSongId");
+    const newPlaylistName = document.getElementById("newPlaylistName");
+    const userPlaylistsList = document.getElementById("userPlaylistsList");
+
 
     const lyricsModal = document.getElementById("lyricsGlassModal");
     const lyricsModalClose = document.getElementById("lyricsModalClose");
@@ -1282,6 +1475,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const playlist = playButtons
         .map((btn) => ({
+            id: btn.dataset.songId || "",
             title: btn.dataset.title || "",
             singer: btn.dataset.singer || "",
             audio: btn.dataset.audio || "",
@@ -1291,6 +1485,7 @@ document.addEventListener("DOMContentLoaded", function () {
             translatedLyrics: btn.dataset.translatedLyrics || ""
         }))
         .filter((song) => song.audio);
+
 
     let currentIndex = -1;
     let isSeeking = false;
@@ -1473,6 +1668,94 @@ document.addEventListener("DOMContentLoaded", function () {
         updateRangeFill(bmpVolume);
     }
 
+    function getCurrentSong() {
+    if (currentIndex < 0 || currentIndex >= playlist.length) return null;
+    return playlist[currentIndex];
+}
+
+function showPlaylistModalAlert(message, type) {
+    if (!playlistModalAlert) return;
+
+    playlistModalAlert.textContent = message;
+    playlistModalAlert.className = "playlist-modal-alert show " + type;
+}
+
+function clearPlaylistModalAlert() {
+    if (!playlistModalAlert) return;
+
+    playlistModalAlert.textContent = "";
+    playlistModalAlert.className = "playlist-modal-alert";
+}
+
+function openPlaylistModal() {
+    const song = getCurrentSong();
+
+    if (!song || !song.id) {
+        alert("ابتدا یک آهنگ را پخش کنید.");
+        return;
+    }
+
+    if (playlistSongId) {
+        playlistSongId.value = song.id;
+    }
+
+    if (playlistModalSongTitle) {
+        playlistModalSongTitle.textContent = song.title || "آهنگ انتخاب‌شده";
+    }
+
+    clearPlaylistModalAlert();
+
+    if (playlistModal) {
+        playlistModal.classList.add("show");
+    }
+
+    loadUserPlaylists();
+}
+
+function closePlaylistModal() {
+    if (playlistModal) {
+        playlistModal.classList.remove("show");
+    }
+}
+
+function loadUserPlaylists() {
+    if (!userPlaylistsList) return;
+
+    userPlaylistsList.innerHTML = "<span>در حال دریافت...</span>";
+
+    fetch("{% url 'accounts:playlist_song_ajax' %}", {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (!data.ok) {
+                userPlaylistsList.innerHTML = "<span>خطا در دریافت پلی‌لیست‌ها</span>";
+                return;
+            }
+
+            if (!data.playlists.length) {
+                userPlaylistsList.innerHTML = "<span>هنوز پلی‌لیستی ندارید.</span>";
+                return;
+            }
+
+            userPlaylistsList.innerHTML = data.playlists.map((item) => {
+                return `
+                    <label class="playlist-radio-item">
+                        <input type="radio" name="playlist_mode" value="${item.id}">
+                        <span>${item.name}</span>
+                    </label>
+                `;
+            }).join("");
+        })
+        .catch(() => {
+            userPlaylistsList.innerHTML = "<span>خطا در ارتباط با سرور</span>";
+        });
+}
+
+
     window.globalMusicPlayer = {
         loadSong: function (index, autoPlay = true) {
             loadSong(index, autoPlay);
@@ -1628,11 +1911,74 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    if (bmpPlaylistBtn) {
+    bmpPlaylistBtn.addEventListener("click", openPlaylistModal);
+}
+
+if (playlistModalClose) {
+    playlistModalClose.addEventListener("click", closePlaylistModal);
+}
+
+if (playlistModal) {
+    playlistModal.addEventListener("click", function (event) {
+        if (event.target === playlistModal) {
+            closePlaylistModal();
+        }
+    });
+}
+
+if (playlistSongForm) {
+    playlistSongForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(playlistSongForm);
+
+        fetch("{% url 'accounts:playlist_song_ajax' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.ok) {
+                    showPlaylistModalAlert(data.message || "با موفقیت ثبت شد.", "success");
+
+                    if (newPlaylistName) {
+                        newPlaylistName.value = "";
+                    }
+
+                    loadUserPlaylists();
+                } else {
+                    showPlaylistModalAlert(data.message || "خطا در ثبت اطلاعات.", "error");
+                }
+            })
+            .catch(() => {
+                showPlaylistModalAlert("خطا در ارتباط با سرور.", "error");
+            });
+    });
+}
+
+
     activateLyricsTab("raw");
     resetProgressUI();
     updatePlayIcon(false);
 });
 </script>
+
+<script src="{% static 'assets/js/vendor/modernizr-3.11.2.min.js' %}"></script>
+<script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/vendor/bootstrap.bundle-5.3.2.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/countdown/countdown.js' %}"></script>
+<script src="{% static 'assets/js/plugin/vanilla-tilt/vanilla-tilt.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/rasta-contact/script.js' %}"></script>
+<script src="{% static 'assets/js/plugin/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+
 
 
 

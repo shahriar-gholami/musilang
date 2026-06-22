@@ -1,16 +1,6 @@
 from django.urls import path
 
-from .views import (
-    DashboardAccountView,
-    DashboardCommentsView,
-    DashboardFavoritesView,
-    DashboardPackagesView,
-    DashboardPlaylistCreateView,
-    DashboardPlaylistsView,
-    DashboardSongRequestView,
-    DashboardTicketsView,
-    DashboardView,
-)
+from .views import *
 
 app_name = "dashboard"
 
@@ -23,6 +13,7 @@ urlpatterns = [
         DashboardPlaylistCreateView.as_view(),
         name="dashboard_playlist_create",
     ),
+    path("dashboard/playlists/<int:pk>/<str:playlist_slug>/", PlaylistDetailView.as_view(), name="playlist_detail"),
     path("dashboard/song-request/", DashboardSongRequestView.as_view(), name="dashboard_song_request"),
     path("dashboard/account/", DashboardAccountView.as_view(), name="dashboard_account"),
     path("dashboard/tickets/", DashboardTicketsView.as_view(), name="dashboard_tickets"),

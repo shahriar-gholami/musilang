@@ -1,0 +1,491 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+{% block dashboard_content %}
+
+
+    
+
+        <div class="collection-detail-hero">
+
+            <div class="collection-detail-cover">
+                {% if collection.image %}
+                    <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+                {% else %}
+                    <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+                {% endif %}
+            </div>
+
+            <div class="collection-detail-content">
+                <span class="collection-badge">
+                   <a href="{% url 'dashboard:dashboard_playlists' %}">بازگشت به لیست‌های پخش</a>
+                </span>
+
+                <h1>{{ collection.title }}</h1>
+
+                {% if collection.description %}
+                    <p>{{ collection.description }}</p>
+                {% else %}
+                    <p>
+                        مجموعه‌ای از آهنگ‌های منتخب این کالکشن را می‌توانید پشت سر هم پخش کنید.
+                    </p>
+                {% endif %}
+
+                <div class="collection-detail-meta">
+                    <span>
+                        <i class="bi bi-music-note-list"></i>
+                        {{ songs|length }} آهنگ
+                    </span>
+
+                    {% if collection.is_public %}
+                        <span class="public-badge">
+                            عمومی
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if songs %}
+                    <button type="button" class="collection-play-all-btn" id="playCollectionBtn">
+                        <i class="bi bi-play-fill"></i>
+                        پخش همه آهنگ‌ها
+                    </button>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="collection-songs-box">
+
+            <div class="section-head">
+                <h2>آهنگ‌های این کالکشن</h2>
+            </div>
+
+            {% if songs %}
+                <div class="collection-song-list">
+
+                    {% for song in songs %}
+                        <div class="collection-song-item">
+
+                            <div class="collection-song-right">
+
+                                <div class="collection-song-index">
+                                    {{ forloop.counter }}
+                                </div>
+
+                                <div class="collection-song-cover">
+                                    {% if song.cover %}
+                                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                                    {% elif song.image %}
+                                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                                    {% else %}
+                                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
+                                    {% endif %}
+                                </div>
+
+                                <div class="collection-song-info">
+                                    <h3>{{ song.title }}</h3>
+
+                                    <p>
+                                        {% if song.singer %}
+                                            {{ song.singer.name }}
+                                        {% else %}
+                                            خواننده نامشخص
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="collection-song-extra">
+                                        {% if song.language %}
+                                            <span>{{ song.language }}</span>
+                                        {% endif %}
+
+                                        {% if song.year %}
+                                            <span>{{ song.year }}</span>
+                                        {% endif %}
+
+                                        {% if song.album %}
+                                            <span>{{ song.album.title }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="collection-song-left">
+
+                                <a href="{{ song.get_absolute_url }}" class="song-detail-btn">
+                                    جزئیات
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="song-play-btn js-play-song"
+                                    data-song-id="{{ song.id }}"
+                                    data-title="{{ song.title|escape }}"
+                                    data-singer="{% if song.singer %}{{ song.singer.name|escape }}{% else %}نامشخص{% endif %}"
+                                    data-audio="{% if song.audio_file %}{{ song.audio_file.url }}{% endif %}"
+                                    data-cover="{% if song.cover %}{{ song.cover.url }}{% elif song.image %}{{ song.image.url }}{% else %}{% static 'assets/img/slide-3.gif' %}{% endif %}"
+                                    data-detail-url="{{ song.get_absolute_url }}"
+                                    {% if song.has_lyrics %}
+                                        data-raw-lyrics="{{ song.lyrics.raw_lyrics|default:''|escape }}"
+                                        data-translated-lyrics="{{ song.lyrics.translated_lyrics|default:''|escape }}"
+                                    {% else %}
+                                        data-raw-lyrics=""
+                                        data-translated-lyrics=""
+                                    {% endif %}
+                                >
+                                    <i class="bi bi-play-fill"></i>
+                                    پخش
+                                </button>
+
+
+
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+            {% else %}
+                <div class="empty-detail-box">
+                    هنوز آهنگی برای این کالکشن ثبت نشده است.
+                </div>
+            {% endif %}
+
+        </div>
+
+
+{{ playlist|json_script:"collectionPlaylistData" }}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const playlistElement = document.getElementById("collectionPlaylistData");
+    if (!playlistElement) return;
+
+    let collectionPlaylist = [];
+
+    try {
+        collectionPlaylist = JSON.parse(playlistElement.textContent);
+    } catch (error) {
+        console.error("Collection playlist JSON parse error:", error);
+        return;
+    }
+
+    if (!collectionPlaylist.length) return;
+
+    const defaultCover = "{% static 'assets/img/slide-3.gif' %}";
+
+    const playerWrapper = document.getElementById("bottomMusicPlayer");
+    const audio = document.getElementById("globalAudioPlayer");
+
+    const bmpCover = document.getElementById("bmpCover");
+    const bmpTitle = document.getElementById("bmpTitle");
+    const bmpSinger = document.getElementById("bmpSinger");
+    const bmpDetailLink = document.getElementById("bmpDetailLink");
+
+    const bmpPlayPause = document.getElementById("bmpPlayPause");
+    const bmpPlayPauseIcon = document.getElementById("bmpPlayPauseIcon");
+    const bmpPrev = document.getElementById("bmpPrev");
+    const bmpNext = document.getElementById("bmpNext");
+    const bmpClose = document.getElementById("bmpClose");
+
+    const bmpProgress = document.getElementById("bmpProgress");
+    const bmpCurrentTime = document.getElementById("bmpCurrentTime");
+    const bmpDuration = document.getElementById("bmpDuration");
+    const bmpVolume = document.getElementById("bmpVolume");
+
+    const bmpLyricsBtn = document.getElementById("bmpLyricsBtn");
+    const lyricsGlassModal = document.getElementById("lyricsGlassModal");
+    const lyricsModalClose = document.getElementById("lyricsModalClose");
+    const lyricsModalSongTitle = document.getElementById("lyricsModalSongTitle");
+    const lyricsModalSingerName = document.getElementById("lyricsModalSingerName");
+    const lyricsRawContent = document.getElementById("lyricsRawContent");
+    const lyricsTranslatedContent = document.getElementById("lyricsTranslatedContent");
+
+    const lyricsTabButtons = document.querySelectorAll(".lyrics-tab-btn");
+    const lyricsRawTab = document.getElementById("lyricsRawTab");
+    const lyricsTranslatedTab = document.getElementById("lyricsTranslatedTab");
+
+    if (!playerWrapper || !audio) return;
+
+    let currentPlaylist = collectionPlaylist;
+    let currentIndex = 0;
+
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return "0:00";
+
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+
+        return minutes + ":" + (secs < 10 ? "0" + secs : secs);
+    }
+
+    function getCurrentSong() {
+        return currentPlaylist[currentIndex] || null;
+    }
+
+    function updateLyrics(song) {
+        if (!song) return;
+
+        if (lyricsModalSongTitle) {
+            lyricsModalSongTitle.textContent = song.title || "متن آهنگ";
+        }
+
+        if (lyricsModalSingerName) {
+            lyricsModalSingerName.textContent = song.singer || "خواننده";
+        }
+
+        if (lyricsRawContent) {
+            lyricsRawContent.textContent = song.lyrics_raw || "متن آهنگ موجود نیست.";
+        }
+
+        if (lyricsTranslatedContent) {
+            lyricsTranslatedContent.textContent = song.lyrics_translated || "ترجمه‌ای برای این آهنگ ثبت نشده است.";
+        }
+    }
+
+    function setPlayerSong(song) {
+        if (!song) return;
+
+        if (bmpTitle) {
+            bmpTitle.textContent = song.title || "بدون عنوان";
+        }
+
+        if (bmpSinger) {
+            bmpSinger.textContent = song.singer || "خواننده نامشخص";
+        }
+
+        if (bmpCover) {
+            bmpCover.src = song.cover || defaultCover;
+        }
+
+        if (bmpDetailLink) {
+            bmpDetailLink.href = song.detail_url || "#";
+        }
+
+        audio.src = song.audio || "";
+
+        if (bmpProgress) {
+            bmpProgress.value = 0;
+        }
+
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = "0:00";
+        }
+
+        if (bmpDuration) {
+            bmpDuration.textContent = "0:00";
+        }
+
+        updateLyrics(song);
+
+        playerWrapper.classList.add("show");
+    }
+
+    function playSongAt(index, autoplay = true) {
+        if (index < 0 || index >= currentPlaylist.length) return;
+
+        currentIndex = index;
+
+        const song = getCurrentSong();
+
+        if (!song || !song.audio) {
+            console.warn("این آهنگ فایل صوتی ندارد:", song);
+            return;
+        }
+
+        setPlayerSong(song);
+
+        if (autoplay) {
+            audio.play()
+                .then(function () {
+                    if (bmpPlayPauseIcon) {
+                        bmpPlayPauseIcon.className = "bi bi-pause-fill";
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Audio play error:", error);
+                });
+        }
+    }
+
+    function playNextSong() {
+        if (!currentPlaylist.length) return;
+
+        let nextIndex = currentIndex + 1;
+
+        if (nextIndex >= currentPlaylist.length) {
+            nextIndex = 0;
+        }
+
+        playSongAt(nextIndex, true);
+    }
+
+    function playPrevSong() {
+        if (!currentPlaylist.length) return;
+
+        let prevIndex = currentIndex - 1;
+
+        if (prevIndex < 0) {
+            prevIndex = currentPlaylist.length - 1;
+        }
+
+        playSongAt(prevIndex, true);
+    }
+
+    const playCollectionBtn = document.getElementById("playCollectionBtn");
+
+    if (playCollectionBtn) {
+        playCollectionBtn.addEventListener("click", function () {
+            currentPlaylist = collectionPlaylist;
+            playSongAt(0, true);
+        });
+    }
+
+    document.querySelectorAll(".js-play-song").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const index = parseInt(this.dataset.index, 10);
+
+            if (isNaN(index)) return;
+
+            currentPlaylist = collectionPlaylist;
+            playSongAt(index, true);
+        });
+    });
+
+    if (bmpPlayPause) {
+        bmpPlayPause.addEventListener("click", function () {
+            if (!audio.src) {
+                playSongAt(currentIndex, true);
+                return;
+            }
+
+            if (audio.paused) {
+                audio.play()
+                    .then(function () {
+                        if (bmpPlayPauseIcon) {
+                            bmpPlayPauseIcon.className = "bi bi-pause-fill";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error("Audio play error:", error);
+                    });
+            } else {
+                audio.pause();
+
+                if (bmpPlayPauseIcon) {
+                    bmpPlayPauseIcon.className = "bi bi-play-fill";
+                }
+            }
+        });
+    }
+
+    if (bmpNext) {
+        bmpNext.addEventListener("click", function () {
+            playNextSong();
+        });
+    }
+
+    if (bmpPrev) {
+        bmpPrev.addEventListener("click", function () {
+            playPrevSong();
+        });
+    }
+
+    audio.addEventListener("loadedmetadata", function () {
+        if (bmpDuration) {
+            bmpDuration.textContent = formatTime(audio.duration);
+        }
+    });
+
+    audio.addEventListener("timeupdate", function () {
+        if (bmpCurrentTime) {
+            bmpCurrentTime.textContent = formatTime(audio.currentTime);
+        }
+
+        if (bmpProgress && audio.duration) {
+            bmpProgress.value = (audio.currentTime / audio.duration) * 100;
+        }
+    });
+
+    if (bmpProgress) {
+        bmpProgress.addEventListener("input", function () {
+            if (audio.duration) {
+                audio.currentTime = (Number(this.value) / 100) * audio.duration;
+            }
+        });
+    }
+
+    if (bmpVolume) {
+        bmpVolume.addEventListener("input", function () {
+            audio.volume = Number(this.value);
+        });
+    }
+
+    audio.addEventListener("play", function () {
+        if (bmpPlayPauseIcon) {
+            bmpPlayPauseIcon.className = "bi bi-pause-fill";
+        }
+    });
+
+    audio.addEventListener("pause", function () {
+        if (bmpPlayPauseIcon) {
+            bmpPlayPauseIcon.className = "bi bi-play-fill";
+        }
+    });
+
+    audio.addEventListener("ended", function () {
+        playNextSong();
+    });
+
+    if (bmpClose) {
+        bmpClose.addEventListener("click", function () {
+            audio.pause();
+            playerWrapper.classList.remove("show");
+        });
+    }
+
+    if (bmpLyricsBtn && lyricsGlassModal) {
+        bmpLyricsBtn.addEventListener("click", function () {
+            lyricsGlassModal.classList.add("show");
+        });
+    }
+
+    if (lyricsModalClose && lyricsGlassModal) {
+        lyricsModalClose.addEventListener("click", function () {
+            lyricsGlassModal.classList.remove("show");
+        });
+    }
+
+    lyricsTabButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            lyricsTabButtons.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const selectedTab = this.dataset.tab;
+
+            if (selectedTab === "raw") {
+                if (lyricsRawTab) {
+                    lyricsRawTab.classList.add("active");
+                }
+
+                if (lyricsTranslatedTab) {
+                    lyricsTranslatedTab.classList.remove("active");
+                }
+            } else {
+                if (lyricsTranslatedTab) {
+                    lyricsTranslatedTab.classList.add("active");
+                }
+
+                if (lyricsRawTab) {
+                    lyricsRawTab.classList.remove("active");
+                }
+            }
+        });
+    });
+});
+</script>
+
+
+{% endblock %}

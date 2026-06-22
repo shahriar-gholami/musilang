@@ -11,5 +11,5 @@ urlpatterns = [
     path("login/", views.LoginView.as_view(), name="login"),
     path("verify-otp/<str:phone_number>/", views.VerifyOTPView.as_view(), name="verify_otp"),
     path("logout/", views.UserLogoutView.as_view(), name="logout"),
-
+    path("ajax/playlist-song/", views.PlaylistSongAjaxView.as_view(), name="playlist_song_ajax")
 ]

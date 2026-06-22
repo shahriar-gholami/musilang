@@ -83,7 +83,7 @@ class BlogPostDetailView(View):
     def get(self, request, post_slug):
 
         post = get_object_or_404(
-            BlogPost.objects.prefetch_related('faqs'),
+            BlogPost,
             slug=post_slug
         )
 

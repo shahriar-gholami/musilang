@@ -1,21 +1,131 @@
 {% extends "dashboard/base_dashboard.html" %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
+<section class="dashboard-page-head">
     <div>
-        <h1>اطلاعات حساب</h1>
-        <p>مشاهده و ویرایش اطلاعات حساب کاربری</p>
+        <span class="dashboard-eyebrow">حساب کاربری</span>
+        <h1 class="dashboard-page-title">اطلاعات حساب</h1>
+        <p class="dashboard-page-desc">
+            اطلاعات اصلی حساب خود را مشاهده و ویرایش کنید.
+        </p>
     </div>
-</div>
+</section>
 
-<div class="dashboard-section">
-    <form method="post" class="dashboard-form">
-        {% csrf_token %}
-        {{ form.as_p }}
+{% if messages %}
+    <div class="dashboard-messages">
+        {% for message in messages %}
+            <div class="dashboard-message dashboard-message-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
-        <button type="submit" class="dashboard-btn">
-            ذخیره تغییرات
-        </button>
-    </form>
+<div class="dashboard-account-grid">
+    <div class="dashboard-card dashboard-account-form-card">
+        <div class="dashboard-card-head">
+            <div>
+                <h2>ویرایش اطلاعات</h2>
+                <p>نام، ایمیل و اطلاعات اصلی حساب شما</p>
+            </div>
+        </div>
+
+        <form method="post" class="dashboard-form" novalidate>
+            {% csrf_token %}
+
+            <div class="dashboard-form-group">
+                <label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}
+                    <div class="dashboard-field-error">{{ form.full_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-form-group">
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="dashboard-field-error">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-form-group">
+                <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+                {{ form.phone_number }}
+                <small class="dashboard-help-text">
+                    شماره موبایل برای ورود استفاده می‌شود و از این بخش قابل تغییر نیست.
+                </small>
+                {% if form.phone_number.errors %}
+                    <div class="dashboard-field-error">{{ form.phone_number.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="dashboard-field-error">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+
+            <div class="dashboard-form-actions">
+                <button type="submit" class="dashboard-btn dashboard-btn-primary">
+                    ذخیره تغییرات
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <aside class="dashboard-card dashboard-account-info-card">
+        <div class="dashboard-card-head">
+            <div>
+                <h2>جزئیات عضویت</h2>
+                <p>وضعیت حساب و اشتراک شما</p>
+            </div>
+        </div>
+
+        <div class="dashboard-info-list">
+            <div class="dashboard-info-item">
+                <span>تاریخ عضویت</span>
+                <strong>{{ customer.join_date|date:"Y/m/d" }}</strong>
+            </div>
+
+            <div class="dashboard-info-item">
+                <span>کد معرف</span>
+                <strong>
+                    {% if customer.affiliation_code %}
+                        {{ customer.affiliation_code }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="dashboard-info-item">
+                <span>وضعیت اشتراک</span>
+                {% if customer.has_package %}
+                    <strong class="dashboard-status dashboard-status-active">فعال</strong>
+                {% else %}
+                    <strong class="dashboard-status dashboard-status-muted">غیرفعال</strong>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-info-item">
+                <span>پایان اشتراک</span>
+                <strong>
+                    {% if customer.site_pkg_exp_date %}
+                        {{ customer.site_pkg_exp_date|date:"Y/m/d" }}
+                    {% else %}
+                        ندارد
+                    {% endif %}
+                </strong>
+            </div>
+        </div>
+
+        <div class="dashboard-account-note">
+            <h3>نکته</h3>
+            <p>
+                برای تغییر شماره موبایل یا مشکلات مربوط به اشتراک، از بخش تیکت‌ها با پشتیبانی در ارتباط باشید.
+            </p>
+        </div>
+    </aside>
 </div>
 {% endblock %}

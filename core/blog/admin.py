@@ -18,11 +18,6 @@ class BlogTagAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}  # خودکار پر کردن slug بر اساس name
     ordering = ('name',)
 
-class PostFAQInline(admin.TabularInline):
-    model = PostFAQ
-    extra = 1
-    fields = ('question', 'answer')
-
 # ثبت مدل BlogPost
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
@@ -33,7 +28,6 @@ class BlogPostAdmin(admin.ModelAdmin):
     ordering = ('-created_date',)
     list_editable = ('published',)
     list_select_related = ('category',)
-    inlines = [PostFAQInline]
     autocomplete_fields = ('category', 'tags')  # برای انتخاب راحت‌تر دسته‌بندی و تگ‌ها
     filter_horizontal = ('tags',)  # برای مدیریت بهتر رابطه ManyToMany
     

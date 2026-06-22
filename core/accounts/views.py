@@ -14,8 +14,89 @@ from utils import send_otp_code
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from .models import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.views import View
+
+from .models import Customer
+from musics.models import Playlist, Song
 
 # Create your views here.
+
+class PlaylistSongAjaxView(LoginRequiredMixin, View):
+    def get_customer(self):
+        return Customer.objects.get(user=self.request.user)
+
+    def get(self, request):
+        customer = self.get_customer()
+
+        playlists = Playlist.objects.filter(customer=customer).order_by("-created_date")
+
+        data = [
+            {
+                "id": playlist.id,
+                "name": playlist.name,
+            }
+            for playlist in playlists
+        ]
+
+        return JsonResponse({
+            "ok": True,
+            "playlists": data,
+        })
+
+    def post(self, request):
+        customer = self.get_customer()
+
+        song_id = request.POST.get("song_id")
+        playlist_mode = request.POST.get("playlist_mode")
+        new_playlist_name = request.POST.get("new_playlist_name", "").strip()
+
+        if not song_id:
+            return JsonResponse({
+                "ok": False,
+                "message": "آهنگ مشخص نیست.",
+            })
+
+        try:
+            song = Song.objects.get(id=song_id)
+        except Song.DoesNotExist:
+            return JsonResponse({
+                "ok": False,
+                "message": "آهنگ پیدا نشد.",
+            })
+
+        if playlist_mode == "new":
+            if not new_playlist_name:
+                return JsonResponse({
+                    "ok": False,
+                    "message": "نام پلی‌لیست جدید را وارد کنید.",
+                })
+
+            playlist = Playlist.objects.create(
+                name=new_playlist_name,
+                customer=customer,
+            )
+
+        else:
+            try:
+                playlist = Playlist.objects.get(
+                    id=playlist_mode,
+                    customer=customer,
+                )
+            except Playlist.DoesNotExist:
+                return JsonResponse({
+                    "ok": False,
+                    "message": "پلی‌لیست انتخاب‌شده پیدا نشد.",
+                })
+
+        playlist.songs.add(song)
+
+        return JsonResponse({
+            "ok": True,
+            "message": "آهنگ به پلی‌لیست اضافه شد.",
+        })
+
 
 
 

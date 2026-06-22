@@ -1,33 +1,68 @@
 {% extends "dashboard/base_dashboard.html" %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
+<section class="dashboard-page-head">
     <div>
-        <h1>دیدگاه‌ها</h1>
-        <p>دیدگاه‌هایی که در سایت ثبت کرده‌ای</p>
+        <span class="dashboard-eyebrow">دیدگاه‌ها</span>
+        <h1 class="dashboard-page-title">دیدگاه‌های من</h1>
+        <p class="dashboard-page-desc">
+            در این بخش می‌توانید همه دیدگاه‌هایی که برای آهنگ‌ها ثبت کرده‌اید را مشاهده کنید.
+        </p>
     </div>
-</div>
+</section>
 
-<div class="dashboard-section">
+<div class="dashboard-card dashboard-comments-card">
+    <div class="dashboard-card-head">
+        <div>
+            <h2>لیست دیدگاه‌ها</h2>
+            <p>وضعیت بررسی و متن هر دیدگاه در این لیست نمایش داده می‌شود.</p>
+        </div>
+    </div>
+
     {% if comments %}
-        <div class="dashboard-list">
+        <div class="dashboard-comments-list">
             {% for comment in comments %}
-                <div class="dashboard-list-item">
-                    <div>
-                        <strong>{{ comment.content|truncatechars:80 }}</strong>
-                        <span>{{ comment.created_at|date:"Y/m/d" }}</span>
+                <article class="dashboard-comment-item">
+                    <div class="dashboard-comment-top">
+                        <div class="dashboard-comment-song">
+                            <h3>
+                                {% if comment.song.get_absolute_url %}
+                                    <a href="{{ comment.song.get_absolute_url }}">
+                                        {{ comment.song.title }}
+                                    </a>
+                                {% else %}
+                                    {{ comment.song.title }}
+                                {% endif %}
+                            </h3>
+                            <span class="dashboard-comment-date">
+                                {{ comment.created_at|date:"Y/m/d - H:i" }}
+                            </span>
+                        </div>
+
+                        <div class="dashboard-comment-status-wrap">
+                            {% if comment.is_confirmed %}
+                                <span class="dashboard-comment-status dashboard-comment-status-confirmed">
+                                    تایید شده
+                                </span>
+                            {% else %}
+                                <span class="dashboard-comment-status dashboard-comment-status-pending">
+                                    در انتظار تایید
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    {% if comment.is_approved %}
-                        <span class="text-success">تایید شده</span>
-                    {% else %}
-                        <span class="text-warning">در انتظار تایید</span>
-                    {% endif %}
-                </div>
+                    <div class="dashboard-comment-body">
+                        <p>{{ comment.text|linebreaksbr }}</p>
+                    </div>
+                </article>
             {% endfor %}
         </div>
     {% else %}
-        <div class="dashboard-empty">هنوز دیدگاهی ثبت نکرده‌ای.</div>
+        <div class="dashboard-empty-state">
+            <h3>هنوز دیدگاهی ثبت نکرده‌اید</h3>
+            <p>بعد از ثبت دیدگاه برای آهنگ‌ها، لیست آن‌ها در این بخش نمایش داده می‌شود.</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

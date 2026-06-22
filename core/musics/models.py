@@ -41,6 +41,7 @@ class Singer(models.Model):
     name = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    is_special = models.BooleanField(default=False)
     nationality = models.ForeignKey(
         Language,
         on_delete=models.SET_NULL,
@@ -316,6 +317,9 @@ class Playlist(models.Model):
     songs = models.ManyToManyField(Song)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    def get_playlist_slug(self):
+        return self.name.replace(' ','-').replace('/','-')
 
     def __str__(self):
         return self.name

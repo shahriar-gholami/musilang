@@ -481,7 +481,6 @@ class CollectionDetailView(View):
         })
 
 
-
 class ArtistListView(View):
     template_name = "musics/artist_list.html"
     paginate_by = 12

@@ -1,21 +1,102 @@
 {% extends "dashboard/base_dashboard.html" %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
-    <div>
-        <h1>درخواست آهنگ</h1>
-        <p>اگر آهنگی در سایت نیست، از این بخش درخواست بده</p>
+
+<div class="song-request-page">
+
+    <div class="song-request-header">
+        <div>
+            <h1>درخواست آهنگ</h1>
+            <p>اگر آهنگی در سایت نیست، نام خواننده و نام آهنگ را برای ما ارسال کن.</p>
+        </div>
     </div>
+
+    {% if messages %}
+        <div class="song-request-messages">
+            {% for message in messages %}
+                <div class="song-request-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="song-request-card">
+        <form method="post" class="song-request-form">
+            {% csrf_token %}
+
+            <div class="song-request-field">
+                <label for="{{ form.singer_name.id_for_label }}">
+                    {{ form.singer_name.label }}
+                </label>
+
+                {{ form.singer_name }}
+
+                {% if form.singer_name.errors %}
+                    <div class="song-request-error">
+                        {{ form.singer_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="song-request-field">
+                <label for="{{ form.song_name.id_for_label }}">
+                    {{ form.song_name.label }}
+                </label>
+
+                {{ form.song_name }}
+
+                {% if form.song_name.errors %}
+                    <div class="song-request-error">
+                        {{ form.song_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="song-request-action">
+                <button type="submit" class="song-request-submit">
+                    ارسال درخواست
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="song-request-history">
+        <div class="song-request-history-head">
+            <div>
+                <h2>درخواست‌های اخیر شما</h2>
+                <p>آخرین درخواست‌هایی که برای بررسی ارسال کرده‌ای.</p>
+            </div>
+        </div>
+
+        {% if user_requests %}
+            <div class="song-request-list">
+                {% for item in user_requests %}
+                    <div class="song-request-item">
+                        <div class="song-request-info">
+                            <h3>{{ item.song_name }}</h3>
+                            <p>{{ item.singer_name }}</p>
+                        </div>
+
+                        <div class="song-request-meta">
+                            <span class="song-request-status status-{{ item.status }}">
+                                {{ item.get_status_display }}
+                            </span>
+
+                            <small>
+                                {{ item.created_at|date:"Y/m/d - H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="song-request-empty">
+                هنوز درخواستی ثبت نکرده‌ای.
+            </div>
+        {% endif %}
+    </div>
+
 </div>
 
-<div class="dashboard-section">
-    <form method="post" class="dashboard-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <button type="submit" class="dashboard-btn">
-            ارسال درخواست
-        </button>
-    </form>
-</div>
 {% endblock %}

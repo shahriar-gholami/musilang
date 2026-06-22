@@ -1,29 +1,222 @@
 {% extends "dashboard/base_dashboard.html" %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
+<section class="dashboard-page-head">
     <div>
-        <h1>تیکت‌ها</h1>
-        <p>پیگیری پیام‌ها و درخواست‌های پشتیبانی</p>
+        <span class="dashboard-eyebrow">پشتیبانی</span>
+        <h1 class="dashboard-page-title">تیکت‌ها</h1>
+        <p class="dashboard-page-desc">
+            درخواست‌های پشتیبانی خود را ثبت کنید و پاسخ‌ها را همین‌جا دنبال کنید.
+        </p>
+    </div>
+</section>
+
+{% if messages %}
+    <div class="dashboard-messages">
+        {% for message in messages %}
+            <div class="dashboard-message dashboard-message-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="dashboard-tickets-grid">
+    <div class="dashboard-card dashboard-ticket-create-card">
+        <div class="dashboard-card-head">
+            <div>
+                <h2>ثبت تیکت جدید</h2>
+                <p>موضوع و متن درخواست خود را وارد کنید.</p>
+            </div>
+        </div>
+
+        <form method="post" class="dashboard-form" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_ticket">
+
+            <div class="dashboard-form-group">
+                <label for="{{ create_form.subject.id_for_label }}">{{ create_form.subject.label }}</label>
+                {{ create_form.subject }}
+                {% if create_form.subject.errors %}
+                    <div class="dashboard-field-error">{{ create_form.subject.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-form-group">
+                <label for="{{ create_form.body.id_for_label }}">{{ create_form.body.label }}</label>
+                {{ create_form.body }}
+                {% if create_form.body.errors %}
+                    <div class="dashboard-field-error">{{ create_form.body.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            {% if create_form.non_field_errors %}
+                <div class="dashboard-field-error">
+                    {{ create_form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+
+            <div class="dashboard-form-actions">
+                <button type="submit" class="dashboard-btn dashboard-btn-primary">
+                    ثبت تیکت
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="dashboard-card dashboard-ticket-list-card">
+        <div class="dashboard-card-head">
+            <div>
+                <h2>لیست تیکت‌ها</h2>
+                <p>برای مشاهده متن تیکت و پاسخ‌ها، گزینه نمایش جزئیات را بزنید.</p>
+            </div>
+        </div>
+
+        {% if tickets %}
+            <div class="ticket-accordion-list">
+                {% for ticket in tickets %}
+                    <article class="ticket-accordion-item {% if ticket.is_answered %}ticket-is-answered{% endif %} {% if ticket.is_closed %}ticket-is-closed{% endif %}">
+                        <div class="ticket-accordion-header align-middle">
+                            <button
+                                type="button"
+                                class="ticket-toggle-btn"
+                                data-ticket-toggle="ticket-panel-{{ ticket.id }}"
+                                aria-expanded="false"
+                            >
+                                <span class="ticket-title-wrap">
+                                    <strong class="ticket-title">{{ ticket.subject }}</strong>
+                                    <small>{{ ticket.created_date|date:"Y/m/d - H:i" }}</small>
+                                </span>
+
+                                <span class="ticket-badges align-items-center">
+                                    {% if ticket.is_closed %}
+                                        <span class="ticket-badge ticket-badge-closed">بسته شده</span>
+                                    {% elif ticket.is_answered %}
+                                        <span class="ticket-badge ticket-badge-answered">پاسخ داده شده</span>
+                                    {% else %}
+                                        <span class="ticket-badge ticket-badge-waiting">در انتظار پاسخ</span>
+                                    {% endif %}
+                                </span>
+                            </button>
+
+                            <div class="ticket-actions align-items-center">
+                                <button
+                                    type="button"
+                                    class="dashboard-btn dashboard-btn-light ticket-detail-btn"
+                                    data-ticket-toggle="ticket-panel-{{ ticket.id }}"
+                                >
+                                    نمایش جزئیات
+                                </button>
+
+                                {% if not ticket.is_closed %}
+                                    <form method="post" class="ticket-close-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="close_ticket">
+                                        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                                        <button type="submit" class="dashboard-btn dashboard-btn-danger">
+                                            بستن تیکت
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="ticket-panel-{{ ticket.id }}" class="ticket-accordion-panel">
+                            <div class="ticket-thread">
+                                <div class="ticket-message ticket-message-main">
+                                    <div class="ticket-message-head">
+                                        <strong>متن تیکت شما</strong>
+                                        <span>{{ ticket.created_date|date:"Y/m/d - H:i" }}</span>
+                                    </div>
+                                    <p>{{ ticket.body|linebreaksbr }}</p>
+                                </div>
+
+                                {% for reply in ticket.replies.all %}
+                                    <div class="ticket-message ticket-message-reply">
+                                        <div class="ticket-message-head">
+                                            <strong>پاسخ</strong>
+                                            <span>{{ reply.created_date|date:"Y/m/d - H:i" }}</span>
+                                        </div>
+                                        <p>{{ reply.body|linebreaksbr }}</p>
+                                    </div>
+                                {% empty %}
+                                    <div class="ticket-empty-replies">
+                                        هنوز پاسخی برای این تیکت ثبت نشده است.
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if not ticket.is_closed %}
+                                <form method="post" class="ticket-reply-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="reply_ticket">
+                                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+                                    <div class="dashboard-form-group">
+                                        <label for="reply-body-{{ ticket.id }}">ارسال پاسخ</label>
+                                        <textarea
+                                            id="reply-body-{{ ticket.id }}"
+                                            name="body"
+                                            class="dashboard-textarea ticket-reply-textarea"
+                                            rows="3"
+                                            placeholder="پاسخ خود را بنویسید..."
+                                            required
+                                        ></textarea>
+                                    </div>
+
+                                    <div class="dashboard-form-actions">
+                                        <button type="submit" class="dashboard-btn dashboard-btn-primary">
+                                            ارسال پاسخ
+                                        </button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="ticket-closed-note">
+                                    این تیکت بسته شده و امکان ارسال پاسخ جدید وجود ندارد.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty-state">
+                <h3>هنوز تیکتی ثبت نکرده‌اید</h3>
+                <p>از فرم سمت دیگر صفحه، اولین تیکت خود را برای پشتیبانی ارسال کنید.</p>
+            </div>
+        {% endif %}
     </div>
 </div>
 
-<div class="dashboard-section">
-    {% if tickets %}
-        <div class="dashboard-list">
-            {% for ticket in tickets %}
-                <div class="dashboard-list-item">
-                    <div>
-                        <strong>{{ ticket.title }}</strong>
-                        <span>{{ ticket.created_at|date:"Y/m/d" }}</span>
-                    </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButtons = document.querySelectorAll("[data-ticket-toggle]");
 
-                    <span>{{ ticket.get_status_display }}</span>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="dashboard-empty">هنوز تیکتی ثبت نکرده‌ای.</div>
-    {% endif %}
-</div>
+    toggleButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const panelId = button.getAttribute("data-ticket-toggle");
+            const panel = document.getElementById(panelId);
+
+            if (!panel) {
+                return;
+            }
+
+            const item = panel.closest(".ticket-accordion-item");
+            const isOpen = panel.classList.contains("is-open");
+
+            panel.classList.toggle("is-open", !isOpen);
+
+            if (item) {
+                item.classList.toggle("is-open", !isOpen);
+            }
+
+            document
+                .querySelectorAll('[data-ticket-toggle="' + panelId + '"]')
+                .forEach(function (relatedButton) {
+                    relatedButton.setAttribute("aria-expanded", String(!isOpen));
+                });
+        });
+    });
+});
+</script>
 {% endblock %}
