@@ -425,7 +425,7 @@
             <div class="row g-4">
                 {% for collection in collections %}
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-                        <article class="collection-card">
+                        <article class="collection-card bg-white">
 
                             <a href="{{ collection.get_absolute_url }}" class="collection-card-image">
                                 {% if collection.image %}
@@ -470,41 +470,6 @@
                                         {{ collection.title }}
                                     </a>
                                 </h2>
-
-                                {% if collection.description %}
-                                    <p class="collection-description">
-                                        {{ collection.description|truncatechars:105 }}
-                                    </p>
-                                {% else %}
-                                    <p class="collection-description">
-                                        این کالکشن شامل مجموعه‌ای از آهنگ‌های منتخب برای یادگیری زبان است.
-                                    </p>
-                                {% endif %}
-
-                                <div class="collection-singers">
-                                    <span class="collection-singers-label">
-                                        خواننده‌ها:
-                                    </span>
-
-                                    {% if collection.preview_singers %}
-                                        <div class="collection-singers-list">
-                                            {% for singer in collection.preview_singers %}
-                                                <a href="#">
-                                                    {{ singer.name }}
-                                                </a>
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        <div class="collection-singers-list">
-                                            <span>ثبت نشده</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <a href="{{ collection.get_absolute_url }}" class="collection-card-btn">
-                                    مشاهده جزئیات
-                                    <i class="bi bi-arrow-left"></i>
-                                </a>
 
                             </div>
 

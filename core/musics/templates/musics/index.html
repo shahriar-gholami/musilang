@@ -465,179 +465,36 @@
 
 /* =============================== */
 /* استایل دسته‌بندی‌ها */
-.category-grid-section {
-    margin-top: 35px;
-    padding: 10px 0 20px;
+
+/* ============================= */
+
+.music-category-carousel {
+    width: 100%;
+    padding: 10px 0 40px;
+    overflow: hidden;
 }
 
-.category-section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-}
-
-.category-section-title > div:first-child {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.category-section-title h3 {
-    margin: 0;
-    color: var(--main-color-one);
-    font-size: 22px;
-    font-weight: 900;
-}
-
-.section-title-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--main-color-one);
-    background: var(--main-color-two);
-    box-shadow: 0 10px 28px var(--main-color-two-shadow);
-}
-
-.music-category-grid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 16px;
+.music-category-carousel .swiper-slide {
+    height: auto;
 }
 
 .music-category-box {
-    position: relative;
-    min-height: 92px;
-    border-radius: 24px;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 80px;
+    padding: 16px;
+    border-radius: 14px;
     text-decoration: none;
-    background:
-        radial-gradient(circle at top left, var(--main-color-two-shadow), transparent 45%),
-        linear-gradient(135deg, var(--main-color-one), var(--main-color-one-hover));
-    box-shadow: 0 14px 35px var(--main-color-one-shadow);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-
-.music-category-box::before {
-    content: "";
-    position: absolute;
-    inset: 1px;
-    border-radius: 23px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    pointer-events: none;
-}
-
-.music-category-box::after {
-    content: "";
-    position: absolute;
-    width: 74px;
-    height: 74px;
-    left: -24px;
-    bottom: -28px;
-    border-radius: 50%;
-    background: var(--main-color-two);
-    opacity: 0.9;
-}
-
-.music-category-glow {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    top: -35px;
-    right: -25px;
-    border-radius: 50%;
-    background: var(--main-color-two);
-    opacity: 0.24;
-    filter: blur(2px);
+    background: #062d7d;
+    color: #ffffff;
 }
 
 .music-category-title {
-    position: relative;
-    z-index: 2;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 900;
-    text-align: center;
-    padding: 0 10px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
-.music-category-box:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 45px var(--main-color-one-shadow);
-}
-
-.music-category-box.category-yellow {
-    background:
-        radial-gradient(circle at top left, var(--main-color-one-shadow), transparent 45%),
-        linear-gradient(135deg, var(--main-color-two), var(--main-color-two-hover));
-    box-shadow: 0 14px 35px var(--main-color-two-shadow);
-}
-
-.music-category-box.category-yellow .music-category-title {
-    color: var(--main-color-one);
-}
-
-.music-category-box.category-yellow::after,
-.music-category-box.category-yellow .music-category-glow {
-    background: var(--main-color-one);
-}
-
-.music-category-empty {
-    grid-column: 1 / -1;
-    padding: 18px;
-    border-radius: 18px;
-    color: var(--main-color-one);
-    background: var(--main-color-one-shadow);
-    text-align: center;
-    font-weight: 700;
-}
-
-@media (max-width: 575px) {
-    .category-section-title h3 {
-        font-size: 18px;
-    }
-
-    .music-category-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .music-category-box {
-        min-height: 74px;
-        border-radius: 18px;
-    }
-
-    .music-category-box::before {
-        border-radius: 17px;
-    }
-
-    .music-category-box::after {
-        width: 52px;
-        height: 52px;
-        left: -20px;
-        bottom: -22px;
-    }
-
-    .music-category-glow {
-        width: 56px;
-        height: 56px;
-        top: -25px;
-        right: -20px;
-    }
-
-    .music-category-title {
-        font-size: 13px;
-        line-height: 1.6;
-    }
-}
-
-/* ============================= */
 
 
 </style>
@@ -858,31 +715,74 @@
 
 <!-- end product slider -->
 
-
-<section class="category-grid-section mt-0 py-0 pt-0">
-    <div class="container-fluid pt-0 mt-0">
-        <div class="section-title category-section-title  pt-0 mt-0">
-            <div>
-                <span class="section-title-icon">
-                    <i class="bi bi-grid-3x3-gap-fill"></i>
-                </span>
-                <h3>دسته‌بندی‌های موسیقی</h3>
+<div class="container-fluid position-relative">
+    <div class="slider-title mb-3">
+        <div class="slider-title-desc">
+            <div class="slider-title-title">
+                <h2 class="h1">
+                    دسته‌بندی‌های 
+                    <span class="main-color-one-color title-font">آهنگ‌ها</span>
+                </h2>
             </div>
         </div>
+    </div>
+</div>
+<section class="category-grid-section mt-0 py-0 pt-0">
+    <div class="container-fluid pt-0 mt-0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+        <div class="music-category-carousel swiper">
+            <div class="swiper-wrapper">
+                {% for category in categories %}
+                    <div class="swiper-slide">
+                        <a href="{% url 'musics:songs_by_category' category.slug %}"
+                        class="music-category-box">
+                            <span class="music-category-title text-white">{{ category.title }}</span>
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="music-category-empty">
+                        دسته‌بندی‌ای وجود ندارد
+                    </div>
+                {% endfor %}
+            </div>
 
-        <div class="music-category-grid">
-            {% for category in categories %}
-                <a href="{% url 'musics:songs_by_category' category.slug %}"
-                   class="music-category-box {% cycle 'category-purple' 'category-yellow' %}">
-                    <span class="music-category-glow"></span>
-                    <span class="music-category-title">{{ category.title }}</span>
-                </a>
-            {% empty %}
-                <div class="music-category-empty">
-                    دسته‌بندی‌ای وجود ندارد
-                </div>
-            {% endfor %}
+            <div class="music-category-button-next swiper-button-next"></div>
+            <div class="music-category-button-prev swiper-button-prev"></div>
+            <div class="music-category-pagination swiper-pagination"></div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                new Swiper(".music-category-carousel", {
+                    slidesPerView: 2,
+                    spaceBetween: 12,
+                    loop: false,
+                    grabCursor: true,
+                    navigation: {
+                        nextEl: ".music-category-button-next",
+                        prevEl: ".music-category-button-prev",
+                    },
+                    pagination: {
+                        el: ".music-category-pagination",
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        576: {
+                            slidesPerView: 3,
+                        },
+                        768: {
+                            slidesPerView: 4,
+                        },
+                        992: {
+                            slidesPerView: 5,
+                        },
+                        1200: {
+                            slidesPerView: 6,
+                        },
+                    },
+                });
+            });
+        </script>
     </div>
 </section>
 
@@ -909,7 +809,7 @@
 
                 <div class="col-sm-4">
                     <div class="slider-title-link">
-                        <a href="" class="main-color-one-color font-16">
+                        <a href="{% url 'musics:artist_list' %}" class="main-color-one-color font-16">
                             مشاهده همه <i class="bi bi-caret-left-fill"></i>
                         </a>
                     </div>
@@ -923,6 +823,7 @@
 
                     {% for singer in singers %}
                         <div class="swiper-slide">
+                            <a href="{{ singer.get_absolute_url }}"></a>
                             <div class="product-box music-card music-card-static music-card-light">
 
                                 <div class="music-cover-wrap">
@@ -969,10 +870,10 @@
                         <div class="slider-title-title">
                             <h2 class="h1 text-white">
                                 جدیدترین
-                                <span class="title-font text-light">پلی‌لیست‌ها</span>
+                                <span class="title-font text-light">کالکشن‌ها</span>
                             </h2>
                             <p class="mb-0 mt-2 h5 text-white">
-                                جدیدترین پلی‌لیست‌های منتخب را اینجا ببینید
+                                جدیدترین کالکشن‌های منتخب را اینجا ببینید
                             </p>
                         </div>
                     </div>
@@ -994,7 +895,7 @@
                 {% for collection in collections %}
                     <div class="col-lg-4 col-12">
                         <div class="product-row-item collection-grid-card">
-                            <a href="#" class="collection-grid-link">
+                            <a href="{{ collectiom.get_absolute_url }}" class="collection-grid-link">
                                 <div class="row align-items-center g-3">
                                     <div class="col-4">
                                         <div class="collection-grid-image-wrap">
@@ -1021,7 +922,7 @@
 
                                         <div class="collection-grid-meta">
                                             <span>
-                                                <i class="bi bi-music-note-list">     </i>
+                                                <i class="bi bi-music-note-list"></i>
                                                 {{ collection.songs_count|default:collection.songs.count }}
                                                 آهنگ
                                             </span>
@@ -1032,7 +933,7 @@
                                         <div class="cart-canvas-foot d-flex align-items-center justify-content-end">
                                             <div class="cart-canvas-add collection-grid-action">
                                                 <button class="btn text-white" type="button">
-                                                    <i class="bi bi-play-list text-light"></i>
+                                                    <i class="bi bi-eye text-light"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -1121,7 +1022,7 @@
                             </div>
                         </div>
                         <div class="slider-title-title">
-                            <h2 class="h1"><span class="title-font main-color-one-color">مقالات</span> وبلاگ</h2>
+                            <h2 class="h1"><span class="title-font main-color-one-color">آخرین مقالات دنیای</span> هنر و موسیقی</h2>
                         </div>
                     </div>
                 </div>
@@ -1134,131 +1035,63 @@
             </div>
         </div>
 
-        <div class="blog-slider-items mt-3">
+        <div class="blog-slider-items">
             <div class="row gy-5 align-items-center">
-                <div class="col-lg-6">
-                    <div class="row gy-5">
-                        <div class="col-md-6">
-                            <div class="blog-slider-item-stand">
-                                <a href="">
-                                    <span class="blog-slider-overlay"></span>
-                                    <div class="blog-slider-item-stand-image">
-                                        <img src="{% static 'assets/img/blog-1.jpg' %}" alt="">
-                                    </div>
-                                    <div class="blog-slider-item-stand-text">
-                                        <div class="blog-slider-item-stand-title">
-                                            <span class="badge badge-pill main-color-two-bg mb-2">جدید ترین ها</span>
-                                            <h6 class="font-16 title-font text-overflow-1 text-white">راهنمای خرید موبایل آبان 1402</h6>
-                                            <p class="text-overflow-2 text-white mb-0 mt-2">رید گوشی موبایل مانند هر وسیله دیگری، نیازمند تحقیق و کسب اطلاعات کافی است. ما در این راهنمای خرید سعی می‌کنیم تا بهترین محصولات بازار را معرفی کنیم و حتی به صورت اختصاصی</p>
-                                            <div class="blog-slider-item-info d-flex align-items-center justify-content-between">
-                                                <div class="blog-slider-item-info-item me-2 text-white">
-                                                    <i class="bi bi-clock me-1"></i>
-                                                    <span class="text-white">2 روز پیش نوشته شده</span>
-                                                </div>
-                                                <div class="blog-slider-item-info-item text-white">
-                                                    <i class="bi bi-eye me-1"></i>
-                                                    <span class="text-white">17 بازدید</span>
-                                                </div>
+                
+                <div class="row gy-5">
+                    {% for post in posts %}
+                    <div class="col-md-3">
+                        <div class="blog-slider-item-stand">
+                            <a href="{{ post.get_absolute_url }}">
+                                <span class="blog-slider-overlay"></span>
+                                <div class="blog-slider-item-stand-image">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                                </div>
+                                <div class="blog-slider-item-stand-text">
+                                    <div class="blog-slider-item-stand-title">
+                                        <h6 class="font-16 title-font text-overflow-1 text-white">{{ post.title }}</h6>
+                                        <p class="text-overflow-2 text-white mb-0 mt-2">{{ post.meta_description }}</p>
+                                        <div class="blog-slider-item-info d-flex align-items-center justify-content-between">
+                                            <div class="blog-slider-item-info-item me-2 text-white">
+                                                <i class="bi bi-clock me-1"></i>
+                                                <span class="text-white">{{ post.shamsi_created_date }}</span>
+                                            </div>
+                                            <div class="blog-slider-item-info-item text-white">
+                                                <i class="bi bi-eye me-1"></i>
+                                                <span class="text-white"></span>
                                             </div>
                                         </div>
                                     </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="blog-slider-item-stand">
-                                <a href="">
-                                    <span class="blog-slider-overlay"></span>
-                                    <div class="blog-slider-item-stand-image">
-                                        <img src="{% static 'assets/img/blog-3.jpg' %}" alt="">
-                                    </div>
-                                    <div class="blog-slider-item-stand-text">
-                                        <div class="blog-slider-item-stand-title">
-                                            <span class="badge badge-pill main-color-two-bg mb-2">جدید ترین ها</span>
-                                            <h6 class="font-16 title-font text-overflow-1 text-white">راهنمای خرید موبایل آبان 1402</h6>
-                                            <p class="text-overflow-2 text-white mb-0 mt-2">رید گوشی موبایل مانند هر وسیله دیگری، نیازمند تحقیق و کسب اطلاعات کافی است. ما در این راهنمای خرید سعی می‌کنیم تا بهترین محصولات بازار را معرفی کنیم و حتی به صورت اختصاصی</p>
-                                            <div class="blog-slider-item-info d-flex align-items-center justify-content-between">
-                                                <div class="blog-slider-item-info-item me-2 text-white">
-                                                    <i class="bi bi-clock me-1"></i>
-                                                    <span class="text-white">2 روز پیش نوشته شده</span>
-                                                </div>
-                                                <div class="blog-slider-item-info-item text-white">
-                                                    <i class="bi bi-eye me-1"></i>
-                                                    <span class="text-white">17 بازدید</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                <div class="col-lg-6">
-                    <div class="blog-slider-item-row">
-                        <a href="">
-                            <div class="row gy-3 align-items-center">
-                                <div class="col-sm-4">
-                                    <div class="blog-slider-item-row-image">
-                                        <img src="{% static 'assets/img/blog-4.jpg' %}" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-8">
-                                    <div class="blog-slider-item-stand-text">
-                                        <div class="blog-slider-item-stand-title">
-                                            <h6 class="font-16 title-font text-overflow-1 main-color-one-color">راهنمای خرید موبایل آبان 1402</h6>
-                                            <p class="text-overflow-2 my-2">رید گوشی موبایل مانند هر وسیله دیگری، نیازمند تحقیق و کسب اطلاعات کافی است. ما در این راهنمای خرید سعی می‌کنیم تا بهترین محصولات بازار را معرفی کنیم و حتی به صورت اختصاصی</p>
-                                            <div class="blog-slider-item-info d-flex align-items-center">
-                                                <div class="blog-slider-item-info-item me-3">
-                                                    <i class="bi bi-clock me-1"></i>
-                                                    <span>2 روز پیش نوشته شده</span>
-                                                </div>
-                                                <div class="blog-slider-item-info-item">
-                                                    <i class="bi bi-eye me-1"></i>
-                                                    <span>17 بازدید</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="blog-slider-item-row">
-                        <a href="">
-                            <div class="row gy-3 align-items-center">
-                                <div class="col-sm-4">
-                                    <div class="blog-slider-item-row-image">
-                                        <img src="{% static 'assets/img/blog-5.jpg' %}" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-8">
-                                    <div class="blog-slider-item-stand-text">
-                                        <div class="blog-slider-item-stand-title">
-                                            <h6 class="font-16 title-font text-overflow-1 main-color-one-color">راهنمای خرید موبایل آبان 1402</h6>
-                                            <p class="text-overflow-2 my-2">رید گوشی موبایل مانند هر وسیله دیگری، نیازمند تحقیق و کسب اطلاعات کافی است. ما در این راهنمای خرید سعی می‌کنیم تا بهترین محصولات بازار را معرفی کنیم و حتی به صورت اختصاصی</p>
-                                            <div class="blog-slider-item-info d-flex align-items-center">
-                                                <div class="blog-slider-item-info-item me-3">
-                                                    <i class="bi bi-clock me-1"></i>
-                                                    <span>2 روز پیش نوشته شده</span>
-                                                </div>
-                                                <div class="blog-slider-item-info-item">
-                                                    <i class="bi bi-eye me-1"></i>
-                                                    <span>17 بازدید</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                
             </div>
         </div>
 
     </div>
 </div>
+
+<script>
+    new Swiper('.music-category-carousel', {
+        slidesPerView: 2,
+        spaceBetween: 12,
+        loop: false,
+        pagination: {
+            el: '.music-category-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            576: { slidesPerView: 3 },
+            768: { slidesPerView: 4 },
+            992: { slidesPerView: 5 }
+        }
+    });
+</script>
+
 
 <!-- end blog -->
 

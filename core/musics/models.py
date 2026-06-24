@@ -312,17 +312,23 @@ class SongRating(models.Model):
 
 
 class Playlist(models.Model):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     customer = models.ForeignKey('accounts.Customer', on_delete=models.CASCADE)
     songs = models.ManyToManyField(Song)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
-    def get_playlist_slug(self):
-        return self.name.replace(' ','-').replace('/','-')
+    def get_collection_slug(self):
+        return self.title.replace(' ','-').replace('/','-')
+    
+    def get_absolute_url(self):
+        return reverse("musics:playlist_detail", kwargs={
+            "pk": self.pk,
+            "collection_slug": self.title.replace(' ','-').replace('/','-')
+        })
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 

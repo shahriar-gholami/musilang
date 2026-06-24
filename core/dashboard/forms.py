@@ -16,13 +16,13 @@ class PlaylistCreateForm(forms.ModelForm):
 
     class Meta:
         model = Playlist
-        fields = ["name", "songs"]
+        fields = ["title", "songs"]
         labels = {
-            "name": "نام پلی‌لیست",
+            "title": "نام پلی‌لیست",
             "songs": "آهنگ‌ها",
         }
         widgets = {
-            "name": forms.TextInput(attrs={
+            "title": forms.TextInput(attrs={
                 "class": "dashboard-input",
                 "placeholder": "مثلاً آهنگ‌های مورد علاقه من",
             }),

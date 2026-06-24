@@ -305,6 +305,25 @@
     }
 }
 
+
+.collection-songs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+.collection-songs-grid img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
 </style>
 {% endblock %}
 {% block title %}
@@ -322,7 +341,17 @@
                 {% if collection.image %}
                     <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
                 {% else %}
-                    <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+                    <div class="collection-songs-grid">
+                        {% for song in collection.songs.all|slice:":4" %}
+                            {% if song.image %}
+                                <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                            {% else %}
+                                <img src="{% static 'images/default-song.jpg' %}" alt="{{ song.title }}">
+                            {% endif %}
+                        {% empty %}
+                            <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </div>
 

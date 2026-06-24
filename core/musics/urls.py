@@ -21,5 +21,8 @@ urlpatterns = [
     path("albums/<int:pk>/<slug:album_slug>/", views.AlbumDetailView.as_view(), name="album_detail"),
     path("songs/create-comment/<int:pk>/",views.CreateSongCommentView.as_view(), name="song_comment_create"),
     path("songs/submit_rating/<int:pk>/",views.CreateSongRatingView.as_view(), name="song_rating_create"),
+    path("playlists/",views.PlayListsView.as_view(),name="playlists"),
+    path("playlists/<int:pk>/<str:collection_slug>/",views.PlaylistDetailView.as_view(),name="playlist_detail"),
+    
 
 ]

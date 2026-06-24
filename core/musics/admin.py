@@ -442,9 +442,9 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Playlist)
 class PlaylistAdmin(admin.ModelAdmin):
-    list_display = ("name", "customer", "created_date", "updated_date")
+    list_display = ("title", "customer", "created_date", "updated_date")
     list_filter = ("created_date", "updated_date")
-    search_fields = ("name", "customer__user__full_name")
+    search_fields = ("title", "customer__user__full_name")
     filter_horizontal = ("songs",)
     readonly_fields = ("created_date", "updated_date")
 

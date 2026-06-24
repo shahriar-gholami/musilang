@@ -35,7 +35,7 @@ class PlaylistSongAjaxView(LoginRequiredMixin, View):
         data = [
             {
                 "id": playlist.id,
-                "name": playlist.name,
+                "name": playlist.title,
             }
             for playlist in playlists
         ]
@@ -74,7 +74,7 @@ class PlaylistSongAjaxView(LoginRequiredMixin, View):
                 })
 
             playlist = Playlist.objects.create(
-                name=new_playlist_name,
+                title=new_playlist_name,
                 customer=customer,
             )
 

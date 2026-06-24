@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db.models import Count, Prefetch
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
+from blog.models import BlogPost
 
 
 
@@ -35,6 +36,7 @@ class IndexPageView(View):
         context = {
 
             'songs': songs,
+            'posts' : BlogPost.objects.all()[:4],
             'collections': collections,
             'singers': Singer.objects.all().order_by("name"),
             'latest_songs': Song.objects.order_by('-created_at')[:10],
@@ -431,27 +433,6 @@ class CollectionListView(View):
         return render(request, self.template_name, context)
 
 
-from django.db.models import Prefetch
-from django.shortcuts import get_object_or_404, render
-from django.views import View
-
-from .models import Collection, Song
-
-
-from django.db.models import Prefetch
-from django.shortcuts import get_object_or_404, render, redirect
-from django.views import View
-
-from .models import Collection, Song
-
-
-from django.db.models import Prefetch
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views import View
-
-from .models import Collection, Song
-
-
 class CollectionDetailView(View):
     template_name = "musics/collection_detail.html"
 
@@ -585,3 +566,87 @@ class AlbumDetailView(View):
             "songs": songs,
             "songs_count": album.songs_count,
         })
+
+
+class PlayListsView(View):
+    template_name = "musics/playlists.html"
+    paginate_by = 12
+
+    def get_queryset(self):
+        sort = self.request.GET.get("sort", "newest")
+
+        songs_queryset = (
+            Song.objects
+            .select_related("singer", "language", "album")
+            .prefetch_related("categories", "tags")
+            .order_by("-created_at")
+        )
+
+        queryset = (
+            Playlist.objects
+            .annotate(
+                songs_count=Count("songs", distinct=True)
+            )
+            .filter(songs_count__gt=4)
+            .prefetch_related(
+                Prefetch("songs", queryset=songs_queryset)
+            )
+        )
+
+        if sort == "oldest":
+            queryset = queryset.order_by("created_date")
+        elif sort == "songs_desc":
+            queryset = queryset.order_by("-songs_count", "-created_date")
+        elif sort == "songs_asc":
+            queryset = queryset.order_by("songs_count", "-created_date")
+        else:
+            queryset = queryset.order_by("-created_date")
+
+
+        return queryset
+
+    def get(self, request):
+        collections_queryset = self.get_queryset()
+
+        paginator = Paginator(collections_queryset, self.paginate_by)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            "collections": page_obj.object_list,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "current_sort": request.GET.get("sort", "newest"),
+        }
+
+        return render(request, self.template_name, context)
+
+
+class PlaylistDetailView(View):
+    template_name = "musics/collection_detail.html"
+
+    def get(self, request, pk, collection_slug):
+        songs_queryset = (
+            Song.objects
+            .select_related("singer", "language", "album")
+            .prefetch_related("categories", "tags")
+            .order_by("id")
+        )
+
+        collection = get_object_or_404(
+            Playlist.objects.filter(pk=pk)
+            .prefetch_related(
+                Prefetch("songs", queryset=songs_queryset)
+            )
+        )
+
+        if collection.get_collection_slug() != collection_slug:
+            return redirect(collection.get_absolute_url())
+
+        songs = list(collection.songs.all())
+
+        return render(request, self.template_name, {
+            "collection": collection,
+            "songs": songs,
+        })
+
