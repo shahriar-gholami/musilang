@@ -1,5 +1,105 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    {% if query %}
+        <title>نتایج جستجو برای {{ query }} | {{ info.site_name }}</title>
+        <meta name="description" content="نتایج جستجوی آهنگ برای «{{ query }}» در {{ info.site_name }}؛ مشاهده آهنگ‌های مرتبط، پخش آنلاین، دانلود، متن و ترجمه.">
+    {% else %}
+        <title>جستجوی آهنگ | {{ info.site_name }}</title>
+        <meta name="description" content="جستجو در آرشیو آهنگ‌های {{ info.site_name }} بر اساس نام آهنگ، خواننده، آلبوم، دسته‌بندی، برچسب و زبان.">
+    {% endif %}
+
+    <meta name="robots" content="{% if query %}noindex,follow{% else %}noindex,nofollow{% endif %}">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:search' %}{% if query %}?q={{ query|urlencode }}{% endif %}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    {% if query %}
+        <meta property="og:title" content="نتایج جستجو برای {{ query }} | {{ info.site_name }}">
+        <meta property="og:description" content="نتایج جستجوی آهنگ برای «{{ query }}» در {{ info.site_name }}؛ مشاهده آهنگ‌های مرتبط، پخش آنلاین، دانلود، متن و ترجمه.">
+        <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:search' %}?q={{ query|urlencode }}">
+    {% else %}
+        <meta property="og:title" content="جستجوی آهنگ | {{ info.site_name }}">
+        <meta property="og:description" content="جستجو در آرشیو آهنگ‌های {{ info.site_name }} بر اساس نام آهنگ، خواننده، آلبوم، دسته‌بندی، برچسب و زبان.">
+        <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:search' %}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    {% if query %}
+        <meta name="twitter:title" content="نتایج جستجو برای {{ query }} | {{ info.site_name }}">
+        <meta name="twitter:description" content="نتایج جستجوی آهنگ برای «{{ query }}» در {{ info.site_name }}؛ مشاهده آهنگ‌های مرتبط، پخش آنلاین، دانلود، متن و ترجمه.">
+    {% else %}
+        <meta name="twitter:title" content="جستجوی آهنگ | {{ info.site_name }}">
+        <meta name="twitter:description" content="جستجو در آرشیو آهنگ‌های {{ info.site_name }} بر اساس نام آهنگ، خواننده، آلبوم، دسته‌بندی، برچسب و زبان.">
+    {% endif %}
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    {% if query %}
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "SearchResultsPage",
+          "name": "نتایج جستجو برای {{ query|escapejs }} | {{ info.site_name|escapejs }}",
+          "description": "نتایج جستجوی آهنگ برای «{{ query|escapejs }}» در {{ info.site_name|escapejs }}؛ مشاهده آهنگ‌های مرتبط، پخش آنلاین، دانلود، متن و ترجمه.",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:search' %}?q={{ query|urlencode }}",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "{{ info.site_name|escapejs }}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}"
+          },
+          "mainEntity": {
+            "@type": "ItemList",
+            "name": "فهرست نتایج جستجو برای {{ query|escapejs }}",
+            "numberOfItems": {{ page_obj.paginator.count|default:0 }},
+            "itemListElement": [
+              {% for song in songs %}
+              {
+                "@type": "ListItem",
+                "position": {{ page_obj.start_index|add:forloop.counter0 }},
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+                "item": {
+                  "@type": "MusicRecording",
+                  "name": "{{ song.title|escapejs }}",
+                  "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.cover %},
+                  "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% elif song.image %},
+                  "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% endif %}{% if song.singer %},
+                  "byArtist": {
+                    "@type": "Person",
+                    "name": "{{ song.singer.name|escapejs }}",
+                    "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+                  }{% endif %}{% if song.album %},
+                  "inAlbum": {
+                    "@type": "MusicAlbum",
+                    "name": "{{ song.album.title|escapejs }}",
+                    "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+                  }{% endif %}{% if song.rating %},
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "{{ song.rating|floatformat:1 }}",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                  }{% endif %}{% if song.audio_file %},
+                  "audio": {
+                    "@type": "AudioObject",
+                    "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{{ song.audio_file.url|escapejs }}"
+                  }{% endif %}
+                }
+              }{% if not forloop.last %},{% endif %}
+              {% endfor %}
+            ]
+          }
+        }
+        </script>
+    {% endif %}
+{% endblock meta %}
 
 {% block style %}
 <style>

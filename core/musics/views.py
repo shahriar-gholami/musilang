@@ -269,6 +269,13 @@ class SingleSongDetailView(View):
             pk=pk,
         )
 
+        is_favorite_song = False
+
+        if request.user.is_authenticated:
+            customer = getattr(request.user, "customer_profile", None)
+            if customer:
+                is_favorite_song = customer.favorite_songs.filter(pk=song.pk).exists()
+
         song.views_count += 1
         song.save(update_fields=["views_count"])
 
@@ -309,6 +316,7 @@ class SingleSongDetailView(View):
 
         context = {
             "song": song,
+            "is_favorite_song": is_favorite_song,
             "lyrics": getattr(song, "lyrics", None),
             "comments": song.comments.all(),
             "all_singers": Singer.objects.all(),
@@ -319,6 +327,42 @@ class SingleSongDetailView(View):
         }
 
         return render(request, "musics/song_detail.html", context)
+    
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+
+from .models import Song
+
+
+@login_required
+@require_POST
+def song_favorite_toggle(request, pk):
+    song = get_object_or_404(Song, pk=pk)
+    customer = getattr(request.user, "customer_profile", None)
+
+    if customer is None:
+        return JsonResponse(
+            {"ok": False, "message": "پروفایل کاربری شما پیدا نشد."},
+            status=400,
+        )
+
+    if customer.favorite_songs.filter(pk=song.pk).exists():
+        customer.favorite_songs.remove(song)
+        is_favorite = False
+        message = "آهنگ از علاقه‌مندی‌ها حذف شد."
+    else:
+        customer.favorite_songs.add(song)
+        is_favorite = True
+        message = "آهنگ به علاقه‌مندی‌ها اضافه شد."
+
+    return JsonResponse({
+        "ok": True,
+        "is_favorite": is_favorite,
+        "message": message,
+    })
+
     
 
 class CreateSongCommentView(LoginRequiredMixin, View):
@@ -458,8 +502,17 @@ class CollectionDetailView(View):
 
         songs = list(collection.songs.all())
 
+        is_favorite_collection = False
+
+        if request.user.is_authenticated:
+            customer = getattr(request.user, "customer_profile", None)
+            if customer:
+                is_favorite_collection = customer.favorite_collections.filter(pk=collection.pk).exists()
+
+
         return render(request, self.template_name, {
             "collection": collection,
+            "is_favorite_collection" : is_favorite_collection,
             "songs": songs,
         })
 
@@ -505,6 +558,14 @@ class ArtistDetailView(View):
             .order_by("-created_at")
         )
 
+        is_favorite_artist = False
+
+        if request.user.is_authenticated:
+            customer = getattr(request.user, "customer_profile", None)
+            if customer:
+                is_favorite_artist = customer.favorite_artists.filter(pk=artist.pk).exists()
+
+
         albums = (
             Album.objects
             .filter(singer=artist)
@@ -514,6 +575,7 @@ class ArtistDetailView(View):
 
         return render(request, self.template_name, {
             "artist": artist,
+            "is_favorite_artist": is_favorite_artist,
             "songs": songs,
             "albums": albums,
         })
@@ -609,7 +671,6 @@ class PlayListsView(View):
 
     def get(self, request):
         collections_queryset = self.get_queryset()
-
         paginator = Paginator(collections_queryset, self.paginate_by)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
@@ -652,3 +713,73 @@ class PlaylistDetailView(View):
             "songs": songs,
         })
 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+
+from .models import Singer
+
+
+@login_required
+@require_POST
+def artist_favorite_toggle(request, pk):
+    artist = get_object_or_404(Singer, pk=pk)
+    customer = getattr(request.user, "customer_profile", None)
+
+    if customer is None:
+        return JsonResponse(
+            {"ok": False, "message": "پروفایل کاربری شما پیدا نشد."},
+            status=400,
+        )
+
+    if customer.favorite_artists.filter(pk=artist.pk).exists():
+        customer.favorite_artists.remove(artist)
+        is_favorite = False
+        message = "خواننده از علاقه‌مندی‌ها حذف شد."
+    else:
+        customer.favorite_artists.add(artist)
+        is_favorite = True
+        message = "خواننده به علاقه‌مندی‌ها اضافه شد."
+
+    return JsonResponse({
+        "ok": True,
+        "is_favorite": is_favorite,
+        "message": message,
+    })
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+
+from .models import Collection
+
+
+@login_required
+@require_POST
+def collection_favorite_toggle(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    customer = getattr(request.user, "customer_profile", None)
+
+    if customer is None:
+        return JsonResponse(
+            {"ok": False, "message": "پروفایل کاربری شما پیدا نشد."},
+            status=400,
+        )
+
+    if customer.favorite_collections.filter(pk=collection.pk).exists():
+        customer.favorite_collections.remove(collection)
+        is_favorite = False
+        message = "کالکشن از علاقه‌مندی‌ها حذف شد."
+    else:
+        customer.favorite_collections.add(collection)
+        is_favorite = True
+        message = "کالکشن به علاقه‌مندی‌ها اضافه شد."
+
+    return JsonResponse({
+        "ok": True,
+        "is_favorite": is_favorite,
+        "message": message,
+    })

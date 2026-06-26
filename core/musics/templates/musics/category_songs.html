@@ -1,5 +1,87 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>پخش آنلاین و دانلود جدیدترین آهنگ‌های {{ category.title }} | {{ info.site_name }}</title>
+
+    <meta name="description" content="{% if category.description %}{{ category.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود رایگان آهنگ‌های  {{ category.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.{% endif %}">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="پخش آنلاین و دانلود جدیدترین آهنگ‌های {{ category.title }} | {{ info.site_name }}">
+    <meta property="og:description" content="{% if category.description %}{{ category.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود رایگان آهنگ‌های  {{ category.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.{% endif %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="پخش آنلاین و دانلود جدیدترین آهنگ‌های {{ category.title }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="{% if category.description %}{{ category.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود رایگان آهنگ‌های  {{ category.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.{% endif %}">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "پخش آنلاین و دانلود جدیدترین آهنگ‌های {{ category.title }} | {{ info.site_name }}",
+      "description": "{% if category.description %}{{ category.description|striptags|truncatechars:155|escapejs }}{% else %}پخش آنلاین و دانلود رایگان آهنگ‌های دسته {{ category.title|escapejs }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name|escapejs }}.{% endif %}",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "{{ category.title|escapejs }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "آهنگ‌های دسته {{ category.title|escapejs }}",
+        "numberOfItems": {{ paginator.count|default:0 }},
+        "itemListElement": [
+          {% for song in songs %}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicRecording",
+              "name": "{{ song.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.cover %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% elif song.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% endif %}{% if song.singer %},
+              "byArtist": {
+                "@type": "Person",
+                "name": "{{ song.singer.name|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.album %},
+              "inAlbum": {
+                "@type": "MusicAlbum",
+                "name": "{{ song.album.title|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.rating %},
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ song.rating|floatformat:1 }}",
+                "bestRating": "5",
+                "worstRating": "1"
+              }{% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>
@@ -357,7 +439,7 @@
                             <h1 class="h2 mb-2">
                                 آهنگ‌های دسته
                                 <span class="title-font main-color-one-color">
-                                    {{ category.name }}
+                                    {{ category.title }}
                                 </span>
                             </h1>
 
@@ -517,7 +599,7 @@
                             <h3>آهنگی در این دسته‌بندی پیدا نشد</h3>
                             <p>
                                 فعلاً برای دسته
-                                «{{ category.name }}»
+                                «{{ category.title }}»
                                 آهنگی ثبت نشده است.
                             </p>
                         </div>
@@ -580,101 +662,6 @@
 
     </div>
 </section>
-
-
-<div class="bottom-music-player" id="bottomMusicPlayer">
-    <div class="bmp-backdrop"></div>
-
-    <div class="bmp-inner">
-        <div class="bmp-left">
-            <div class="bmp-cover">
-                <img id="bmpCover" src="{% static 'assets/img/slide-3.gif' %}" alt="cover">
-            </div>
-
-            <div class="bmp-meta">
-                <h5 id="bmpTitle">هیچ آهنگی انتخاب نشده</h5>
-                <p id="bmpSinger">خواننده</p>
-            </div>
-        </div>
-
-        <div class="bmp-center">
-            <div class="bmp-controls">
-                <button type="button" class="bmp-btn" id="bmpPrev" aria-label="قبلی">
-                    <i class="bi bi-skip-backward-fill"></i>
-                </button>
-
-                <button type="button" class="bmp-btn bmp-btn-play" id="bmpPlayPause" aria-label="پخش/توقف">
-                    <i class="bi bi-play-fill" id="bmpPlayPauseIcon"></i>
-                </button>
-
-                <button type="button" class="bmp-btn" id="bmpNext" aria-label="بعدی">
-                    <i class="bi bi-skip-forward-fill"></i>
-                </button>
-
-                <button type="button" class="bmp-btn" id="bmpLyricsBtn" aria-label="نمایش متن آهنگ">
-                    <i class="bi bi-file-earmark-text"></i>
-                </button>
-            </div>
-
-            <div class="bmp-progress-wrap">
-                <span id="bmpCurrentTime">0:00</span>
-                <input type="range" id="bmpProgress" min="0" max="100" value="0">
-                <span id="bmpDuration">0:00</span>
-            </div>
-        </div>
-
-        <div class="bmp-right">
-            <a href="#" class="bmp-detail-link" id="bmpDetailLink">
-                <i class="bi bi-music-note-list"></i>
-            </a>
-
-            <div class="bmp-volume">
-                <i class="bi bi-volume-up-fill"></i>
-                <input type="range" id="bmpVolume" min="0" max="1" step="0.01" value="1">
-            </div>
-
-            <button type="button" class="bmp-btn bmp-close" id="bmpClose" aria-label="بستن">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    </div>
-
-    <audio id="globalAudioPlayer"></audio>
-</div>
-
-
-<div class="lyrics-glass-modal" id="lyricsGlassModal">
-    <div class="lyrics-modal-dialog">
-        <button type="button" class="lyrics-modal-close" id="lyricsModalClose">
-            <i class="bi bi-x-lg"></i>
-        </button>
-
-        <div class="lyrics-modal-header">
-            <div>
-                <h4 id="lyricsModalSongTitle">متن آهنگ</h4>
-                <p id="lyricsModalSingerName">خواننده</p>
-            </div>
-        </div>
-
-        <div class="lyrics-tabs">
-            <button type="button" class="lyrics-tab-btn active" data-tab="raw">متن اصلی</button>
-            <button type="button" class="lyrics-tab-btn" data-tab="translated">ترجمه</button>
-        </div>
-
-        <div class="lyrics-tab-content active" id="lyricsRawTab">
-            <div class="lyrics-scroll" id="lyricsRawContent">
-                متن آهنگ موجود نیست.
-            </div>
-        </div>
-
-        <div class="lyrics-tab-content" id="lyricsTranslatedTab">
-            <div class="lyrics-scroll" id="lyricsTranslatedContent">
-                ترجمه‌ای برای این آهنگ ثبت نشده است.
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 {% endblock %}

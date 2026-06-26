@@ -3,19 +3,17 @@
 <html class="no-js" lang="Fa_IR" dir="rtl">
 
 <head>
-    <meta charset="utf-8">
-    <title>قالب شاهان</title>
-    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block meta %}
+    <meta charset="utf-8">
+    <title>حساب کاربری | {{ info.site_name }}</title>
+    <meta name="description" content="حساب کاربری">
+    <meta name="robots" content="noindex,nofollow">
+    {% endblock %}
 
-    <meta property="og:title" content="">
-    <meta property="og:type" content="">
-    <meta property="og:url" content="">
-    <meta property="og:image" content="">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/img/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/img/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/img/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ info.logo.icon.url }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ info.logo.icon.url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ info.logo.icon.url }}">
     <link rel="manifest" href="/site.webmanifest">
     <!-- Place favicon.ico in the root directory -->
 
@@ -1054,15 +1052,6 @@
 
 <!-- end mobile menu -->
 
-
-<div class="float-btn">
-    <div class="container-fluid">
-        <!-- contact us floating -->
-        <div id="btncollapzion" class=" btn_collapzion"></div>
-        <div class="" id="contactOverlay"></div>
-        <!-- end contact us floating -->
-    </div>
-</div>
 
 
 <div class="bottom-music-player" id="bottomMusicPlayer">

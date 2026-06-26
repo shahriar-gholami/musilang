@@ -14,16 +14,27 @@
     {% if favorite_songs %}
         <div class="dashboard-grid">
             {% for song in favorite_songs %}
-                <a href="{{ song.get_absolute_url }}" class="dashboard-music-card">
-                    {% if song.image %}
-                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
-                    {% elif song.cover %}
-                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
-                    {% endif %}
+                <div class="dashboard-music-card js-favorite-card">
+                    <a href="{{ song.get_absolute_url }}" class="dashboard-card-link">
+                        {% if song.image %}
+                            <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                        {% elif song.cover %}
+                            <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                        {% endif %}
 
-                    <strong>{{ song.title }}</strong>
-                    <span>{{ song.singer.name }}</span>
-                </a>
+                        <strong>{{ song.title }}</strong>
+                        <span>{{ song.singer.name }}</span>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="dashboard-remove-favorite-btn js-remove-favorite-btn"
+                        data-url="{% url 'dashboard:favorite_remove' 'song' song.pk %}"
+                    >
+                        <i class="bi bi-trash"></i>
+                        حذف از علاقه‌مندی‌ها
+                    </button>
+                </div>
             {% endfor %}
         </div>
     {% else %}
@@ -37,13 +48,24 @@
     {% if favorite_artists %}
         <div class="dashboard-grid">
             {% for artist in favorite_artists %}
-                <a href="{{ artist.get_absolute_url }}" class="dashboard-music-card">
-                    {% if artist.image %}
-                        <img src="{{ artist.image.url }}" alt="{{ artist.name }}">
-                    {% endif %}
+                <div class="dashboard-music-card js-favorite-card">
+                    <a href="{{ artist.get_absolute_url }}" class="dashboard-card-link">
+                        {% if artist.image %}
+                            <img src="{{ artist.image.url }}" alt="{{ artist.name }}">
+                        {% endif %}
 
-                    <strong>{{ artist.name }}</strong>
-                </a>
+                        <strong>{{ artist.name }}</strong>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="dashboard-remove-favorite-btn js-remove-favorite-btn"
+                        data-url="{% url 'dashboard:favorite_remove' 'artist' artist.pk %}"
+                    >
+                        <i class="bi bi-trash"></i>
+                        حذف از علاقه‌مندی‌ها
+                    </button>
+                </div>
             {% endfor %}
         </div>
     {% else %}
@@ -57,18 +79,141 @@
     {% if favorite_collections %}
         <div class="dashboard-grid">
             {% for collection in favorite_collections %}
-                <a href="{{ collection.get_absolute_url }}" class="dashboard-music-card">
-                    {% if collection.image %}
-                        <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
-                    {% endif %}
+                <div class="dashboard-music-card js-favorite-card">
+                    <a href="{{ collection.get_absolute_url }}" class="dashboard-card-link">
+                        {% if collection.image %}
+                            <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+                        {% endif %}
 
-                    <strong>{{ collection.title }}</strong>
-                </a>
+                        <strong>{{ collection.title }}</strong>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="dashboard-remove-favorite-btn js-remove-favorite-btn"
+                        data-url="{% url 'dashboard:favorite_remove' 'collection' collection.pk %}"
+                    >
+                        <i class="bi bi-trash"></i>
+                        حذف از علاقه‌مندی‌ها
+                    </button>
+                </div>
             {% endfor %}
         </div>
     {% else %}
         <div class="dashboard-empty">کالکشنی در علاقه‌مندی‌ها نیست.</div>
     {% endif %}
 </div>
-{% endblock %}
 
+<style>
+.dashboard-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.dashboard-card-link:hover {
+    color: inherit;
+}
+
+.dashboard-remove-favorite-btn {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #e11d48;
+    background: #fff0f3;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.dashboard-remove-favorite-btn:hover {
+    color: #fff;
+    background: #e11d48;
+    transform: translateY(-2px);
+}
+
+.dashboard-remove-favorite-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+
+        return null;
+    }
+
+    document.querySelectorAll(".js-remove-favorite-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const card = button.closest(".js-favorite-card");
+            const grid = button.closest(".dashboard-grid");
+            const section = button.closest(".dashboard-section");
+
+            button.disabled = true;
+
+            fetch(button.dataset.url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (!data.ok) {
+                        alert(data.message || "خطایی رخ داد.");
+                        button.disabled = false;
+                        return;
+                    }
+
+                    card.remove();
+
+                    if (grid && grid.children.length === 0) {
+                        grid.remove();
+
+                        const emptyBox = document.createElement("div");
+                        emptyBox.className = "dashboard-empty";
+
+                        const title = section.querySelector("h2").textContent;
+
+                        if (title.includes("آهنگ")) {
+                            emptyBox.textContent = "آهنگی در علاقه‌مندی‌ها نیست.";
+                        } else if (title.includes("خواننده")) {
+                            emptyBox.textContent = "خواننده‌ای در علاقه‌مندی‌ها نیست.";
+                        } else {
+                            emptyBox.textContent = "کالکشنی در علاقه‌مندی‌ها نیست.";
+                        }
+
+                        section.appendChild(emptyBox);
+                    }
+                })
+                .catch(function () {
+                    alert("ارتباط با سرور برقرار نشد.");
+                    button.disabled = false;
+                });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,157 +1,208 @@
 {% extends "dashboard/base_dashboard.html" %}
 {% load static %}
+
 {% block dashboard_content %}
 
+<div class="collection-detail-hero">
 
-    
+    <div class="collection-detail-cover">
+        {% if collection.image %}
+            <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
+        {% else %}
+            <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
+        {% endif %}
+    </div>
 
-        <div class="collection-detail-hero">
+    <div class="collection-detail-content">
+        <span class="collection-badge">
+            <a href="{% url 'dashboard:dashboard_playlists' %}">بازگشت به لیست‌های پخش</a>
+        </span>
 
-            <div class="collection-detail-cover">
-                {% if collection.image %}
-                    <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
-                {% else %}
-                    <img src="{% static 'images/default-collection.jpg' %}" alt="{{ collection.title }}">
-                {% endif %}
-            </div>
+        <h1>{{ collection.title }}</h1>
 
-            <div class="collection-detail-content">
-                <span class="collection-badge">
-                   <a href="{% url 'dashboard:dashboard_playlists' %}">بازگشت به لیست‌های پخش</a>
+        {% if collection.description %}
+            <p>{{ collection.description }}</p>
+        {% else %}
+            <p>
+                مجموعه‌ای از آهنگ‌های منتخب این پلی‌لیست را می‌توانید پشت سر هم پخش کنید.
+            </p>
+        {% endif %}
+
+        <div class="collection-detail-meta">
+            <span class="js-playlist-songs-count">
+                <i class="bi bi-music-note-list"></i>
+                {{ songs|length }} آهنگ
+            </span>
+
+            {% if collection.is_public %}
+                <span class="public-badge">
+                    عمومی
                 </span>
-
-                <h1>{{ collection.title }}</h1>
-
-                {% if collection.description %}
-                    <p>{{ collection.description }}</p>
-                {% else %}
-                    <p>
-                        مجموعه‌ای از آهنگ‌های منتخب این کالکشن را می‌توانید پشت سر هم پخش کنید.
-                    </p>
-                {% endif %}
-
-                <div class="collection-detail-meta">
-                    <span>
-                        <i class="bi bi-music-note-list"></i>
-                        {{ songs|length }} آهنگ
-                    </span>
-
-                    {% if collection.is_public %}
-                        <span class="public-badge">
-                            عمومی
-                        </span>
-                    {% endif %}
-                </div>
-
-                {% if songs %}
-                    <button type="button" class="collection-play-all-btn" id="playCollectionBtn">
-                        <i class="bi bi-play-fill"></i>
-                        پخش همه آهنگ‌ها
-                    </button>
-                {% endif %}
-            </div>
-
-        </div>
-
-        <div class="collection-songs-box">
-
-            <div class="section-head">
-                <h2>آهنگ‌های این کالکشن</h2>
-            </div>
-
-            {% if songs %}
-                <div class="collection-song-list">
-
-                    {% for song in songs %}
-                        <div class="collection-song-item">
-
-                            <div class="collection-song-right">
-
-                                <div class="collection-song-index">
-                                    {{ forloop.counter }}
-                                </div>
-
-                                <div class="collection-song-cover">
-                                    {% if song.cover %}
-                                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
-                                    {% elif song.image %}
-                                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
-                                    {% else %}
-                                        <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
-                                    {% endif %}
-                                </div>
-
-                                <div class="collection-song-info">
-                                    <h3>{{ song.title }}</h3>
-
-                                    <p>
-                                        {% if song.singer %}
-                                            {{ song.singer.name }}
-                                        {% else %}
-                                            خواننده نامشخص
-                                        {% endif %}
-                                    </p>
-
-                                    <div class="collection-song-extra">
-                                        {% if song.language %}
-                                            <span>{{ song.language }}</span>
-                                        {% endif %}
-
-                                        {% if song.year %}
-                                            <span>{{ song.year }}</span>
-                                        {% endif %}
-
-                                        {% if song.album %}
-                                            <span>{{ song.album.title }}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="collection-song-left">
-
-                                <a href="{{ song.get_absolute_url }}" class="song-detail-btn">
-                                    جزئیات
-                                </a>
-
-                                <button
-                                    type="button"
-                                    class="song-play-btn js-play-song"
-                                    data-song-id="{{ song.id }}"
-                                    data-title="{{ song.title|escape }}"
-                                    data-singer="{% if song.singer %}{{ song.singer.name|escape }}{% else %}نامشخص{% endif %}"
-                                    data-audio="{% if song.audio_file %}{{ song.audio_file.url }}{% endif %}"
-                                    data-cover="{% if song.cover %}{{ song.cover.url }}{% elif song.image %}{{ song.image.url }}{% else %}{% static 'assets/img/slide-3.gif' %}{% endif %}"
-                                    data-detail-url="{{ song.get_absolute_url }}"
-                                    {% if song.has_lyrics %}
-                                        data-raw-lyrics="{{ song.lyrics.raw_lyrics|default:''|escape }}"
-                                        data-translated-lyrics="{{ song.lyrics.translated_lyrics|default:''|escape }}"
-                                    {% else %}
-                                        data-raw-lyrics=""
-                                        data-translated-lyrics=""
-                                    {% endif %}
-                                >
-                                    <i class="bi bi-play-fill"></i>
-                                    پخش
-                                </button>
-
-
-
-                            </div>
-
-                        </div>
-                    {% endfor %}
-
-                </div>
-            {% else %}
-                <div class="empty-detail-box">
-                    هنوز آهنگی برای این کالکشن ثبت نشده است.
-                </div>
             {% endif %}
-
         </div>
 
+        {% if songs %}
+            <button type="button" class="collection-play-all-btn" id="playCollectionBtn">
+                <i class="bi bi-play-fill"></i>
+                پخش همه آهنگ‌ها
+            </button>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="collection-songs-box">
+
+    <div class="section-head">
+        <h2>آهنگ‌های این پلی‌لیست</h2>
+    </div>
+
+    {% if songs %}
+        <div class="collection-song-list">
+
+            {% for song in songs %}
+                <div class="collection-song-item js-playlist-song-item" data-song-id="{{ song.id }}">
+
+                    <div class="collection-song-right">
+
+                        <div class="collection-song-index">
+                            {{ forloop.counter }}
+                        </div>
+
+                        <div class="collection-song-cover">
+                            {% if song.cover %}
+                                <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                            {% elif song.image %}
+                                <img src="{{ song.image.url }}" alt="{{ song.title }}">
+                            {% else %}
+                                <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
+                            {% endif %}
+                        </div>
+
+                        <div class="collection-song-info">
+                            <h3>{{ song.title }}</h3>
+
+                            <p>
+                                {% if song.singer %}
+                                    {{ song.singer.name }}
+                                {% else %}
+                                    خواننده نامشخص
+                                {% endif %}
+                            </p>
+
+                            <div class="collection-song-extra">
+                                {% if song.language %}
+                                    <span>{{ song.language }}</span>
+                                {% endif %}
+
+                                {% if song.year %}
+                                    <span>{{ song.year }}</span>
+                                {% endif %}
+
+                                {% if song.album %}
+                                    <span>{{ song.album.title }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="collection-song-left">
+
+                        <a href="{{ song.get_absolute_url }}" class="song-detail-btn">
+                            جزئیات
+                        </a>
+
+                        <button
+                            type="button"
+                            class="song-play-btn js-play-song"
+                            data-index="{{ forloop.counter0 }}"
+                            data-song-id="{{ song.id }}"
+                            data-title="{{ song.title|escape }}"
+                            data-singer="{% if song.singer %}{{ song.singer.name|escape }}{% else %}نامشخص{% endif %}"
+                            data-audio="{% if song.audio_file %}{{ song.audio_file.url }}{% endif %}"
+                            data-cover="{% if song.cover %}{{ song.cover.url }}{% elif song.image %}{{ song.image.url }}{% else %}{% static 'assets/img/slide-3.gif' %}{% endif %}"
+                            data-detail-url="{{ song.get_absolute_url }}"
+                            {% if song.has_lyrics %}
+                                data-raw-lyrics="{{ song.lyrics.raw_lyrics|default:''|escape }}"
+                                data-translated-lyrics="{{ song.lyrics.translated_lyrics|default:''|escape }}"
+                            {% else %}
+                                data-raw-lyrics=""
+                                data-translated-lyrics=""
+                            {% endif %}
+                        >
+                            <i class="bi bi-play-fill"></i>
+                            پخش
+                        </button>
+
+                        {% if can_manage_playlist %}
+                            <button
+                                type="button"
+                                class="playlist-song-remove-btn js-playlist-song-remove-btn"
+                                data-url="{% url 'dashboard:playlist_song_remove' collection.pk song.pk %}"
+                                data-song-id="{{ song.id }}"
+                                data-title="{{ song.title|escape }}"
+                            >
+                                <i class="bi bi-trash"></i>
+                                حذف
+                            </button>
+                        {% endif %}
+
+
+                    </div>
+
+                </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <div class="empty-detail-box js-playlist-empty">
+            هنوز آهنگی برای این پلی‌لیست ثبت نشده است.
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+.playlist-song-remove-btn {
+    min-height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #e11d48;
+    background: #fff0f3;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.playlist-song-remove-btn:hover {
+    color: #fff;
+    background: #e11d48;
+    transform: translateY(-2px);
+}
+
+.playlist-song-remove-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 768px) {
+    .collection-song-left {
+        flex-wrap: wrap;
+    }
+
+    .playlist-song-remove-btn {
+        width: 100%;
+    }
+}
+</style>
 
 {{ playlist|json_script:"collectionPlaylistData" }}
 
@@ -168,8 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Collection playlist JSON parse error:", error);
         return;
     }
-
-    if (!collectionPlaylist.length) return;
 
     const defaultCover = "{% static 'assets/img/slide-3.gif' %}";
 
@@ -204,10 +253,121 @@ document.addEventListener("DOMContentLoaded", function () {
     const lyricsRawTab = document.getElementById("lyricsRawTab");
     const lyricsTranslatedTab = document.getElementById("lyricsTranslatedTab");
 
-    if (!playerWrapper || !audio) return;
-
     let currentPlaylist = collectionPlaylist;
     let currentIndex = 0;
+
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+
+        return null;
+    }
+
+    function refreshSongIndexes() {
+        document.querySelectorAll(".js-play-song").forEach(function (button, index) {
+            button.dataset.index = index;
+        });
+
+        document.querySelectorAll(".collection-song-index").forEach(function (element, index) {
+            element.textContent = index + 1;
+        });
+    }
+
+    function updateSongsCount(count) {
+        const countElement = document.querySelector(".js-playlist-songs-count");
+
+        if (countElement) {
+            countElement.innerHTML = '<i class="bi bi-music-note-list"></i> ' + count + ' آهنگ';
+        }
+    }
+
+    function showEmptyPlaylistMessage() {
+        const songList = document.querySelector(".collection-song-list");
+        const songsBox = document.querySelector(".collection-songs-box");
+
+        if (songList) {
+            songList.remove();
+        }
+
+        if (songsBox && !document.querySelector(".js-playlist-empty")) {
+            const emptyBox = document.createElement("div");
+            emptyBox.className = "empty-detail-box js-playlist-empty";
+            emptyBox.textContent = "هنوز آهنگی برای این پلی‌لیست ثبت نشده است.";
+            songsBox.appendChild(emptyBox);
+        }
+
+        const playCollectionBtn = document.getElementById("playCollectionBtn");
+
+        if (playCollectionBtn) {
+            playCollectionBtn.remove();
+        }
+    }
+
+    document.querySelectorAll(".js-playlist-song-remove-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const songTitle = button.dataset.title || "این آهنگ";
+            const confirmed = confirm("آیا از حذف «" + songTitle + "» از پلی‌لیست مطمئن هستید؟");
+
+            if (!confirmed) return;
+
+            const item = button.closest(".js-playlist-song-item");
+            const songId = parseInt(button.dataset.songId, 10);
+
+            button.disabled = true;
+
+            fetch(button.dataset.url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (!data.ok) {
+                        alert(data.message || "خطایی رخ داد.");
+                        button.disabled = false;
+                        return;
+                    }
+
+                    if (item) {
+                        item.remove();
+                    }
+
+                    collectionPlaylist = collectionPlaylist.filter(function (song) {
+                        return Number(song.id) !== songId;
+                    });
+
+                    currentPlaylist = collectionPlaylist;
+
+                    if (currentIndex >= currentPlaylist.length) {
+                        currentIndex = 0;
+                    }
+
+                    refreshSongIndexes();
+                    updateSongsCount(data.songs_count || collectionPlaylist.length);
+
+                    if (!collectionPlaylist.length) {
+                        showEmptyPlaylistMessage();
+                    }
+                })
+                .catch(function () {
+                    alert("ارتباط با سرور برقرار نشد.");
+                    button.disabled = false;
+                });
+        });
+    });
+
+    if (!collectionPlaylist.length || !playerWrapper || !audio) return;
 
     function formatTime(seconds) {
         if (!seconds || isNaN(seconds)) return "0:00";
@@ -486,6 +646,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-
 
 {% endblock %}

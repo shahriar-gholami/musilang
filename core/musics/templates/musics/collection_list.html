@@ -1,5 +1,69 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>پخش آنلاین و دانلود بهترین کالکشن‌های آهنگ خارجی | {{ info.site_name }}</title>
+
+    <meta name="description" content="پخش آنلاین و دانلود رایگان بهترین و جدیدترین کالکشن‌های آهنگ‌های خارجی و انگلیسی زبان برای تقویت زبان در {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:collection_list' %}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="پخش آنلاین و دانلود بهترین کالکشن‌های آهنگ خارجی | {{ info.site_name }}">
+    <meta property="og:description" content="پخش آنلاین و دانلود رایگان بهترین و جدیدترین کالکشن‌های آهنگ‌های خارجی و انگلیسی زبان برای تقویت زبان در {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:collection_list' %}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="پخش آنلاین و دانلود بهترین کالکشن‌های آهنگ خارجی | {{ info.site_name }}">
+    <meta name="twitter:description" content="پخش آنلاین و دانلود رایگان بهترین و جدیدترین کالکشن‌های آهنگ‌های خارجی و انگلیسی زبان برای تقویت زبان در {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "پخش آنلاین و دانلود بهترین کالکشن‌های آهنگ خارجی | {{ info.site_name }}",
+      "description": "پخش آنلاین و دانلود رایگان بهترین و جدیدترین کالکشن‌های آهنگ‌های خارجی و انگلیسی زبان برای تقویت زبان در {{ info.site_name }}.",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:collection_list' %}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "فهرست کالکشن‌ها",
+        "numberOfItems": {{ page_obj.paginator.count|default:0 }},
+        "itemListElement": [
+          {% for collection in collections %}
+          {
+            "@type": "ListItem",
+            "position": {{ page_obj.start_index|add:forloop.counter0 }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicPlaylist",
+              "name": "{{ collection.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+              "description": "{% if collection.description %}{{ collection.description|striptags|truncatechars:155|escapejs }}{% else %}این کالکشن شامل مجموعه‌ای از آهنگ‌های منتخب برای یادگیری زبان است.{% endif %}"{% if collection.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url|escapejs }}"{% endif %},
+              "numTracks": {{ collection.songs_count|default:0 }}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
+
 {% block style %}
 <style>
     .collection-list-page {
@@ -381,9 +445,6 @@
 
 
 </style>
-{% endblock %}
-{% block title %}
-    کالکشن‌ها
 {% endblock %}
 
 {% block content %}

@@ -1,5 +1,76 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>{{ collection.title }} | پخش آنلاین و دانلود آهنگ‌ها | {{ info.site_name }}</title>
+
+    <meta name="description" content="{% if collection.description %}{{ collection.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود آهنگ‌های کالکشن {{ collection.title }} به‌صورت یکجا در سایت {{ info.site_name }}.{% endif %}">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url }}">
+
+    <meta property="og:type" content="music.playlist">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="{{ collection.title }} | {{ info.site_name }}">
+    <meta property="og:description" content="{% if collection.description %}{{ collection.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود آهنگ‌های کالکشن {{ collection.title }} به‌صورت یکجا در سایت {{ info.site_name }}.{% endif %}">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url }}">
+    {% if collection.image %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ collection.title }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="{% if collection.description %}{{ collection.description|striptags|truncatechars:155 }}{% else %}پخش آنلاین و دانلود آهنگ‌های کالکشن {{ collection.title }} به‌صورت یکجا در سایت {{ info.site_name }}.{% endif %}">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if collection.image %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicPlaylist",
+      "name": "{{ collection.title|escapejs }}",
+      "description": "{% if collection.description %}{{ collection.description|striptags|truncatechars:155|escapejs }}{% else %}پخش آنلاین و دانلود آهنگ‌های کالکشن {{ collection.title|escapejs }} به‌صورت یکجا در سایت {{ info.site_name|escapejs }}.{% endif %}",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+      {% if collection.image %}
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url|escapejs }}",
+      {% endif %}
+      "numTracks": {{ songs|length|default:0 }},
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "track": [
+        {% for song in songs %}
+        {
+          "@type": "MusicRecording",
+          "name": "{{ song.title|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.cover %},
+          "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% elif song.image %},
+          "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% endif %}{% if song.singer %},
+          "byArtist": {
+            "@type": "Person",
+            "name": "{{ song.singer.name|escapejs }}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+          }{% endif %}{% if song.album %},
+          "inAlbum": {
+            "@type": "MusicAlbum",
+            "name": "{{ song.album.title|escapejs }}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+          }{% endif %}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }
+    </script>
+{% endblock meta %}
+
 {% block style %}
 <style>
     .collection-detail-page {
@@ -303,6 +374,17 @@
     .song-play-btn {
         flex: 1;
     }
+
+    .collection-detail-actions {
+    align-items: stretch;
+    }
+
+    .collection-play-all-btn,
+    .collection-favorite-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
 }
 
 
@@ -324,11 +406,62 @@
     border-radius: 12px;
 }
 
+.collection-detail-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.collection-favorite-btn {
+    min-height: 50px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #e11d48;
+    background: #fff0f3;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 950;
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.collection-favorite-btn i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.collection-favorite-btn:hover {
+    color: #e11d48;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(225, 29, 72, 0.14);
+}
+
+.collection-favorite-btn.is-active {
+    color: #fff;
+    background: #e11d48;
+    box-shadow: 0 12px 28px rgba(225, 29, 72, 0.24);
+}
+
+.collection-favorite-btn.is-active:hover {
+    color: #fff;
+}
+
+.collection-favorite-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
 </style>
 {% endblock %}
-{% block title %}
-    {{ collection.title }}
-{% endblock %}
+
 
 {% block content %}
 
@@ -383,12 +516,39 @@
                     {% endif %}
                 </div>
 
+                
+                <div class="collection-detail-actions">
                 {% if songs %}
                     <button type="button" class="collection-play-all-btn" id="playCollectionBtn">
                         <i class="bi bi-play-fill"></i>
                         پخش همه آهنگ‌ها
                     </button>
                 {% endif %}
+
+                {% if request.user.is_authenticated %}
+                    <button
+                        type="button"
+                        class="collection-favorite-btn js-favorite-collection-btn {% if is_favorite_collection %}is-active{% endif %}"
+                        data-url="{% url 'musics:collection_favorite_toggle' collection.pk %}"
+                        data-is-favorite="{% if is_favorite_collection %}true{% else %}false{% endif %}"
+                    >
+                        <i class="bi {% if is_favorite_collection %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                        <span>
+                            {% if is_favorite_collection %}
+                                حذف از علاقه‌مندی‌ها
+                            {% else %}
+                                افزودن به علاقه‌مندی‌ها
+                            {% endif %}
+                        </span>
+                    </button>
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="collection-favorite-btn">
+                        <i class="bi bi-heart"></i>
+                        <span>ورود برای علاقه‌مندی</span>
+                    </a>
+                {% endif %}
+            </div>
+
             </div>
 
         </div>
@@ -825,6 +985,73 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const favoriteCollectionBtn = document.querySelector(".js-favorite-collection-btn");
+
+    if (!favoriteCollectionBtn) return;
+
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+
+        return null;
+    }
+
+    favoriteCollectionBtn.addEventListener("click", function () {
+        const url = favoriteCollectionBtn.dataset.url;
+        const icon = favoriteCollectionBtn.querySelector("i");
+        const text = favoriteCollectionBtn.querySelector("span");
+
+        favoriteCollectionBtn.disabled = true;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (!data.ok) {
+                    alert(data.message || "خطایی رخ داد.");
+                    return;
+                }
+
+                if (data.is_favorite) {
+                    icon.classList.remove("bi-heart");
+                    icon.classList.add("bi-heart-fill");
+                    text.textContent = "حذف از علاقه‌مندی‌ها";
+                    favoriteCollectionBtn.classList.add("is-active");
+                    favoriteCollectionBtn.dataset.isFavorite = "true";
+                } else {
+                    icon.classList.remove("bi-heart-fill");
+                    icon.classList.add("bi-heart");
+                    text.textContent = "افزودن به علاقه‌مندی‌ها";
+                    favoriteCollectionBtn.classList.remove("is-active");
+                    favoriteCollectionBtn.dataset.isFavorite = "false";
+                }
+            })
+            .catch(function () {
+                alert("ارتباط با سرور برقرار نشد.");
+            })
+            .finally(function () {
+                favoriteCollectionBtn.disabled = false;
+            });
     });
 });
 </script>

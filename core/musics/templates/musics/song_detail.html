@@ -1,5 +1,95 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %} | {{ info.site_name }}</title>
+
+    <meta name="description" content="پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %}{% if song.album %} از آلبوم {{ song.album.title }}{% endif %}، با متن و ترجمه فارسی در {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="music.song">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %} | {{ info.site_name }}">
+    <meta property="og:description" content="پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %}{% if song.album %} از آلبوم {{ song.album.title }}{% endif %}، با متن و ترجمه فارسی در {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if song.cover %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url }}">
+    {% elif song.image %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ song.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+    {% if song.singer %}
+    <meta property="music:musician" content="{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url }}">
+    {% endif %}
+    {% if song.album %}
+    <meta property="music:album" content="{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url }}">
+    {% endif %}
+    {% if song.language %}
+    <meta property="music:release_date" content="{{ song.created_at|date:'Y-m-d' }}">
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %} | {{ info.site_name }}">
+    <meta name="twitter:description" content="پخش آنلاین و دانلود آهنگ {{ song.title }}{% if song.singer %} از {{ song.singer.name }}{% endif %}{% if song.album %} از آلبوم {{ song.album.title }}{% endif %}، با متن و ترجمه فارسی در {{ info.site_name }}.">
+    {% if info.twitter %}
+    <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if song.cover %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url }}">
+    {% elif song.image %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ song.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicRecording",
+      "name": "{{ song.title|escapejs }}",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri|escapejs }}"
+      }{% if song.cover %},
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"
+      {% elif song.image %},
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"
+      {% elif info.logo.wide_logo.url %},
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url|escapejs }}"
+      {% endif %}{% if song.year %},
+      "datePublished": "{{ song.year }}"
+      {% elif song.created_at %},
+      "datePublished": "{{ song.created_at|date:'Y-m-d' }}"
+      {% endif %}{% if song.singer %},
+      "byArtist": {
+        "@type": "Person",
+        "name": "{{ song.singer.name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+      }
+      {% endif %}{% if song.album %},
+      "inAlbum": {
+        "@type": "MusicAlbum",
+        "name": "{{ song.album.title|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+      }
+      {% endif %}{% if song.audio_file %},
+      "audio": {
+        "@type": "AudioObject",
+        "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{{ song.audio_file.url|escapejs }}"
+      }
+      {% endif %}{% if lyrics %},
+      "lyrics": "{{ lyrics.raw_lyrics|default:lyrics.translated_lyrics|default:''|escapejs }}"
+      {% endif %}{% if song.rating %},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ song.rating|floatformat:1 }}",
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+      {% endif %}
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>
@@ -720,7 +810,126 @@ textarea.song-form-control {
 }
 
 
+.song-favorite-btn {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    min-height: 46px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.song-favorite-btn i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.song-favorite-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px);
+}
+
+.song-favorite-btn.is-active i {
+    color: #fff;
+}
+
+.song-favorite-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 576px) {
+    .song-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .song-favorite-btn {
+        width: 100%;
+    }
+}
+
+.lyrics-tabs {
+    display: inline-flex;
+    gap: 8px;
+    padding: 6px;
+    margin-bottom: 18px;
+    background: #f3f4f6;
+    border-radius: 999px;
+}
+
+.lyrics-tab-btn {
+    border: 0;
+    background: transparent;
+    color: #6b7280;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lyrics-tab-btn.is-active {
+    background: #fff;
+    color: #111827;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.lyrics-tab-content {
+    display: none;
+}
+
+.lyrics-tab-content.is-active {
+    display: block;
+}
+
+.lyrics-line-pair {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.lyrics-line-pair:last-child {
+    border-bottom: 0;
+}
+
+.lyrics-main-line {
+    color: #111827;
+    font-size: 16px;
+    line-height: 2;
+    direction: ltr;
+    text-align: left;
+}
+
+.lyrics-translate-line {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.lyrics-plain-box {
+    direction: ltr;
+    text-align: left;
+    line-height: 2.1;
+}
+
+
 </style>
+
 
 
 
@@ -760,10 +969,10 @@ textarea.song-form-control {
                 </div>
 
                 <div class="song-hero-info  text-white">
-                    <div class="song-hero-badge  text-white">
+                    <!-- <div class="song-hero-badge  text-white">
                         <i class="bi bi-music-note-beamed  text-white"></i>
                         <span class=" text-white">آموزش زبان با موسیقی</span>
-                    </div>
+                    </div> -->
 
                     <h1 class="song-hero-title  text-white">{{ song.title }}</h1>
 
@@ -831,6 +1040,28 @@ textarea.song-form-control {
                                 <i class="bi bi-play-fill"></i>
                                 پخش آهنگ
                             </button>
+                            {% if request.user.is_authenticated %}
+                            <button
+                                type="button"
+                                class="song-favorite-btn js-favorite-song-btn song-main-link {% if is_favorite_song %}is-active{% endif %}"
+                                data-url="{% url 'musics:song_favorite_toggle' song.pk %}"
+                                data-is-favorite="{% if is_favorite_song %}true{% else %}false{% endif %}"
+                            >
+                                <i class="bi {% if is_favorite_song %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                                <span class="text-white">
+                                    {% if is_favorite_song %}
+                                        حذف از علاقه‌مندی‌ها
+                                    {% else %}
+                                        افزودن به علاقه‌مندی‌ها
+                                    {% endif %}
+                                </span>
+                            </button>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="song-favorite-btn">
+                                    <i class="bi bi-heart"></i>
+                                    <span>ورود برای علاقه‌مندی</span>
+                                </a>
+                            {% endif %}
 
                             <a href="{{ song.audio_file.url }}" download class="song-main-download">
                                 <i class="bi bi-download"></i>
@@ -869,27 +1100,28 @@ textarea.song-form-control {
                         <h2>متن و ترجمه آهنگ</h2>
                     </div>
 
-                    {% if lyrics %}
-                        {% if lyrics.raw_lyrics %}
-                            <div class="lyrics-box">{{ lyrics.raw_lyrics }}</div>
-                        {% elif lyrics.synced_lyrics %}
-                            <div class="lyrics-box">
-                                {% for line in lyrics.synced_lyrics %}
-                                    {{ line.text }}
-                                    {% if line.translation %}
-                                        <br>
-                                        <span class="text-muted">{{ line.translation }}</span>
-                                    {% endif %}
-                                    <br>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="empty-detail-box">متنی برای این آهنگ ثبت نشده است.</div>
-                        {% endif %}
-                    {% else %}
-                        <div class="empty-detail-box">متنی برای این آهنگ ثبت نشده است.</div>
-                    {% endif %}
+                        <div class="lyrics-tabs">
+                            <button type="button" class="lyrics-tab-btn is-active" data-tab="lyrics-with-translation">
+                                متن با ترجمه
+                            </button>
+
+                            <button type="button" class="lyrics-tab-btn" data-tab="lyrics-only">
+                                متن بدون ترجمه
+                            </button>
+                        </div>
+
+                        <div class="lyrics-tab-content is-active" id="lyrics-with-translation">
+                            
+                                <div class="lyrics-box lyrics-translation-box">
+                                {{ lyrics.translated_lyrics }}
+                                </div>
+                        </div>
+
+                        <div class="lyrics-tab-content" id="lyrics-only">
+                            <div class="lyrics-box lyrics-plain-box">{{ lyrics.raw_lyrics|linebreaksbr }}</div>
+                        </div>
                 </div>
+
 
 
                 <div class="song-section-card mb-4">
@@ -1193,5 +1425,95 @@ textarea.song-form-control {
 
     </div>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const favoriteBtn = document.querySelector(".js-favorite-song-btn");
+
+    if (!favoriteBtn) return;
+
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+
+        return null;
+    }
+
+    
+
+    favoriteBtn.addEventListener("click", function () {
+        const url = favoriteBtn.dataset.url;
+        const icon = favoriteBtn.querySelector("i");
+        const text = favoriteBtn.querySelector("span");
+
+        favoriteBtn.disabled = true;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert(data.message || "خطایی رخ داد.");
+                    return;
+                }
+
+                if (data.is_favorite) {
+                    icon.classList.remove("bi-heart");
+                    icon.classList.add("bi-heart-fill");
+                    text.textContent = "حذف از علاقه‌مندی‌ها";
+                    favoriteBtn.dataset.isFavorite = "true";
+                } else {
+                    icon.classList.remove("bi-heart-fill");
+                    icon.classList.add("bi-heart");
+                    text.textContent = "افزودن به علاقه‌مندی‌ها";
+                    favoriteBtn.dataset.isFavorite = "false";
+                }
+            })
+            .catch(() => {
+                alert("ارتباط با سرور برقرار نشد.");
+            })
+            .finally(() => {
+                favoriteBtn.disabled = false;
+            });
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabButtons = document.querySelectorAll(".lyrics-tab-btn");
+    const tabContents = document.querySelectorAll(".lyrics-tab-content");
+
+    tabButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const targetId = button.dataset.tab;
+
+            tabButtons.forEach(function (item) {
+                item.classList.remove("is-active");
+            });
+
+            tabContents.forEach(function (item) {
+                item.classList.remove("is-active");
+            });
+
+            button.classList.add("is-active");
+            document.getElementById(targetId).classList.add("is-active");
+        });
+    });
+});
+</script>
+
 
 {% endblock %}

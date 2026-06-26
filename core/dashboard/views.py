@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Ticket, TicketReply
 from .forms import *
+from django.http import JsonResponse
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -33,12 +34,48 @@ class DashboardFavoritesView(LoginRequiredMixin, View):
 
         context = {
             "customer": customer,
-            "favorite_songs": customer.favorite_songs.select_related("singer"),
-            "favorite_artists": customer.favorite_artists.all(),
-            "favorite_collections": customer.favorite_collections.all(),
+            "favorite_songs": customer.favorite_songs.select_related("singer") if customer else [],
+            "favorite_artists": customer.favorite_artists.all() if customer else [],
+            "favorite_collections": customer.favorite_collections.all() if customer else [],
         }
 
         return render(request, self.template_name, context)
+
+    
+
+
+
+class DashboardFavoriteRemoveView(LoginRequiredMixin, View):
+    def post(self, request, item_type, pk):
+        customer = Customer.objects.filter(user=request.user).first()
+
+        if customer is None:
+            return JsonResponse(
+                {"ok": False, "message": "پروفایل کاربری پیدا نشد."},
+                status=400,
+            )
+
+        favorite_fields = {
+            "song": customer.favorite_songs,
+            "artist": customer.favorite_artists,
+            "collection": customer.favorite_collections,
+        }
+
+        favorite_manager = favorite_fields.get(item_type)
+
+        if favorite_manager is None:
+            return JsonResponse(
+                {"ok": False, "message": "نوع علاقه‌مندی نامعتبر است."},
+                status=400,
+            )
+
+        favorite_manager.remove(pk)
+
+        return JsonResponse({
+            "ok": True,
+            "message": "آیتم از علاقه‌مندی‌ها حذف شد.",
+        })
+
 
 
 class DashboardPlaylistsView(LoginRequiredMixin, View):
@@ -52,12 +89,21 @@ class PlaylistDetailView(View):
     template_name = "dashboard/playlist_detail.html"
 
     def get(self, request, pk, playlist_slug):
-        collection = Playlist.objects.get(id=pk)
+        collection = get_object_or_404(Playlist, id=pk)
         songs = list(collection.songs.all())
+
+        can_manage_playlist = False
+
+        if request.user.is_authenticated:
+            customer = Customer.objects.filter(user=request.user).first()
+
+            if customer and collection.customer_id == customer.id:
+                can_manage_playlist = True
 
         return render(request, self.template_name, {
             "collection": collection,
             "songs": songs,
+            "can_manage_playlist": can_manage_playlist,
         })
 
 
@@ -296,3 +342,40 @@ class DashboardCommentsView(LoginRequiredMixin, View):
         }
         return render(request, self.template_name, context)
 
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views import View
+
+from accounts.models import Customer
+from musics.models import Playlist, Song
+
+
+class DashboardPlaylistSongRemoveView(LoginRequiredMixin, View):
+    def post(self, request, playlist_pk, song_pk):
+        customer = get_object_or_404(Customer, user=request.user)
+
+        playlist = get_object_or_404(
+            Playlist,
+            pk=playlist_pk,
+            customer=customer,
+        )
+
+        song = get_object_or_404(Song, pk=song_pk)
+
+        if not playlist.songs.filter(pk=song.pk).exists():
+            return JsonResponse({
+                "ok": False,
+                "message": "این آهنگ در پلی‌لیست وجود ندارد.",
+            }, status=400)
+
+        playlist.songs.remove(song)
+
+        songs_count = playlist.songs.count()
+
+        return JsonResponse({
+            "ok": True,
+            "message": "آهنگ از پلی‌لیست حذف شد.",
+            "songs_count": songs_count,
+        })

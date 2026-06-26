@@ -23,6 +23,10 @@ urlpatterns = [
     path("songs/submit_rating/<int:pk>/",views.CreateSongRatingView.as_view(), name="song_rating_create"),
     path("playlists/",views.PlayListsView.as_view(),name="playlists"),
     path("playlists/<int:pk>/<str:collection_slug>/",views.PlaylistDetailView.as_view(),name="playlist_detail"),
-    
+    path("songs/favorite-toggle/<int:pk>/",views.song_favorite_toggle,name="song_favorite_toggle",),
+    path("artists/favorite-toggle/<int:pk>/",views.artist_favorite_toggle,name="artist_favorite_toggle",),
+    path("collections/favorite-toggle/<int:pk>/",views.collection_favorite_toggle,name="collection_favorite_toggle",),
+
+
 
 ]

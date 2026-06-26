@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from khayyam import JalaliDatetime
 import os
 import uuid
+from itertools import zip_longest
+
 
 def upload_to(instance, filename):
     ext = os.path.splitext(filename)[1]
@@ -130,26 +132,29 @@ class Album(models.Model):
         return f"{self.title} - {self.singer.name}"
 
 class Lyrics(models.Model):
-    song = models.OneToOneField(Song,on_delete=models.CASCADE,related_name="lyrics")
+    song = models.OneToOneField(Song, on_delete=models.CASCADE, related_name="lyrics")
     raw_lyrics = models.TextField()
     translated_lyrics = models.TextField()
-    # برای پخش همزمان:
-    # [
-    #   {
-    #       "start_time": "00:12",
-    #       "text": "Hello",
-    #       "translation": "سلام"
-    #   }
-    # ]
     synced_lyrics = models.JSONField(
         help_text=_("JSON structure containing timestamps, text and translation"),
         null=True,
         blank=True
     )
 
+    @property
+    def raw_lines(self):
+        return self.raw_lyrics.splitlines() if self.raw_lyrics else []
+
+    @property
+    def translated_lines(self):
+        return self.translated_lyrics.splitlines() if self.translated_lyrics else []
+
+    @property
+    def paired_lines(self):
+        return zip_longest(self.raw_lines, self.translated_lines, fillvalue="")
+
     def __str__(self):
         return f"Lyrics for {self.song.title}"
-
 
 class Word(models.Model):
     song = models.ForeignKey(Song,on_delete=models.CASCADE,related_name="important_words")
@@ -160,7 +165,6 @@ class Word(models.Model):
 
     def __str__(self):
         return f"{self.term} ({self.song.title})"
-
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
@@ -226,13 +230,15 @@ class SongRating(models.Model):
     def __str__(self):
         return f"{self.user} rated {self.song.title}: {self.score}"
 
-
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
     customer = models.ForeignKey('accounts.Customer', on_delete=models.CASCADE)
     songs = models.ManyToManyField(Song)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    def get_slug(self):
+        return self.title.replace(' ','-').replace('/','-')
 
     def get_collection_slug(self):
         return self.title.replace(' ','-').replace('/','-')

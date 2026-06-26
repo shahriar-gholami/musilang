@@ -157,3 +157,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.User"
 
+DEFAULT_FILE_STORAGE = 'musics.storage_backends.LiaraStorage'
+AWS_ACCESS_KEY_ID = 'pg5rqlmr2u8e5uln'
+AWS_SECRET_ACCESS_KEY = '6ea004ea-01ab-45c4-bf03-3c9f70322c18'
+AWS_STORAGE_BUCKET_NAME = 'marketplace-bucket'
+AWS_S3_ENDPOINT_URL = 'https://storage.iran.liara.site'
+AWS_S3_FILE_OVERWRITE = False
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+        'height': 300,
+        'width': 600,
+    },
+}

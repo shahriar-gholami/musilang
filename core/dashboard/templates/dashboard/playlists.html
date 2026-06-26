@@ -14,7 +14,7 @@
     {% if playlists %}
         <div class="dashboard-grid">
             {% for playlist in playlists %}
-                <a href="{{ playlist.get_absolute_url }}">
+                <a href="{% url 'dashboard:playlist_detail' playlist.id playlist.get_slug %}">
                 <div class="dashboard-card">
                     <h3>{{ playlist.title }}</h3>
                     <p>{{ playlist.songs.count }} آهنگ</p>

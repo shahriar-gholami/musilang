@@ -1,5 +1,103 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>{{ post.title }} | {{ info.site_name }}</title>
+
+    <meta name="description" content="{{ post.meta_description|striptags|truncatechars:160 }}">
+    <meta name="robots" content="{% if post.published %}index,follow{% else %}noindex,nofollow{% endif %}">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}">
+
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="{{ post.title }} | {{ info.site_name }}">
+    <meta property="og:description" content="{{ post.meta_description|striptags|truncatechars:200 }}">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}">
+    {% if post.image %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+    <meta property="article:published_time" content="{{ post.created_date|date:'c' }}">
+    <meta property="article:modified_time" content="{{ post.created_date|date:'c' }}">
+    {% if post.category %}
+        <meta property="article:section" content="{{ post.category.name }}">
+    {% endif %}
+    {% for tag in post.tags.all %}
+        <meta property="article:tag" content="{{ tag.name }}">
+    {% endfor %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ post.title }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="{{ post.meta_description|striptags|truncatechars:200 }}">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if post.image %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "{{ post.title|escapejs }}",
+      "description": "{{ post.meta_description|striptags|truncatechars:200|escapejs }}",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url|escapejs }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url|escapejs }}"
+      },
+      "datePublished": "{{ post.created_date|date:'c' }}",
+      "dateModified": "{{ post.created_date|date:'c' }}",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      }{% if post.image %},
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.image.url|escapejs }}"
+      }{% elif info.logo.wide_logo.url %},
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url|escapejs }}"
+      }{% endif %},
+      "publisher": {
+        "@type": "Organization",
+        "name": "{{ info.site_name|escapejs }}"{% if info.logo.icon.url %},
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{{ info.logo.icon.url|escapejs }}"
+        }{% endif %}
+      }{% if post.category %},
+      "articleSection": "{{ post.category.name|escapejs }}"{% endif %}{% if post.tags.all %},
+      "keywords": "{% for tag in post.tags.all %}{{ tag.name|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}"{% endif %}
+    }
+    </script>
+
+    {% if post.faqs.all %}
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {% for faq in post.faqs.all %}
+            {
+              "@type": "Question",
+              "name": "{{ faq.question|striptags|escapejs }}",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ faq.answer|striptags|escapejs }}"
+              }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }
+        </script>
+    {% endif %}
+{% endblock meta %}
 
 {% block style %}
 <style>
@@ -288,9 +386,6 @@
 </style>
 {% endblock %}
 
-{% block title %}
-    {{ post.title }}
-{% endblock %}
 
 {% block content %}
 <main class="blog-detail-page">

@@ -1,5 +1,89 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>پخش آنلاین و دانلود آهنگ‌های آرشیو {{ tag.title }} | {{ info.site_name }}</title>
+
+    <meta name="description" content="پخش آنلاین و دانلود رایگان آهنگ با برچسب {{ tag.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="پخش آنلاین و دانلود آهنگ‌های {{ tag.title }} | {{ info.site_name }}">
+    <meta property="og:description" content="پخش آنلاین و دانلود رایگان آهنگ با برچسب {{ tag.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="پخش آنلاین و دانلود آهنگ‌های {{ tag.title }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="پخش آنلاین و دانلود رایگان آهنگ با برچسب {{ tag.title }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "پخش آنلاین و دانلود آهنگ‌های آرشیو {{ tag.title|escapejs }} | {{ info.site_name|escapejs }}",
+      "description": "پخش آنلاین و دانلود رایگان آهنگ‌های آرشیو {{ tag.title|escapejs }} با متن و ترجمه فارسی برای تقویت زبان در سایت {{ info.site_name|escapejs }}.",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "about": {
+        "@type": "DefinedTerm",
+        "name": "{{ tag.title|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ tag.get_absolute_url|escapejs }}"
+      },
+      "keywords": "{{ tag.title|escapejs }}",
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "آهنگ‌های برچسب {{ tag.title|escapejs }}",
+        "numberOfItems": {{ paginator.count|default:0 }},
+        "itemListElement": [
+          {% for song in songs %}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicRecording",
+              "name": "{{ song.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.cover %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% elif song.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% endif %}{% if song.singer %},
+              "byArtist": {
+                "@type": "Person",
+                "name": "{{ song.singer.name|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.album %},
+              "inAlbum": {
+                "@type": "MusicAlbum",
+                "name": "{{ song.album.title|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.rating %},
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ song.rating|floatformat:1 }}",
+                "bestRating": "5",
+                "worstRating": "1"
+              }{% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>

@@ -1,5 +1,73 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>لیست آلبوم‌ها | {{ info.site_name }}</title>
+
+    <meta name="description" content="لیست آلبوم‌های موسیقی در {{ info.site_name }} را ببینید؛ مشاهده جزئیات آلبوم، خواننده، تعداد آهنگ‌ها و ورود به صفحه اختصاصی هر آلبوم.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="لیست آلبوم‌ها | {{ info.site_name }}">
+    <meta property="og:description" content="مجموعه‌ای از آلبوم‌های ثبت‌شده در {{ info.site_name }} را مشاهده کنید و وارد صفحه اختصاصی هر آلبوم شوید.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="لیست آلبوم‌ها | {{ info.site_name }}">
+    <meta name="twitter:description" content="مشاهده لیست آلبوم‌های موسیقی ثبت‌شده در {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "لیست آلبوم‌ها",
+      "description": "مجموعه‌ای از آلبوم‌های ثبت‌شده در {{ info.site_name }}.",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "آلبوم‌های موسیقی",
+        "itemListElement": [
+          {% for album in albums %}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ album.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicAlbum",
+              "name": "{{ album.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ album.get_absolute_url|escapejs }}"{% if album.cover %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ album.cover.url|escapejs }}"{% endif %}{% if album.release_date %},
+              "datePublished": "{{ album.release_date|date:'Y-m-d' }}"{% endif %}{% if album.singer %},
+              "byArtist": {
+                "@type": "Person",
+                "name": "{{ album.singer.name|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ album.singer.get_absolute_url|escapejs }}"
+              }{% endif %}{% if album.songs_count is not None %},
+              "numTracks": {{ album.songs_count }}
+              {% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>

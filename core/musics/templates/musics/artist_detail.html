@@ -1,6 +1,60 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block meta %}
+    <title>بیوگرافی و دانلود آخرین آهنگ‌های {{ artist.name }} | {{ info.site_name }}</title>
+    <meta name="description" content="مشاهده پروفایل و دانلود آخرین آهنگ‌های  {{ artist.name }}، بیوگرافی، آهنگ‌ها و آلبوم‌های {{ artist.name }} در {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {# Open Graph #}
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="بیوگرافی و دانلود آخرین آهنگ‌های {{ artist.name }} | {{ info.site_name }}">
+    <meta property="og:description" content="مشاهده پروفایل و دانلود آخرین آهنگ‌های  {{ artist.name }}، بیوگرافی، آهنگ‌ها و آلبوم‌های {{ artist.name }} در {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if artist.image %}
+    <meta property="og:image" content="{{ artist.image.url }}">
+    {% else %}
+    <meta property="og:image" content="{{ info.logo.wide_logo.url }}">
+    {% endif %}
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="معرفی و دانلود آهنگ‌های {{ artist.name }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="مشاهده پروفایل و دانلود آخرین آهنگ‌های  {{ artist.name }}، بیوگرافی، آهنگ‌ها و آلبوم‌های {{ artist.name }} در {{ info.site_name }}.">
+    {% if info.twitter %}
+    <meta name="twitter:site" content="@{{ info.twitter }}">
+    <meta name="twitter:creator" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if artist.image %}
+    <meta name="twitter:image" content="{{ artist.image.url }}">
+    {% else %}
+    <meta name="twitter:image" content="{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    {# Schema.org JSON-LD #}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "{{ artist.name|escapejs }}",
+      "url": "{{ request.build_absolute_uri|escapejs }}"{% if artist.image %},
+      "image": "{{ artist.image.url|escapejs }}"{% elif info.logo.wide_logo.url %},
+      "image": "{{ info.logo.wide_logo.url|escapejs }}"{% endif %}{% if artist.bio %},
+      "description": "مشاهده پروفایل و دانلود آخرین آهنگ‌های  {{ artist.name }}، بیوگرافی، آهنگ‌ها و آلبوم‌های {{ artist.name }} در {{ info.site_name }}.",
+      "nationality": {
+        "@type": "Country",
+        "name": "{{ artist.nationality.name|escapejs }}"
+      }{% endif %},
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri|escapejs }}"
+      },
+      "sameAs": [{% if info.instagram %}"https://instagram.com/{{ info.instagram }}"{% endif %}{% if info.youtube %}{% if info.instagram %}, {% endif %}"https://youtube.com/{{ info.youtube }}"{% endif %}{% if info.twitter %}{% if info.instagram or info.youtube %}, {% endif %}"https://twitter.com/{{ info.twitter }}"{% endif %}{% if info.telegram %}{% if info.instagram or info.youtube or info.twitter %}, {% endif %}"https://t.me/{{ info.telegram }}"{% endif %}]
+    }
+    </script>
+{% endblock meta %}
+
+
 {% block style %}
 <style>
 .artist-detail-page {
@@ -443,7 +497,60 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .artist-main-btn,
+    .artist-soft-btn,
+    .artist-favorite-btn {
+        width: 100%;
+    }
+
 }
+
+.artist-favorite-btn {
+    height: 48px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #fff0f3;
+    color: #e11d48;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.artist-favorite-btn i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.artist-favorite-btn:hover {
+    color: #e11d48;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(225, 29, 72, 0.14);
+}
+
+.artist-favorite-btn.is-active {
+    background: #e11d48;
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(225, 29, 72, 0.24);
+}
+
+.artist-favorite-btn.is-active:hover {
+    color: #fff;
+}
+
+.artist-favorite-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
 </style>
 {% endblock %}
 
@@ -498,6 +605,30 @@
                                     پخش همه آهنگ‌ها
                                 </button>
                             {% endif %}
+
+                            {% if request.user.is_authenticated %}
+                                <button
+                                    type="button"
+                                    class="artist-favorite-btn js-favorite-artist-btn {% if is_favorite_artist %}is-active{% endif %}"
+                                    data-url="{% url 'musics:artist_favorite_toggle' artist.pk %}"
+                                    data-is-favorite="{% if is_favorite_artist %}true{% else %}false{% endif %}"
+                                >
+                                    <i class="bi {% if is_favorite_artist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                                    <span>
+                                        {% if is_favorite_artist %}
+                                            حذف از علاقه‌مندی‌ها
+                                        {% else %}
+                                            افزودن به علاقه‌مندی‌ها
+                                        {% endif %}
+                                    </span>
+                                </button>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="artist-favorite-btn">
+                                    <i class="bi bi-heart"></i>
+                                    <span>ورود برای علاقه‌مندی</span>
+                                </a>
+                            {% endif %}
+
 
                             <a href="{% url 'musics:artist_list' %}" class="artist-soft-btn">
                                 <i class="bi bi-arrow-right"></i>
@@ -791,4 +922,73 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const favoriteArtistBtn = document.querySelector(".js-favorite-artist-btn");
+
+    if (!favoriteArtistBtn) return;
+
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                return decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        }
+
+        return null;
+    }
+
+    favoriteArtistBtn.addEventListener("click", function () {
+        const url = favoriteArtistBtn.dataset.url;
+        const icon = favoriteArtistBtn.querySelector("i");
+        const text = favoriteArtistBtn.querySelector("span");
+
+        favoriteArtistBtn.disabled = true;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (!data.ok) {
+                    alert(data.message || "خطایی رخ داد.");
+                    return;
+                }
+
+                if (data.is_favorite) {
+                    icon.classList.remove("bi-heart");
+                    icon.classList.add("bi-heart-fill");
+                    text.textContent = "حذف از علاقه‌مندی‌ها";
+                    favoriteArtistBtn.classList.add("is-active");
+                    favoriteArtistBtn.dataset.isFavorite = "true";
+                } else {
+                    icon.classList.remove("bi-heart-fill");
+                    icon.classList.add("bi-heart");
+                    text.textContent = "افزودن به علاقه‌مندی‌ها";
+                    favoriteArtistBtn.classList.remove("is-active");
+                    favoriteArtistBtn.dataset.isFavorite = "false";
+                }
+            })
+            .catch(function () {
+                alert("ارتباط با سرور برقرار نشد.");
+            })
+            .finally(function () {
+                favoriteArtistBtn.disabled = false;
+            });
+    });
+});
+</script>
+
+
 {% endblock %}

@@ -1,5 +1,95 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block meta %}
+    <title>آهنگ‌های زبان {{ language.name }} | پخش آنلاین و دانلود آهنگ | {{ info.site_name }}</title>
+
+    <meta name="description" content="آرشیو آهنگ‌های زبان {{ language.name }} برای پخش آنلاین، دانلود، مشاهده متن و ترجمه آهنگ‌ها در سایت {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ language.get_absolute_url }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="آهنگ‌های زبان {{ language.name }} | {{ info.site_name }}">
+    <meta property="og:description" content="آرشیو آهنگ‌های زبان {{ language.name }} برای پخش آنلاین، دانلود، مشاهده متن و ترجمه آهنگ‌ها در سایت {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ language.get_absolute_url }}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="آهنگ‌های زبان {{ language.name }} | {{ info.site_name }}">
+    <meta name="twitter:description" content="آرشیو آهنگ‌های زبان {{ language.name }} برای پخش آنلاین، دانلود، مشاهده متن و ترجمه آهنگ‌ها در سایت {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "آهنگ‌های زبان {{ language.name|escapejs }} | {{ info.site_name|escapejs }}",
+      "description": "آرشیو آهنگ‌های زبان {{ language.name|escapejs }} برای پخش آنلاین، دانلود، مشاهده متن و ترجمه آهنگ‌ها در سایت {{ info.site_name|escapejs }}.",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ language.get_absolute_url|escapejs }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "about": {
+        "@type": "Language",
+        "name": "{{ language.name|escapejs }}",
+        "alternateName": "{{ language.code|upper|escapejs }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "فهرست آهنگ‌های زبان {{ language.name|escapejs }}",
+        "numberOfItems": {{ page_obj.paginator.count|default:0 }},
+        "itemListElement": [
+          {% for song in songs %}
+          {
+            "@type": "ListItem",
+            "position": {{ page_obj.start_index|add:forloop.counter0 }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicRecording",
+              "name": "{{ song.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.cover %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% elif song.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% endif %}{% if song.singer %},
+              "byArtist": {
+                "@type": "Person",
+                "name": "{{ song.singer.name|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.album %},
+              "inAlbum": {
+                "@type": "MusicAlbum",
+                "name": "{{ song.album.title|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.album.get_absolute_url|escapejs }}"
+              }{% endif %}{% if song.rating %},
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ song.rating|floatformat:1 }}",
+                "bestRating": "5",
+                "worstRating": "1"
+              }{% endif %}{% if song.audio_file %},
+              "audio": {
+                "@type": "AudioObject",
+                "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{{ song.audio_file.url|escapejs }}"
+              }{% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
+
+
 {% block style %}
 <style>
     .language-songs-page .song-list-header {

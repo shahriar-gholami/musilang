@@ -1,5 +1,210 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block meta %}
+    <title>دانلود آهنگ جدید خارجی و پخش آنلاین با متن و ترجمه فارسی | {{ info.site_name }}</title>
+
+    <meta name="description" content="دانلود آهنگ جدید خارجی و پخش آنلاین با متن و ترجمه فارسی، معرفی خواننده‌ها، کالکشن‌های منتخب در {{ info.site_name }}.">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="دانلود آهنگ جدید و پخش آنلاین با متن و ترجمه فارسی | {{ info.site_name }}">
+    <meta property="og:description" content="دانلود آهنگ جدید خارجی و پخش آنلاین با متن و ترجمه فارسی، معرفی خواننده‌ها، کالکشن‌های منتخب در {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}/">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="دانلود آهنگ جدید و پخش آنلاین با متن و ترجمه فارسی | {{ info.site_name }}">
+    <meta name="twitter:description" content="دانلود آهنگ جدید، پخش آنلاین موسیقی، آرشیو آهنگ‌های خارجی با متن و ترجمه فارسی، معرفی خواننده‌ها، کالکشن‌های منتخب در {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+          "name": "{{ info.site_name|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/"{% if info.logo.icon.url %},
+          "logo": {
+            "@type": "ImageObject",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ info.logo.icon.url|escapejs }}"
+          }{% endif %}
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
+          "name": "{{ info.site_name|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "description": "دانلود آهنگ جدید خارجی و پخش آنلاین با متن و ترجمه فارسی، معرفی خواننده‌ها، کالکشن‌های منتخب در {{ info.site_name }}.",
+          "publisher": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          },
+          "inLanguage": "fa-IR"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#webpage",
+          "url": "{{ request.scheme }}://{{ request.get_host }}/",
+          "name": "دانلود آهنگ جدید و پخش آنلاین موسیقی | {{ info.site_name|escapejs }}",
+          "description": "دانلود آهنگ جدید خارجی و پخش آنلاین با متن و ترجمه فارسی، معرفی خواننده‌ها، کالکشن‌های منتخب در {{ info.site_name }}.",
+          "isPartOf": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#website"
+          },
+          "about": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          },
+          "inLanguage": "fa-IR"
+        },
+        {
+          "@type": "ItemList",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#latest-songs",
+          "name": "جدیدترین آهنگ‌ها",
+          "description": "فهرست جدیدترین آهنگ‌های منتشر شده در {{ info.site_name|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:songs_list' %}",
+          "numberOfItems": {{ latest_songs|length }},
+          "itemListElement": [
+            {% for song in latest_songs %}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.counter }},
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+              "item": {
+                "@type": "MusicRecording",
+                "name": "{{ song.title|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}",
+                "byArtist": {
+                  "@type": "MusicGroup",
+                  "name": "{{ song.singer.name|escapejs }}"{% if song.singer.get_absolute_url %},
+                  "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"{% endif %}
+                }{% if song.album %},
+                "inAlbum": {
+                  "@type": "MusicAlbum",
+                  "name": "{{ song.album.title|escapejs }}"
+                }{% endif %}{% if song.year %},
+                "datePublished": "{{ song.year }}"{% endif %}{% if song.language %},
+                "inLanguage": "{{ song.language.name|escapejs }}"{% endif %}{% if song.audio_file %},
+                "audio": {
+                  "@type": "AudioObject",
+                  "contentUrl": "{{ request.scheme }}://{{ request.get_host }}{{ song.audio_file.url|escapejs }}"
+                }{% endif %}{% if song.image %},
+                "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.image.url|escapejs }}"{% elif song.cover %},
+                "image": "{{ request.scheme }}://{{ request.get_host }}{{ song.cover.url|escapejs }}"{% endif %}{% if song.rating %},
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "{{ song.rating }}",
+                  "bestRating": "5",
+                  "worstRating": "1",
+                  "ratingCount": "1"
+                }{% endif %}
+              }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#music-categories",
+          "name": "دسته‌بندی‌های آهنگ‌ها",
+          "description": "دسته‌بندی‌های موسیقی برای دسترسی سریع به آهنگ‌های مورد علاقه",
+          "numberOfItems": {{ categories|length }},
+          "itemListElement": [
+            {% for category in categories %}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.counter }},
+              "name": "{{ category.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:songs_by_category' category.slug %}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#top-artists",
+          "name": "خواننده‌های برتر",
+          "description": "محبوب‌ترین خواننده‌ها و هنرمندان موسیقی در {{ info.site_name|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:artist_list' %}",
+          "numberOfItems": {{ home_content.artists.all|length }},
+          "itemListElement": [
+            {% for singer in home_content.artists.all %}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.counter }},
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ singer.get_absolute_url|escapejs }}",
+              "item": {
+                "@type": "MusicGroup",
+                "name": "{{ singer.name|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ singer.get_absolute_url|escapejs }}"{% if singer.nationality %},
+                "nationality": "{{ singer.nationality|escapejs }}"{% endif %}{% if singer.image %},
+                "image": "{{ request.scheme }}://{{ request.get_host }}{{ singer.image.url|escapejs }}"{% endif %}
+              }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#music-collections",
+          "name": "جدیدترین کالکشن‌های موسیقی",
+          "description": "کالکشن‌های منتخب آهنگ برای گوش دادن و کشف موسیقی‌های جدید",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:collection_list' %}",
+          "numberOfItems": {{ home_content.collections.all|length }},
+          "itemListElement": [
+            {% for collection in home_content.collections.all %}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.counter }},
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+              "item": {
+                "@type": "MusicPlaylist",
+                "name": "{{ collection.title|escapejs }}",
+                "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}"{% if collection.description %},
+                "description": "{{ collection.description|striptags|truncatechars:200|escapejs }}"{% endif %}{% if collection.image %},
+                "image": "{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url|escapejs }}"{% endif %},
+                "numTracks": "{{ collection.songs_count|default:collection.songs.count }}"
+              }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        },
+        {
+          "@type": "Blog",
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#blog",
+          "name": "آخرین مقالات موسیقی {{ info.site_name|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:post_list' %}",
+          "description": "آخرین مقاله‌ها، آموزش‌ها، معرفی‌ها و مطالب دنیای هنر و موسیقی.",
+          "publisher": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+          },
+          "blogPost": [
+            {% for post in posts %}
+            {
+              "@type": "BlogPosting",
+              "headline": "{{ post.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url|escapejs }}",
+              "datePublished": "{{ post.created_date|date:'c' }}",
+              "dateModified": "{{ post.created_date|date:'c' }}"{% if post.meta_description %},
+              "description": "{{ post.meta_description|striptags|truncatechars:200|escapejs }}"{% endif %}{% if post.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ post.image.url|escapejs }}"{% endif %}
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }
+      ]
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>
@@ -634,6 +839,7 @@
                             <div class="product-box music-card music-card-static music-card-light">
 
                                 <div class="music-cover-wrap">
+                                    <a href="{{ song.get_absolute_url }}">
                                     {% if song.image %}
                                         <img src="{{ song.image.url }}" alt="{{ song.title }}" loading="lazy">
                                     {% elif song.cover %}
@@ -641,6 +847,7 @@
                                     {% else %}
                                         <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}" loading="lazy">
                                     {% endif %}
+                                    </a>
 
                                     <div class="music-floating-actions">
                                         <button
@@ -684,8 +891,12 @@
                                 </div>
 
                                 <div class="product-box-title music-card-title">
+                                    <a href="{{ song.get_absolute_url }}">
                                     <h5 class="text-overflow-2">{{ song.title }}</h5>
+                                    </a>
+                                    <a href="{{ song.singer.get_absolute_url }}">
                                     <p class="mb-0 text-muted text-overflow-1">{{ song.singer.name }}</p>
+                                    </a>
                                 </div>
 
                                 <div class="music-card-info">
@@ -823,7 +1034,7 @@
 
                     {% for singer in home_content.artists.all %}
                         <div class="swiper-slide">
-                            <a href="{{ singer.get_absolute_url }}"></a>
+                            <a href="{{ singer.get_absolute_url }}">
                             <div class="product-box music-card music-card-static music-card-light">
 
                                 <div class="music-cover-wrap">
@@ -834,25 +1045,8 @@
                                     <h6 class="text-overflow-2 mb-0 pb-0">{{ singer.name }}</h6>
                                     <p class="mb-0 text-muted text-overflow-1 mt-0 pt-0 py-0">{{ singer.nationality }}</p>
                                 </div>
-
-                                <!-- <div class="music-card-info">
-                                    <div class="music-card-tags">
-                                        {% if song.language %}
-                                            <span>{{ song.language.name }}</span>
-                                        {% endif %}
-
-                                        {% if song.year %}
-                                            <span>{{ song.year }}</span>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="music-card-rating">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span>{{ song.rating }}</span>
-                                    </div>
-                                </div> -->
-
                             </div>
+                            </a>
                         </div>
                     {% endfor %}
             </div>
@@ -895,7 +1089,7 @@
                 {% for collection in home_content.collections.all %}
                     <div class="col-lg-4 col-12">
                         <div class="product-row-item collection-grid-card">
-                            <a href="{{ collectiom.get_absolute_url }}" class="collection-grid-link">
+                            <a href="{{ collection.get_absolute_url }}" class="collection-grid-link">
                                 <div class="row align-items-center g-3">
                                     <div class="col-4">
                                         <div class="collection-grid-image-wrap">
@@ -1022,7 +1216,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="slider-title-link">
-                        <a href="" class="main-color-one-color font-16"> مشاهده همه <i
+                        <a href="{% url 'blog:post_list' %}" class="main-color-one-color font-16"> مشاهده همه <i
                                 class="bi bi-caret-left-fill"></i></a>
                     </div>
                 </div>

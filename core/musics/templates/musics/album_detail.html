@@ -1,5 +1,85 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>
+        آلبوم {{ album.title }}{% if album.singer %} از {{ album.singer.name }}{% endif %} | {{ info.site_name }}
+    </title>
+
+    <meta name="description" content="{% if album.singer %}مشاهده آلبوم {{ album.title }} از {{ album.singer.name }}، لیست آهنگ‌ها، پخش آنلاین و جزئیات ترک‌ها در {{ info.site_name }}.{% else %}مشاهده آلبوم {{ album.title }}، لیست آهنگ‌ها، پخش آنلاین و جزئیات ترک‌ها در {{ info.site_name }}.{% endif %}">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <meta property="og:type" content="music.album">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="آلبوم {{ album.title }}{% if album.singer %} از {{ album.singer.name }}{% endif %} | {{ info.site_name }}">
+    <meta property="og:description" content="{% if album.singer %}مشاهده آلبوم {{ album.title }} از {{ album.singer.name }}، لیست آهنگ‌ها و جزئیات کامل آلبوم در {{ info.site_name }}.{% else %}مشاهده آلبوم {{ album.title }}، لیست آهنگ‌ها و جزئیات کامل آلبوم در {{ info.site_name }}.{% endif %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if album.cover %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ album.cover.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    {% if album.singer %}
+        <meta property="music:musician" content="{{ request.scheme }}://{{ request.get_host }}{{ album.singer.get_absolute_url }}">
+    {% endif %}
+    {% if album.release_date %}
+        <meta property="music:release_date" content="{{ album.release_date|date:'Y-m-d' }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="آلبوم {{ album.title }}{% if album.singer %} از {{ album.singer.name }}{% endif %} | {{ info.site_name }}">
+    <meta name="twitter:description" content="{% if album.singer %}مشاهده آلبوم {{ album.title }} از {{ album.singer.name }}، لیست آهنگ‌ها و پخش آنلاین در {{ info.site_name }}.{% else %}مشاهده آلبوم {{ album.title }}، لیست آهنگ‌ها و پخش آنلاین در {{ info.site_name }}.{% endif %}">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if album.cover %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ album.cover.url }}">
+    {% elif info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicAlbum",
+      "name": "{{ album.title|escapejs }}",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri|escapejs }}"
+      }{% if album.cover %},
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ album.cover.url|escapejs }}"
+      {% elif info.logo.wide_logo.url %},
+      "image": "{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url|escapejs }}"
+      {% endif %}{% if album.release_date %},
+      "datePublished": "{{ album.release_date|date:'Y-m-d' }}"
+      {% endif %}{% if album.singer %},
+      "byArtist": {
+        "@type": "Person",
+        "name": "{{ album.singer.name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ album.singer.get_absolute_url|escapejs }}"
+      }
+      {% endif %}{% if songs %},
+      "numTracks": {{ songs_count|default:songs|length }},
+      "track": [
+        {% for song in songs %}
+        {
+          "@type": "MusicRecording",
+          "name": "{{ song.title|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.get_absolute_url|escapejs }}"{% if song.singer %},
+          "byArtist": {
+            "@type": "Person",
+            "name": "{{ song.singer.name|escapejs }}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ song.singer.get_absolute_url|escapejs }}"
+          }{% endif %}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]
+      {% endif %}
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>

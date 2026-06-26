@@ -1,5 +1,70 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>لیست هنرمندان و خوانندگان | {{ info.site_name }}</title>
+
+    <meta name="description" content="لیست خوانندگان و هنرمندان {{ info.site_name }} را ببینید و وارد صفحه اختصاصی هر هنرمند شوید؛ شامل بیوگرافی، آهنگ‌ها، آلبوم‌ها و اطلاعات خواننده.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="لیست هنرمندان و خوانندگان | {{ info.site_name }}">
+    <meta property="og:description" content="مشاهده لیست خوانندگان و هنرمندان ثبت‌شده در {{ info.site_name }} به همراه صفحه اختصاصی هر هنرمند.">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="لیست هنرمندان و خوانندگان | {{ info.site_name }}">
+    <meta name="twitter:description" content="مشاهده لیست خوانندگان و هنرمندان ثبت‌شده در {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "لیست هنرمندان و خوانندگان",
+      "description": "لیست خوانندگان و هنرمندان {{ info.site_name }} به همراه صفحه اختصاصی هر هنرمند.",
+      "url": "{{ request.build_absolute_uri|escapejs }}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "لیست هنرمندان",
+        "itemListElement": [
+          {% for artist in artists %}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.counter }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ artist.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "Person",
+              "name": "{{ artist.name|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ artist.get_absolute_url|escapejs }}"{% if artist.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ artist.image.url|escapejs }}"{% endif %}{% if artist.bio %},
+              "description": "{{ artist.bio|striptags|truncatechars:250|escapejs }}"{% endif %}{% if artist.nationality %},
+              "nationality": {
+                "@type": "Country",
+                "name": "{{ artist.nationality.name|escapejs }}"
+              }{% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
 
 {% block style %}
 <style>

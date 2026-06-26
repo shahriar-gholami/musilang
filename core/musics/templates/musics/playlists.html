@@ -1,5 +1,68 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta %}
+    <title>پلی‌لیست‌های کاربران | {{ info.site_name }}</title>
+
+    <meta name="description" content="مشاهده پلی‌لیست‌های کاربران شامل مجموعه‌ای از آهنگ‌های منتخب برای پخش آنلاین و دانلود رایگان آهنگ در سایت {{ info.site_name }}.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:playlists' %}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ info.site_name }}">
+    <meta property="og:title" content="پلی‌لیست‌های کاربران | {{ info.site_name }}">
+    <meta property="og:description" content="مشاهده پلی‌لیست‌های کاربران شامل مجموعه‌ای از آهنگ‌های منتخب برای پخش آنلاین و دانلود رایگان آهنگ در سایت {{ info.site_name }}.">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'musics:playlists' %}">
+    {% if info.logo.wide_logo.url %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="پلی‌لیست‌های کاربران | {{ info.site_name }}">
+    <meta name="twitter:description" content="مشاهده پلی‌لیست‌های کاربران شامل مجموعه‌ای از آهنگ‌های منتخب برای پخش آنلاین و دانلود رایگان آهنگ در سایت {{ info.site_name }}.">
+    {% if info.twitter %}
+        <meta name="twitter:site" content="@{{ info.twitter }}">
+    {% endif %}
+    {% if info.logo.wide_logo.url %}
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ info.logo.wide_logo.url }}">
+    {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "پلی‌لیست‌های کاربران | {{ info.site_name|escapejs }}",
+      "description": "مشاهده پلی‌لیست‌های کاربران شامل مجموعه‌ای از آهنگ‌های منتخب برای پخش آنلاین و دانلود رایگان آهنگ در سایت {{ info.site_name }}.",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'musics:playlists' %}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "{{ info.site_name|escapejs }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "فهرست پلی‌لیست‌های کاربران",
+        "numberOfItems": {{ page_obj.paginator.count|default:0 }},
+        "itemListElement": [
+          {% for collection in collections %}
+          {
+            "@type": "ListItem",
+            "position": {{ page_obj.start_index|add:forloop.counter0 }},
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+            "item": {
+              "@type": "MusicPlaylist",
+              "name": "{{ collection.title|escapejs }}",
+              "url": "{{ request.scheme }}://{{ request.get_host }}{{ collection.get_absolute_url|escapejs }}",
+              "numTracks": {{ collection.songs_count|default:0 }}{% if collection.image %},
+              "image": "{{ request.scheme }}://{{ request.get_host }}{{ collection.image.url|escapejs }}"{% endif %}
+            }
+          }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    }
+    </script>
+{% endblock meta %}
+
 {% block style %}
 <style>
     .collection-list-page {
@@ -382,9 +445,7 @@
 
 </style>
 {% endblock %}
-{% block title %}
-    کالکشن‌ها
-{% endblock %}
+
 
 {% block content %}
 
@@ -426,7 +487,6 @@
                 {% for collection in collections %}
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
                         <article class="collection-card bg-white">
-
                             <a href="{{ collection.get_absolute_url }}" class="collection-card-image">
                                 {% if collection.image %}
                                     <img src="{{ collection.image.url }}" alt="{{ collection.title }}">
