@@ -712,11 +712,7 @@
                     </button>
                     <div class="offcanvas offcanvas-start" tabindex="-1" id="responsiveMenu"
                          aria-labelledby="responsive menu">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasRightLabel">فروشگاه شاهان</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                                    aria-label="Close"></button>
-                        </div>
+                        
                         <div class="offcanvas-body">
                             <a href="" class="text-center d-block mb-3">
                                 <img src="{{ info.logo.wide_logo.url }}" alt="" class="img-fluid" width="200">
@@ -725,153 +721,55 @@
                                 <li class="nav-item bg-ul-f7"><a href="{% url 'musics:index' %}" class="nav-link">صفحه
                                     اصلی</a>
                                 </li>
+                                <li class="nav-item bg-ul-f7"><a href="{% url 'musics:songs_list' %}" class="nav-link">آرشیو آهنگ‌ها</a>
+                                </li>
                                 <li class="nav-item bg-ul-f7">
-                                    <a href="" class="nav-link">گوشی موبایل</a>
+                                    <a href="" class="nav-link">براساس سبک</a>
                                     <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
                                     <ul class="navbar-nav h-0">
+                                        {% for cat in info.get_categories %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="">برند</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">سامسونگ</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">هوآوی</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">شیائومی</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">الجی</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">سونی</a></li>
-                                            </ul>
+                                            <a class="nav-link" href="{% url 'musics:songs_by_category' cat.slug %}">{{ cat.title }}</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="">بر اساس رده بندی</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">لمسی</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">دکمه ای</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">نظامی</a></li>
-                                            </ul>
-                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
                                 <li class="nav-item bg-ul-f7">
-                                    <a href="" class="nav-link">تبلت</a>
+                                    <a href="" class="nav-link">براساس برچسب</a>
                                     <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
                                     <ul class="navbar-nav h-0">
+                                        {% for tag in info.get_tags %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="">کشور</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">ژاپن</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">کره جنوبی</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">آمریکایی</a>
-                                                </li>
-                                            </ul>
+                                            <a class="nav-link" href="{% url 'musics:songs_by_tag' tag.id tag.get_slug %}">{{ tag.title }}</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="">بر اساس رده بندی</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">لمسی</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">دانش آموزی</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">مخصوص بازی</a>
-                                                </li>
-                                            </ul>
-                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
                                 <li class="nav-item bg-ul-f7">
-                                    <a href="" class="nav-link">لپتاپ</a>
+                                    <a href="" class="nav-link">براساس زبان</a>
                                     <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
                                     <ul class="navbar-nav h-0">
+                                        {% for language in info.get_languages %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="">برند</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">ایسر</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">مایکروسافت</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">ایسوس</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">اپل</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">سونی</a></li>
-                                            </ul>
+                                            <a class="nav-link" href="{{ language.get_absolute_url }}">{{ language.name }}</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="">بر اساس قیمت</a>
-                                            <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
-                                            <ul class="navbar-nav h-0 bg-ul-f7">
-                                                <li class="nav-item"><a href="" class="nav-link">ارزان</a></li>
-                                                <li class="nav-item"><a href="" class="nav-link">اقتصادی</a>
-                                                </li>
-                                                <li class="nav-item"><a href="" class="nav-link">گران</a></li>
-                                            </ul>
-                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
                                 <li class="nav-item bg-ul-f7">
-                                    <a href="" class="nav-link">صفحات</a>
+                                    <a href="" class="nav-link">براساس خواننده</a>
                                     <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
                                     <ul class="navbar-nav h-0">
-                                        <li><a href="index.html">صفحه اصلی</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="product.html">صفحه
-                                            محصول</a>
+                                        {% for singer in info.get_singers %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ singer.get_absolute_url }}">{{ singer.name }}</a>
                                         </li>
-                                        <li class="nav-item"><a class="nav-link" href="category.html">صفحه دسته
-                                            بندی</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="cart.html">صفحه سبد
-                                            خرید</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="search.html">صفحه
-                                            جستجو</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="category-product-row.html">دسته
-                                            بندی محصولات خطی</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="404.html">صفحه 404</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="login.html">صفحه ورود</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="register.html">صفحه ثبت
-                                            نام</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="forget.html">صفحه فراموشی
-                                            رمز
-                                            عبور</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="blog.html">صفحه وبلاگ</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="blog-detail.html">صفحه
-                                            جزییات
-                                            وبلاگ</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="compare.html">صفحه مقایسه
-                                            محصول</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="checkout.html">پرداخت
-                                            مرحله
-                                            ای</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="payment-ok.html">پرداخت
-                                            موفق</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="payment-nok.html">پرداخت
-                                            ناموفق</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="product-not-found.html">محصول
-                                            ناموجود</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="empty-cart.html">سبد خرید
-                                            خالی</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="dashboard.html"> داشبورد
-                                            کاربری</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="order.html">سفارشات</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="favorite.html">محصولات
-                                            مورد
-                                            علاقه</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="notification.html">اطلاعیه</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="comments.html">نظرات</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="address-create.html">آدرس ها</a>
-                                        </li>
-                                        <li class="nav-item"><a class="nav-link" href="last-seen.html">آخرین
-                                            بازدید
-                                            ها</a></li>
+                                        {% endfor %}
                                     </ul>
+                                </li>
+                                <li class="nav-item bg-ul-f7"><a href="{% url 'musics:collection_list' %}" class="nav-link">کالکشن‌ها</a>
+                                </li>
+                                <li class="nav-item bg-ul-f7"><a href="{% url 'musics:playlists' %}" class="nav-link">پلی‌لیست‌های کاربران</a>
                                 </li>
                             </ul>
                         </div>
@@ -911,186 +809,7 @@
                     <div class="header-top-menu-right">
                         <div class="top-menu-menu">
                             <ul class="navbar-nav align-items-center">
-                                <li class="position-relative m-0"></li>
-                                <!-- <li class="nav-item main-menu-head"><a href=""
-                                                                       class="nav-link header-top-menu-link-a  nav-active fw-bold"><i
-                                        class="bi bi-list"></i>
-                                    مگا تب منو
-                                </a>
-                                    <ul class="main-menu mega-container">
-                                        <li class="main-menu-sub-active-li"><a href=""><i
-                                                class="bi bi-phone"></i>
-                                            موبایل</a>
-                                            <ul class="main-menu-sub back-menu"
-                                                style=" background: #fff url('assets/img/509-5092096_offering-high-quality-mobile-repair-service-main-image_prev_ui.png') no-repeat;">
-                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
-                                                    گوشی</a>
-                                                </li>
-                                                <li><a href="">گوشی اپل</a></li>
-                                                <li><a href="">گوشی سامسونگ</a></li>
-                                                <li><a href="">گوشی شیائومی</a></li>
-                                                <li><a href="">گوشی بلک بری</a></li>
-                                                <li><a href="">گوشی ایرانی</a></li>
-                                                <li><a class="title my-flex-baseline" href="">گوشی بر اساس
-                                                    قیمت</a></li>
-                                                <li><a href="">گوشی تا 2 میلیون</a></li>
-                                                <li><a href="">گوشی تا 5 میلیون</a></li>
-                                                <li><a href="">گوشی تا 10 میلیون</a></li>
-                                                <li><a href="">گوشی تا 12 میلیون</a></li>
-                                                <li><a href="">گوشی تا 15 میلیون</a></li>
-                                                <li><a class="title my-flex-baseline" href="">گوشی براساس حافظه
-                                                    داخلی</a></li>
-                                                <li><a href="">گوشی تا 16 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 32 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 64 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 128 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 256 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 512 گیگابایت</a></li>
-                                                <li><a href="">گوشی تا 1 ترابایت</a></li>
-                                                <li><a class="title my-flex-baseline" href="">گوشی براساس
-                                                    کاربری</a>
-                                                </li>
-                                                <li><a href="">گوشی اقتصادی</a></li>
-                                                <li><a href="">گوشی دانش آموزی</a></li>
-                                                <li><a href="">گوشی لاکچری</a></li>
-                                                <li><a href="">گوشی پرچمدار</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href=""><i class="bi bi-tablet"></i> تبلت</a>
-                                            <ul class="main-menu-sub back-menu"
-                                                style=" background: #fff url('assets/img/tablet-menu.png') no-repeat;">
-                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
-                                                    تبلت</a>
-                                                </li>
-                                                <li><a href="">تبلت اپل</a></li>
-                                                <li><a href="">تبلت سامسونگ</a></li>
-                                                <li><a href="">تبلت شیائومی</a></li>
-                                                <li><a href="">تبلت بلک بری</a></li>
-                                                <li><a href="">تبلت ایرانی</a></li>
-                                                <li><a class="title my-flex-baseline" href="">تبلت بر اساس
-                                                    قیمت</a></li>
-                                                <li><a href="">تبلت تا 2 میلیون</a></li>
-                                                <li><a href="">تبلت تا 5 میلیون</a></li>
-                                                <li><a href="">تبلت تا 10 میلیون</a></li>
-                                                <li><a href="">تبلت تا 12 میلیون</a></li>
-                                                <li><a href="">تبلت تا 15 میلیون</a></li>
-                                                <li><a class="title my-flex-baseline" href="">تبلت براساس حافظه
-                                                    داخلی</a></li>
-                                                <li><a href="">تبلت تا 16 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 32 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 64 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 128 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 256 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 512 گیگابایت</a></li>
-                                                <li><a href="">تبلت تا 1 ترابایت</a></li>
-                                                <li><a class="title my-flex-baseline" href="">تبلت براساس
-                                                    کاربری</a>
-                                                </li>
-                                                <li><a href="">گتبلتوشی اقتصادی</a></li>
-                                                <li><a href="">تبلت دانش آموزی</a></li>
-                                                <li><a href="">تبلت لاکچری</a></li>
-                                                <li><a href="">تبلت پرچمدار</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href=""><i class="bi bi-shield"></i>آنتی ویروس</a>
-                                            <ul class="main-menu-sub back-menu"
-                                                style=" background: #fff url('assets/img/EAV.png') no-repeat;">
-                                                <li><a class="title my-flex-baseline" href="">براساس برند</a>
-                                                </li>
-                                                <li><a href="">نود 32</a></li>
-                                                <li><a href="">کسپر اسکای</a></li>
-                                                <li><a href="">360 سکوریتی</a></li>
-                                                <li><a href="">بیت دیفیندر</a></li>
-                                                <li><a href="">ایمن</a></li>
-                                                <li><a class="title my-flex-baseline" href="">براساس ویندوز</a>
-                                                </li>
-                                                <li><a href="">ویندوز 7</a></li>
-                                                <li><a href="">ویندوز 8</a></li>
-                                                <li><a href="">ویندوز 8.1</a></li>
-                                                <li><a href="">ویندوز 10</a></li>
-                                                <li><a href="">ویندوز 11</a></li>
-                                                <li><a class="title my-flex-baseline" href="">براساس برند</a>
-                                                </li>
-                                                <li><a href="">نود 32</a></li>
-                                                <li><a href="">کسپر اسکای</a></li>
-                                                <li><a href="">360 سکوریتی</a></li>
-                                                <li><a href="">بیت دیفیندر</a></li>
-                                                <li><a href="">ایمن</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href=""><i class="bi bi-laptop"></i>لبتاپ</a>
-                                            <ul class="main-menu-sub back-menu"
-                                                style=" background: #fff url('assets/img/labtop.png') no-repeat;">
-                                                <li><a class="title my-flex-baseline" href="">برند های مختلف
-                                                    لبتاپ</a>
-                                                </li>
-                                                <li><a href="">لبتاپ اپل</a></li>
-                                                <li><a href="">لبتاپ سامسونگ</a></li>
-                                                <li><a href="">لبتاپ شیائومی</a></li>
-                                                <li><a href="">لبتاپ بلک بری</a></li>
-                                                <li><a href="">لبتاپ ایرانی</a></li>
-                                                <li><a class="title my-flex-baseline" href="">لبتاپ بر اساس
-                                                    قیمت</a>
-                                                </li>
-                                                <li><a href="">لبتاپ تا 2 میلیون</a></li>
-                                                <li><a href="">لبتاپ تا 5 میلیون</a></li>
-                                                <li><a href="">لبتاپ تا 10 میلیون</a></li>
-                                                <li><a href="">لبتاپ تا 12 میلیون</a></li>
-                                                <li><a href="">لبتاپ تا 15 میلیون</a></li>
-                                                <li><a class="title my-flex-baseline" href="">لبتاپ براساس حافظه
-                                                    داخلی</a></li>
-                                                <li><a href="">لبتاپ تا 16 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 32 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 64 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 128 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 256 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 512 گیگابایت</a></li>
-                                                <li><a href="">لبتاپ تا 1 ترابایت</a></li>
-                                                <li><a class="title my-flex-baseline" href="">لبتاپ براساس
-                                                    کاربری</a>
-                                                </li>
-                                                <li><a href="">لبتاپ اقتصادی</a></li>
-                                                <li><a href="">لبتاپ دانش آموزی</a></li>
-                                                <li><a href="">لبتاپ لاکچری</a></li>
-                                                <li><a href="">لبتاپ پرچمدار</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href=""><i class="bi bi-tag"></i>پر فروش ترین ها</a>
-                                            <ul class="main-menu-sub back-menu"
-                                                style=" background: #fff url('assets/img/top-sales.jpeg') no-repeat;">
-                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
-                                                    1 </a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
-                                                    1 </a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
-                                                    1 </a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a class="title my-flex-baseline" href="">زیر منو شماره
-                                                    1 </a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                                <li><a href="">زیر منو شماره 1</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li> -->
-                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">
+                                <li class="position-relative m-0"></li><li class="nav-item"><a href="{% url 'musics:songs_list' %}" class="nav-link header-top-menu-link-a  ">
                                     آرشیو آهنگ‌ها
                                     <i class="bi bi-music-note-beamed"></i></a>
                                     <ul class="list-unstyled shadow-lg back-menu sub-menu mega-container"
@@ -1117,8 +836,6 @@
                                     لیست کالکشن‌ها
                                     <i class="bi bi-menu-app"></i></a>
                                 </li>
-                                <li class="nav-item"><a href="" class="nav-link header-top-menu-link-a  ">
-                                    پرطرفدارترین آهنگ‌ها <i class="bi bi-star"></i></a></li>
                                 <li class="nav-item"><a href="{% url 'musics:playlists' %}" class="nav-link header-top-menu-link-a  ">
                                     پلی‌لیست کاربران <i class="bi bi-music-note-list"></i></a></li>
                                 
@@ -1139,12 +856,24 @@
                             </div>
                             <div class="col-lg-12 col-xl-6">
                                 <div class="header-top-menu-socail">
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-telegram"></i></a>
+                                    {% if info.instagram %}
+                                        <a href="https://instagram.com/{{ info.instagram }}"><i class="bi bi-instagram"></i></a>
+                                    {% endif %}
+                                    
+                                    {% if info.youtube %}
+                                        <a href="https://youtube.com/@{{ info.youtube }}"><i class="bi bi-youtube"></i></a>
+                                    {% endif %}
+                                    
+                                    {% if info.linkedin %}
+                                        <a href="https://linkedin.com/in/{{ info.linkedin }}"><i class="bi bi-linkedin"></i></a>
+                                    {% endif %}
+                                    
+                                    {% if info.telegram %}
+                                        <a href="https://t.me/{{ info.telegram }}"><i class="bi bi-telegram"></i></a>
+                                    {% endif %}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -1288,7 +1017,7 @@
                 </div>
                 
                 <div class="footer-copy-right">
-                    <p class="font-16 my-4">کلی حقوق این سایت متعلق به <span class="fw-bold">راستچین</span> می باشد</p>
+                    <p class="font-16 my-4">کلی حقوق این سایت متعلق به <span class="fw-bold">لیریکال</span> می باشد</p>
                 </div>
             </div>
         </div>
@@ -1305,18 +1034,18 @@
             <i class="bi bi-chevron-up font-20"></i>
         </div>
         <div class="item">
-            <a href="index.html">
+            <a href="{% url 'musics:index' %}">
                 <i class="bi bi-house font-20"></i>
             </a>
         </div>
         
         <div class="item ">
-            <a href="index.html">
-                <i class="bi bi-archive"></i>
+            <a href="{% url 'dashboard:dashboard_favorites' %}">
+                <i class="bi bi-heart"></i>
             </a>
         </div>
         <div class="item">
-            <a href="index.html">
+            <a href="{% url 'dashboard:dashboard' %}">
                 <i class="bi bi-person"></i>
             </a>
         </div>
@@ -1417,13 +1146,13 @@
             <button type="button" class="lyrics-tab-btn" data-tab="translated">ترجمه</button>
         </div>
 
-        <div class="lyrics-tab-content active" id="lyricsRawTab">
+        <div class="lyrics-tab-content active text-center" id="lyricsRawTab">
             <div class="lyrics-scroll" id="lyricsRawContent">
                 متن آهنگ موجود نیست.
             </div>
         </div>
 
-        <div class="lyrics-tab-content" id="lyricsTranslatedTab">
+        <div class="lyrics-tab-content text-center" id="lyricsTranslatedTab">
             <div class="lyrics-scroll" id="lyricsTranslatedContent">
                 ترجمه‌ای برای این آهنگ ثبت نشده است.
             </div>

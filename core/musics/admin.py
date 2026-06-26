@@ -448,6 +448,23 @@ class PlaylistAdmin(admin.ModelAdmin):
     filter_horizontal = ("songs",)
     readonly_fields = ("created_date", "updated_date")
 
+from django.contrib import admin
+
+from .models import IndexPageContent
+
+
+@admin.register(IndexPageContent)
+class IndexPageContentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'created_date', 'updated_date')
+    filter_horizontal = (
+        'slider_songs',
+        'artists',
+        'collections',
+        'special_tags',
+    )
+    readonly_fields = ('created_date', 'updated_date')
+
+
 
 
 

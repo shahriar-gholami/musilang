@@ -771,7 +771,7 @@ textarea.song-form-control {
                         {% if song.singer %}
                             <span class=" text-white">
                                 <i class="bi bi-mic-fill  text-white"></i>
-                                <a href="#">{{ song.singer.name }}</a>
+                                <a href="{{ song.singer.get_absolute_url }}">{{ song.singer.name }}</a>
                             </span>
                         {% endif %}
 
@@ -1081,7 +1081,7 @@ textarea.song-form-control {
                             را ببین.
                         </p>
 
-                        <a href="#" class="btn btn-primary w-100 rounded-4">
+                        <a href="{{ song.singer.get_absolute_url }}" class="btn btn-primary w-100 rounded-4">
                             صفحه خواننده
                         </a>
                     </div>
@@ -1157,7 +1157,7 @@ textarea.song-form-control {
                                     <i class="bi bi-mic-fill"></i>
 
                                     {% if related_song.singer %}
-                                        <a href="#">
+                                        <a href="{{ related_song.singer.get_absolute_url }}">
                                             {{ related_song.singer.name }}
                                         </a>
                                     {% else %}

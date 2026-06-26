@@ -15,6 +15,7 @@ from blog.models import BlogPost
 
 class IndexPageView(View):
     def get(self, request):
+        home_content = IndexPageContent.objects.first()
         songs = Song.objects.select_related("singer", "language", "album", "lyrics").all()
         collections = (
         Collection.objects
@@ -36,6 +37,7 @@ class IndexPageView(View):
         context = {
 
             'songs': songs,
+            'home_content': home_content,
             'posts' : BlogPost.objects.all()[:4],
             'collections': collections,
             'singers': Singer.objects.all().order_by("name"),

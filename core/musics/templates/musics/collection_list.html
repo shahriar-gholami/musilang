@@ -489,7 +489,7 @@
                                     {% if collection.preview_singers %}
                                         <div class="collection-singers-list">
                                             {% for singer in collection.preview_singers %}
-                                                <a href="#">
+                                                <a href="{{ singer.get_absolute_url }}">
                                                     {{ singer.name }}
                                                 </a>
                                             {% endfor %}

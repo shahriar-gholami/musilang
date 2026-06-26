@@ -397,7 +397,7 @@
                                 <div class="music-card-singer text-overflow-1">
                                     <i class="bi bi-mic-fill"></i>
                                     {% if song.singer %}
-                                        <a href="#">
+                                        <a href="{{ song.singer.get_absolute_url }}">
                                             {{ song.singer.name }}
                                         </a>
                                     {% else %}
