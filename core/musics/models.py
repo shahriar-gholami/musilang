@@ -45,7 +45,7 @@ class Singer(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    slug = models.CharField(max_length=255,unique=True)
 
     def get_absolute_url(self):
         return reverse("musics:songs_by_category", kwargs={

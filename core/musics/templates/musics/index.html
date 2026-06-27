@@ -1166,8 +1166,8 @@
                         <a href="{{ song.get_absolute_url }}" class="footer-media-thumb-link">
                             {% if song.image %}
                                 <img src="{{ song.image.url }}" alt="{{ song.title }}" class="footer-thumb">
-                            {% elif song.cover %}
-                                <img src="{{ song.cover.url }}" alt="{{ song.title }}" class="footer-thumb">
+                            {% elif song.image %}
+                                <img src="{{ song.image.url }}" alt="{{ song.title }}" class="footer-thumb">
                             {% else %}
                                 <img src="{% static 'images/default-music.jpg' %}" alt="{{ song.title }}" class="footer-thumb">
                             {% endif %}

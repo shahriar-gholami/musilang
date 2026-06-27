@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -9,7 +9,7 @@ urlpatterns = [
     path("", views.IndexPageView.as_view(), name="index"),
     path("songs/", views.SongListView.as_view(), name="songs_list"),
     path("songs/<int:pk>/<str:song_slug>/", views.SingleSongDetailView.as_view(), name="song_detail"),
-    path("songs/category/<slug:slug>/", views.SongsListByCategoryView.as_view(), name="songs_by_category",),
+    path("songs/category/<str:slug>/", views.SongsListByCategoryView.as_view(), name="songs_by_category",),
     path("songs/tag/<int:tag_id>/<str:tag_slug>/", views.SongsListByTagView.as_view(),name="songs_by_tag",),
     path("songs/language/<str:code>/",views.SongsListByLanguage.as_view(),name="songs_by_language",),
     path("search/", views.SearchView.as_view(), name="search"),
@@ -26,6 +26,7 @@ urlpatterns = [
     path("songs/favorite-toggle/<int:pk>/",views.song_favorite_toggle,name="song_favorite_toggle",),
     path("artists/favorite-toggle/<int:pk>/",views.artist_favorite_toggle,name="artist_favorite_toggle",),
     path("collections/favorite-toggle/<int:pk>/",views.collection_favorite_toggle,name="collection_favorite_toggle",),
+    path('api/', include("musics.api.v1.urls")),
 
 
 

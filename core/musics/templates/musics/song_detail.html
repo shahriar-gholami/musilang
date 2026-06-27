@@ -961,8 +961,8 @@ textarea.song-form-control {
             <div class="song-hero-content  text-white">
 
                 <div class="song-hero-cover">
-                    {% if song.cover %}
-                        <img src="{{ song.cover.url }}" alt="{{ song.title }}">
+                    {% if song.image %}
+                        <img src="{{ song.image.url }}" alt="{{ song.title }}">
                     {% else %}
                         <img src="{% static 'assets/img/slide-3.gif' %}" alt="{{ song.title }}">
                     {% endif %}
